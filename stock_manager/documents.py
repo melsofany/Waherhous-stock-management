@@ -23,7 +23,8 @@ from django.db import IntegrityError, transaction
 from django.db.models import F
 from django.utils import timezone
 
-from .models import Item, ShopItem, StockDocument, StockDocumentLine
+from .audit import record
+from .models import AuditEvent, Item, ShopItem, StockDocument, StockDocumentLine
 
 IN = StockDocument.IN
 OUT = StockDocument.OUT
@@ -192,7 +193,32 @@ def create_document(
         if not pending:
             _apply(document, approved_by=created_by)
     document.refresh_from_db()
+    # Recorded after the transaction: a failed audit write must not roll back a
+    # document that was saved correctly.
+    record(
+        user=created_by,
+        action=AuditEvent.DOCUMENT_CREATED,
+        entity="stock_document",
+        entity_id=document.pk,
+        description=_describe(document),
+    )
     return document
+
+
+def _describe(document) -> str:
+    """A one-line, language-neutral summary for the audit trail."""
+    lines = list(document.lines.all())
+    shown = "، ".join(
+        f"{line.sku} ×{line.quantity}{(' ' + line.unit) if line.unit else ''}"
+        for line in lines[:3]
+    )
+    more = f" (+{len(lines) - 3})" if len(lines) > 3 else ""
+    parts = [document.number, document.get_doc_type_display()]
+    if document.counterparty:
+        parts.append(document.counterparty)
+    if document.site_id:
+        parts.append(document.site.get_username())
+    return " · ".join(str(part) for part in parts) + (f" — {shown}{more}" if shown else "")
 
 
 def _insert_document(**kwargs) -> StockDocument:
@@ -228,6 +254,13 @@ def approve_document(document: StockDocument, user=None, note: str = "") -> Stoc
             raise DocumentError("A rejected document cannot be approved.")
         _apply(locked, approved_by=user, note=note)
         locked.refresh_from_db()
+    record(
+        user=user,
+        action=AuditEvent.DOCUMENT_APPROVED,
+        entity="stock_document",
+        entity_id=locked.pk,
+        description=_describe(locked),
+    )
     return locked
 
 
@@ -242,6 +275,14 @@ def reject_document(document: StockDocument, user=None, note: str = "") -> Stock
         locked.decided_at = timezone.now()
         locked.decision_note = (note or "").strip()
         locked.save(update_fields=["status", "decided_by", "decided_at", "decision_note"])
+    record(
+        user=user,
+        action=AuditEvent.DOCUMENT_REJECTED,
+        entity="stock_document",
+        entity_id=locked.pk,
+        description=_describe(locked)
+        + (f" — {locked.decision_note}" if locked.decision_note else ""),
+    )
     return locked
 
 
