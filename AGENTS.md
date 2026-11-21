@@ -65,3 +65,34 @@ suites skip themselves when Chromium is missing.
 `permissions.push: true`. `$OH_GIT_CREDENTIAL_ACCESS_TOKEN_GITHUB` is invalid
 (401). A fresh user-issued `ghp_` token with `repo` scope is required to push and
 open a PR.
+
+## One menu, five pages (users, Android app, audit log, label picker)
+
+The sidebar used to differ per shell: the dashboard listed four pages, every
+other page listed five, and the two sets overlapped. It is now **nine entries
+from one partial** (`templates/partials/sidenav.html`), included by both shells,
+with the current entry chosen by URL name in `stock_manager/context.py`
+(`NAV_SECTIONS`). A new page means one entry in `NAV_SECTIONS` and one line in
+the partial — never a copy per shell.
+
+- **A `{# … #}` comment is single-line in Django.** A multi-line one is *not* a
+  comment: it is printed as text on the page. Use `{% comment %}`.
+- **`_()` at module level freezes the language.** `ROLE_LABELS` is built at
+  import time, so its `_()` calls captured English for every request — the
+  Arabic UI showed "Warehouse manager". Module-level labels need `gettext_lazy`.
+- **The shellbar states the reader's role**, so `is_manager` is supplied by the
+  context processor now: a page whose view forgot to pass it showed "Site user"
+  to a manager. Views may still override it.
+- **Dates stay left-to-right** (`<td dir="ltr">`): in an RTL page a bare
+  `2026-11-21 15:41` is re-ordered into `15:41 2026-11-21`.
+- **The dashboard keeps its in-page jump list**, but under «أقسام هذه الصفحة»
+  and styled quieter (`.sap-sidenav__nav--sections`), so it does not read as a
+  second site menu.
+- **Roles are named, not exposed**: `managers`/`shop_users`/`receive_mail` show
+  as Warehouse manager / Site user / Mail receiver, and a group added later
+  still shows under its own name.
+- **The audit log records what a person can read**: sign-in, sign-out, refused
+  sign-in, document decisions, password changes (including a self-service one,
+  via `AuditedPasswordChangeView`), and a setting change written as
+  «Edit lock: on/off» rather than `edit_lock=False`.
+- `python -m pytest -q` — 473 pass, 3 skip.
