@@ -80,6 +80,8 @@ AXES_COOLOFF_TIME = int(os.getenv("AXES_COOLOFF_TIME"))
 # out all users.
 AXES_LOCKOUT_PARAMETERS = ["username"]
 AXES_CLIENT_IP_CALLABLE = lambda x: None  # Disable logging IP
+# Render the lockout as a branded page instead of a bare 429 text response.
+AXES_LOCKOUT_TEMPLATE = "registration/lockout.html"
 # axes.W006 recommends adding "ip_address" to AXES_LOCKOUT_PARAMETERS, but
 # that advice does not apply here: with the client IP nulled above, every
 # request shares one IP identity and the lockout would become global.
