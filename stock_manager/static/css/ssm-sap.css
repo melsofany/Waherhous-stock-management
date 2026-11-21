@@ -1085,6 +1085,19 @@ img {
     font-size: 0.875rem;
 }
 
+/* The one column that must stay readable; .sap-tablewrap scrolls sideways
+   rather than wrapping an item name onto three lines. */
+.sap-table__wide {
+    min-width: 12rem;
+}
+
+/* Twelve columns have to fit a laptop screen; the trimmed padding buys the
+   width without dropping a column behind a horizontal scroll. */
+.sap-table.sap-table--dense thead th,
+.sap-table.sap-table--dense tbody td {
+    padding: 0.625rem 0.75rem;
+}
+
 .sap-table thead th {
     position: relative;
     padding: 0.625rem 1.25rem;
@@ -1844,7 +1857,7 @@ body.sap-login {
     color: #0a6ed1;
 }
 
-/* One receipt line: item code, description, quantity, remove. */
+/* One document line: item code, description, unit, quantity, remove. */
 .sap-lines {
     display: flex;
     flex-direction: column;
@@ -1853,7 +1866,7 @@ body.sap-login {
 
 .sap-line {
     display: grid;
-    grid-template-columns: minmax(8rem, 12rem) minmax(8rem, 1fr) 5rem 2.25rem;
+    grid-template-columns: minmax(7rem, 10rem) minmax(7rem, 1fr) 6rem 4.5rem 2.25rem;
     gap: 0.5rem;
     align-items: center;
 }
@@ -1865,6 +1878,10 @@ body.sap-login {
 }
 
 .sap-input--qty {
+    text-align: center;
+}
+
+.sap-input--unit {
     text-align: center;
 }
 

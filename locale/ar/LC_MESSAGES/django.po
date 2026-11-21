@@ -853,6 +853,9 @@ msgstr "النقل متاح"
 msgid "Type"
 msgstr "النوع"
 
+msgid "Unit"
+msgstr "الوحدة"
+
 msgid "Unknown action."
 msgstr "إجراء غير معروف."
 
@@ -930,6 +933,9 @@ msgstr "مثال: NSCOM-1001"
 
 msgid "e.g. PO-2026-00123"
 msgstr "مثال: PO-2026-00123"
+
+msgid "e.g. piece, metre, kg"
+msgstr "مثال: قطعة، متر، كجم"
 
 msgid "items"
 msgstr "صنف"

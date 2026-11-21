@@ -57,6 +57,9 @@ class Item(models.Model):
     description = models.CharField(max_length=250)
     retail_price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField(validators=[MinValueValidator(0)])
+    # Unit of measure as the operator writes it (قطعة / متر / كجم ...). A unit
+    # is data, not an enum: the catalogue mixes Arabic and English articles.
+    unit = models.CharField(max_length=20, blank=True, default="")
     last_updated = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)  # Soft-delete flag
 
@@ -167,6 +170,9 @@ class GoodsReceiptLine(models.Model):
     sku = models.CharField(max_length=100)
     description = models.CharField(max_length=250, blank=True, default="")
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
+    # Snapshot of the unit at booking time: changing the catalogue unit later
+    # must not rewrite what a past document said was moved.
+    unit = models.CharField(max_length=20, blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -301,6 +307,9 @@ class StockDocumentLine(models.Model):
     sku = models.CharField(max_length=100)
     description = models.CharField(max_length=250, blank=True, default="")
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
+    # Snapshot of the unit at booking time: changing the catalogue unit later
+    # must not rewrite what a past document said was moved.
+    unit = models.CharField(max_length=20, blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

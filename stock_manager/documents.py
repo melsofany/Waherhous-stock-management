@@ -50,6 +50,14 @@ COUNTERPARTY_REQUIRED = (
 MAX_NUMBER_ATTEMPTS = 5
 
 
+# Offered as suggestions in the unit box. Free text is allowed: the catalogue
+# mixes Arabic and English articles and a unit is data, not an enum.
+COMMON_UNITS = [
+    "قطعة", "متر", "كجم", "لفة", "كرتونة", "لتر", "عبوة", "طن", "متر مربع",
+    "PCS", "MTR", "KG", "ROLL", "BOX", "LTR", "SET",
+]
+
+
 class DocumentError(ValueError):
     """A refusal the operator can act on (never an internal error)."""
 
@@ -61,14 +69,14 @@ def direction_of(doc_type: str) -> str:
         raise DocumentError(f"Unknown document type: {doc_type}")
 
 
-def parse_lines(raw_lines) -> list[tuple[str, int, str]]:
+def parse_lines(raw_lines) -> list[tuple[str, int, str, str]]:
     """Normalise submitted lines into ``[(sku, quantity, description)]``.
 
     A repeated SKU is summed, so a double-submitted line cannot be booked
     twice, and a line without a quantity is refused rather than dropped: a
     silently dropped line is a document that lies about what it moved.
     """
-    merged: dict[str, tuple[int, str]] = {}
+    merged: dict[str, tuple[int, str, str]] = {}
     for raw in raw_lines or []:
         if not isinstance(raw, dict):
             raise DocumentError("Each line must be an item and a quantity.")
@@ -82,13 +90,18 @@ def parse_lines(raw_lines) -> list[tuple[str, int, str]]:
         if quantity <= 0:
             raise DocumentError("The quantity must be greater than zero.")
         description = str(raw.get("description") or "").strip()
+        unit = str(raw.get("unit") or "").strip()[:20]
         if sku in merged:
-            merged[sku] = (merged[sku][0] + quantity, merged[sku][1] or description)
+            merged[sku] = (
+                merged[sku][0] + quantity,
+                merged[sku][1] or description,
+                merged[sku][2] or unit,
+            )
         else:
-            merged[sku] = (quantity, description)
+            merged[sku] = (quantity, description, unit)
     if not merged:
         raise DocumentError("Add at least one item.")
-    return [(sku, qty, desc) for sku, (qty, desc) in merged.items()]
+    return [(sku, qty, desc, unit) for sku, (qty, desc, unit) in merged.items()]
 
 
 def _next_number(doc_type: str) -> str:
@@ -164,7 +177,7 @@ def create_document(
             source=source,
             pending=pending,
         )
-        for sku, quantity, description in parsed:
+        for sku, quantity, description, unit in parsed:
             item = _item_for_line(sku)
             StockDocumentLine.objects.create(
                 document=document,
@@ -172,6 +185,9 @@ def create_document(
                 sku=sku,
                 description=description or (item.description if item else sku),
                 quantity=quantity,
+                # The line states its own unit; an unstated one comes from the
+                # catalogue at the moment of booking (a snapshot, not a join).
+                unit=unit or (item.unit if item else ""),
             )
         if not pending:
             _apply(document, approved_by=created_by)
@@ -253,6 +269,10 @@ def _apply(document: StockDocument, approved_by=None, note: str = "") -> None:
             if not line.item_id:
                 line.item = item
                 line.save(update_fields=["item"])
+            if line.unit and not item.unit:
+                # An addition is where a new article's unit is first learned.
+                Item.objects.filter(pk=item.pk).update(unit=line.unit)
+                item.refresh_from_db(fields=["unit"])
             Item.objects.filter(pk=item.pk).update(
                 quantity=F("quantity") + line.quantity
             )

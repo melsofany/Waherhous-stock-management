@@ -398,6 +398,8 @@ ARABIC.update(
         "Nothing was issued in this period.": "لم يُصرف شيء في هذه الفترة.",
         "Only a warehouse manager can approve documents.": "اعتماد الأذون متاح لأمين المخزن فقط.",
         "Pages": "الصفحات",
+        "Unit": "الوحدة",
+        "e.g. piece, metre, kg": "مثال: قطعة، متر، كجم",
         "Pending approval": "في انتظار الاعتماد",
         "Purchase order / reference": "أمر الشراء / المرجع",
         "Qty": "الكمية",

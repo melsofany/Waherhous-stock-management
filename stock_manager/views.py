@@ -684,6 +684,7 @@ def receive_from_supplier(request):
                     sku=sku,
                     description=description or item.description,
                     quantity=quantity,
+                    unit=item.unit,
                 )
                 booked.append(
                     {
@@ -896,11 +897,13 @@ def _form_lines(request):
     skus = request.POST.getlist("sku")
     quantities = request.POST.getlist("quantity")
     descriptions = request.POST.getlist("description")
+    units = request.POST.getlist("unit")
     return [
         {
             "sku": sku,
             "quantity": quantity,
             "description": descriptions[index] if index < len(descriptions) else "",
+            "unit": units[index] if index < len(units) else "",
         }
         for index, (sku, quantity) in enumerate(zip(skus, quantities))
         if str(sku).strip()
@@ -983,6 +986,7 @@ def receipts_page(request):
         "pages/receipts.html",
         {
             "sites": _site_accounts(),
+            "unit_options": stock_documents.COMMON_UNITS,
             "types": [
                 (value, _(label))
                 for value, label in StockDocument.TYPE_CHOICES
@@ -1023,6 +1027,7 @@ def issues_page(request):
         "pages/issues.html",
         {
             "sites": _site_accounts(),
+            "unit_options": stock_documents.COMMON_UNITS,
             "types": [
                 (value, _(label))
                 for value, label in StockDocument.TYPE_CHOICES
