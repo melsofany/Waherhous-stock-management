@@ -4,7 +4,12 @@ from django.urls import path, include
 from django.conf import settings
 from django.views.generic import RedirectView
 
-urlpatterns = []
+from ssm.health import healthz
+
+urlpatterns = [
+    # Public liveness probe (platform health check); never requires a session.
+    path("healthz", healthz, name="healthz"),
+]
 
 if not getattr(settings, "ALLOW_PW_CHANGE", True):
     urlpatterns += [
