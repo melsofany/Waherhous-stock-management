@@ -58,6 +58,7 @@ class Api(private val baseUrl: String) {
     fun versionAnonymous(): UpdateInfo? =
         parseVersionResponse(request("api/mobile/version/", "GET").second)
 
+    /** Repeating a sign-in is harmless: it only opens a session. */
     fun login(
         phone: String,
         password: String,
@@ -70,7 +71,8 @@ class Api(private val baseUrl: String) {
             .put("device", device)
             .put("deviceId", deviceId)
             .toString()
-        val (_, text) = request("api/mobile/login/", "POST", body)
+        // Repeatable: a second sign-in only opens another session.
+        val (_, text) = request("api/mobile/login/", "POST", body, repeatable = true)
         val json = JSONObject(text)
         val token = json.optString("token")
         if (token.isEmpty()) throw ApiException(500, "لم يُرجع الخادم جلسة.")
@@ -138,7 +140,8 @@ class Api(private val baseUrl: String) {
         file: File?,
         fileField: String,
         mimeType: String,
-    ): Pair<Int, String> = retrying { multipartOnce(path, token, fields, file, fileField, mimeType) }
+    ): Pair<Int, String> =
+        retrying(false) { multipartOnce(path, token, fields, file, fileField, mimeType) }
 
     private fun multipartOnce(
         path: String,
@@ -196,7 +199,10 @@ class Api(private val baseUrl: String) {
         method: String,
         body: String? = null,
         token: String? = null,
-    ): Pair<Int, String> = retrying { requestOnce(path, method, body, token) }
+        repeatable: Boolean = false,
+    ): Pair<Int, String> = retrying(method == "GET" || repeatable) {
+        requestOnce(path, method, body, token)
+    }
 
     /**
      * Run a call, waking the server if it is asleep.
@@ -207,16 +213,13 @@ class Api(private val baseUrl: String) {
      * to do the retrying itself — nobody is going to press the button again.
      * A refusal from the API (401, 400, 409…) is NOT retried: it is an answer.
      */
-    private fun retrying(call: () -> Pair<Int, String>): Pair<Int, String> {
+    private fun retrying(repeatable: Boolean, call: () -> Pair<Int, String>): Pair<Int, String> {
         var last: Exception? = null
         for (attempt in 0..wakeDelaysMs.size) {
             try {
                 return call()
-            } catch (error: ApiException) {
-                if (!isWaking(error.status) || attempt == wakeDelaysMs.size) throw error
-                last = error
-            } catch (error: java.io.IOException) {
-                if (attempt == wakeDelaysMs.size) throw error
+            } catch (error: Exception) {
+                if (!Retry.shouldRetry(repeatable, error, attempt, wakeDelaysMs.size)) throw error
                 last = error
             }
             onWaking?.invoke()
@@ -224,8 +227,6 @@ class Api(private val baseUrl: String) {
         }
         throw last ?: java.io.IOException("تعذّر الاتصال بالخادم.")
     }
-
-    private fun isWaking(status: Int): Boolean = status == 502 || status == 503 || status == 504
 
     private fun requestOnce(
         path: String,
