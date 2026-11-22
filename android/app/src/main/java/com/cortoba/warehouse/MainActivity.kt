@@ -139,7 +139,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun renderName(name: String, role: String) {
-        val shown = name.ifEmpty { session.phone }
+        val shown = name.ifEmpty { getString(R.string.my_account) }
         binding.name.text = shown
         binding.role.text = role.ifEmpty { getString(R.string.role_user) }
         binding.avatar.text = shown.trim().firstOrNull()?.uppercase() ?: "؟"

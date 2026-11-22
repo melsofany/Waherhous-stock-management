@@ -39,8 +39,9 @@ class SettingsActivity : AppCompatActivity() {
             R.string.version_line, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE
         )
         binding.deviceLine.text = getString(R.string.device_line, session.deviceLabel())
-        binding.accountName.text = session.displayName.ifEmpty { session.phone }
-        binding.accountPhone.text = session.phone.ifEmpty { getString(R.string.no_phone) }
+        binding.accountName.text =
+            session.displayName.ifEmpty { getString(R.string.my_account) }
+        binding.accountPhone.text = session.maskedPhone.ifEmpty { getString(R.string.no_phone) }
         binding.serverStatus.setText(R.string.server_online)
         loadProfile()
     }
@@ -55,7 +56,7 @@ class SettingsActivity : AppCompatActivity() {
                     binding.accountName.text = profile.displayName
                     binding.accountRole.text = roleLabel(profile.role)
                     binding.accountPhone.text =
-                        profile.phone.ifEmpty { getString(R.string.no_phone) }
+                        session.maskedPhone.ifEmpty { getString(R.string.no_phone) }
                     if (profile.pendingPhone != null) {
                         binding.accountPhone.append(
                             "\n" + getString(R.string.pending_phone_change, profile.pendingPhone)

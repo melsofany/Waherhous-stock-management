@@ -47,9 +47,11 @@ class LoginActivity : AppCompatActivity() {
         if (remembered.isEmpty()) {
             showIdentifierField()
         } else {
-            val name = session.displayName.ifEmpty { remembered }
+            // The name only: the number is the account's business, not the
+            // business of whoever is looking over the shoulder.
+            val name = session.displayName.ifEmpty { getString(R.string.role_user) }
             binding.welcomeTitle.text = getString(R.string.welcome_back)
-            binding.welcomeAccount.text = "$name · $remembered"
+            binding.welcomeAccount.text = name
         }
 
         if (session.isSignedIn) {

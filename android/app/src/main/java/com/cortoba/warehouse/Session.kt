@@ -46,6 +46,13 @@ class Session(context: Context) {
     val isSignedIn: Boolean
         get() = !token.isNullOrEmpty()
 
+    /**
+     * The sign-in number, reduced to what identifies the account without
+     * printing it on a screen anyone standing nearby can read.
+     */
+    val maskedPhone: String
+        get() = phone.takeLast(4).let { if (it.length == 4) "•••• $it" else "" }
+
     /** A phone label for the manager's page: "Samsung SM-A125F". */
     fun deviceLabel(): String = "${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}"
 
