@@ -1,6 +1,7 @@
 """Printable item cards: the stock card layout, its project header and its codes."""
 
 import pytest
+from django.conf import settings
 from django.contrib import admin as django_admin
 
 from stock_manager import item_codes
@@ -88,6 +89,19 @@ class TestItemCardContent:
         assert "كابل نحاس 3*10مم" in html
         assert "LM" in html
         assert card_item.description in html
+
+    def test_the_card_stays_english_and_reads_right_to_left(
+        self, client, manager, project, card_item
+    ):
+        client.force_login(manager)
+        client.cookies[settings.LANGUAGE_COOKIE_NAME] = "ar"
+
+        html = client.get(f"/labels/cards/?skus={card_item.sku}").content.decode()
+
+        assert 'lang="en"' in html
+        assert 'dir="rtl"' in html
+        assert "Sub Inventory" in html
+        assert "المخزن الفرعي" not in html
 
     def test_card_prints_the_internal_code_with_its_barcode(
         self, client, manager, project, card_item
