@@ -275,7 +275,6 @@
                 url: '/api/set_edit_lock_status/',
                 type: 'POST',
                 contentType: 'application/json',
-                headers: { 'X-CSRFToken': getCSRFToken() },
                 data: JSON.stringify({ edit_lock_status: status }),
                 success: response => {
                     window.editLock = response.edit_lock;
@@ -347,11 +346,6 @@
         $table.data('sortOrder', newOrder).data('sortColumn', column);
         const searchVal = $(`#searchBox${tableNum}`).val();
         updatePageGlobals(tableNum, 1, column, newOrder, searchVal);
-    };
-
-    // Update the update mode toggle button state.
-    const setUpdateModeButtonState = () => {
-        $('#updateModeToggle').prop('checked', window.editLock);
     };
 
     // Paint the sort direction on the column headers.
@@ -652,7 +646,6 @@
             url: '/api/items/',
             type: 'POST',
             contentType: 'application/json',
-            headers: { 'X-CSRFToken': getCSRFToken() },
             data: JSON.stringify(data),
             success: () => {
                 fetchItems(1);
@@ -680,7 +673,6 @@
                 url: `/api/items/${encodeURIComponent(sku)}/`,
                 type: 'PUT',
                 contentType: 'application/json',
-                headers: { 'X-CSRFToken': getCSRFToken() },
                 data: JSON.stringify(data),
                 success: () => fetchItems(1),
                 error: xhr => {
@@ -707,7 +699,6 @@
         $.ajax({
             url: apiUrl,
             type: 'DELETE',
-            headers: { 'X-CSRFToken': getCSRFToken() },
             success: () => {
                 fetchItems(tableNum);
                 notify(tr('Item deleted.'), 'success');
@@ -724,7 +715,6 @@
             url: '/api/transfer/',
             type: 'POST',
             contentType: 'application/json',
-            headers: { 'X-CSRFToken': getCSRFToken() },
             data: JSON.stringify({ sku, transfer_quantity: xfer_qnt }),
             success: () => {
                 fetchItems(3);
@@ -742,7 +732,6 @@
             url: '/api/submit-transfer-request/',
             type: 'POST',
             contentType: 'application/json',
-            headers: { 'X-CSRFToken': getCSRFToken() },
             data: JSON.stringify({}),
             success: () => {
                 fetchItems(3);
@@ -759,7 +748,6 @@
             url: '/api/complete-transfer/',
             type: "POST",
             contentType: 'application/json',
-            headers: { 'X-CSRFToken': getCSRFToken() },
             data: JSON.stringify({ sku, shop_user_id, quantity, cancel }),
             success: () => {
                 [1, 3].forEach(tn => fetchItems(tn));
@@ -808,7 +796,6 @@
             data: formData,
             processData: false,
             contentType: false,
-            headers: { 'X-CSRFToken': getCSRFToken() },
             success: (data) => {
                 let msg = tr('Stock data uploaded successfully.');
                 if (data && data.detail) msg = data.detail;
