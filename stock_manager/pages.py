@@ -1,9 +1,9 @@
 """Standalone pages that are not a stock movement: users, the Android app, the
 audit log, and the label picker.
 
-They live apart from ``views.py`` because they are administration screens: each
-one is a manager's tool (except the Android page, which every user may open),
-and none of them moves stock.
+They live apart from the ``views`` package because they are administration
+screens: each one is a manager's tool (except the Android page, which every user
+may open), and none of them moves stock.
 """
 
 import re

@@ -293,7 +293,7 @@ class TestErrorMessagesDoNotLeakInternals:
         def boom(*args, **kwargs):
             raise RuntimeError(self.SECRET)
 
-        monkeypatch.setattr("stock_manager.views.transfer_to_shop", boom)
+        monkeypatch.setattr("stock_manager.views.transfers.transfer_to_shop", boom)
         response = shop_client.post(
             "/api/transfer/",
             {"sku": "SKU-1", "transfer_quantity": "1"},
@@ -326,7 +326,7 @@ class TestErrorMessagesDoNotLeakInternals:
         def boom(*args, **kwargs):
             raise RuntimeError(self.SECRET)
 
-        monkeypatch.setattr("stock_manager.views.transfer_to_shop", boom)
+        monkeypatch.setattr("stock_manager.views.transfers.transfer_to_shop", boom)
         response = manager_client.post(
             "/api/complete-transfer/",
             {"sku": "SKU-1", "quantity": 4, "shop_user_id": "shop1", "cancel": "false"},
@@ -347,7 +347,7 @@ class TestErrorMessagesDoNotLeakInternals:
 
         # SendEmail.compose is invoked inside the try; make it blow up.
         monkeypatch.setattr(
-            "stock_manager.views.SendEmail.compose", boom
+            "stock_manager.views.transfers.SendEmail.compose", boom
         )
         response = shop_client.post(
             "/api/submit-transfer-request/", {}, format="json"

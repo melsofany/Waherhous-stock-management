@@ -159,7 +159,7 @@ the copies drifting.
 - **`stock_manager/ordering.py` is the only table ordering.** Three viewsets had
   byte-identical branches (natural sort on the code, numeric sort on quantities,
   case-insensitive text, stable default). `tests/test_ordering.py` drives the
-  helper and then asserts the branches are gone from `views.py`, because a
+  helper and then asserts the branches are gone from the `views` package, because a
   helper nobody calls fixes nothing.
 - **The dashboard is an overview, not a second copy of the items page**: KPI
   tiles, the site-request queue, and quick links. The tables that do the work
