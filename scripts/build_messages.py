@@ -614,7 +614,7 @@ def collect_msgids():
     # Every module is scanned, not a hand-kept list: a module left out of the
     # list would ship English on the Arabic interface and nothing would
     # complain. ``_()`` and ``_lazy()`` both mark a translatable string.
-    for path in sorted((BASE_DIR / "stock_manager").glob("*.py")):
+    for path in sorted((BASE_DIR / "stock_manager").rglob("*.py")):
         text = path.read_text(encoding="utf-8")
         for match in re.finditer(r'_(?:lazy)?\(\s*(["\'])(.+?)\1\s*\)', text, re.S):
             msgids.add(match.group(2))
