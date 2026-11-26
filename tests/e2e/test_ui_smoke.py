@@ -4,6 +4,7 @@ browser against a live Django server, covering the core user flows.
 """
 
 import pytest
+from django.conf import settings
 from playwright.sync_api import expect
 
 from stock_manager.models import Item, ShopItem, TransferItem
@@ -216,3 +217,64 @@ class TestMobileDrawer:
         page.wait_for_selector("#sideNav.is-open")
         page.keyboard.press("Escape")
         page.wait_for_selector("#sideNav:not(.is-open)")
+
+
+class TestMobileArabicShell:
+    def test_the_arabic_shellbar_keeps_the_whole_logo(
+        self, page, live_server, login, manager, app_config
+    ):
+        page.set_viewport_size({"width": 390, "height": 844})
+        login("manager")
+        page.context.add_cookies(
+            [
+                {
+                    "name": settings.LANGUAGE_COOKIE_NAME,
+                    "value": "ar",
+                    "url": live_server.url,
+                }
+            ]
+        )
+        page.goto(f"{live_server.url}/")
+
+        metrics = page.evaluate(
+            """() => {
+                const img = document.querySelector('.sap-shellbar__logo img');
+                const row = img.closest('.sap-shellbar__left');
+                const a = img.getBoundingClientRect();
+                const b = row.getBoundingClientRect();
+                return {left: a.left, right: a.right, rowLeft: b.left,
+                        rowRight: b.right, width: a.width, dir: document.documentElement.dir};
+            }"""
+        )
+        assert metrics["dir"] == "rtl"
+        assert metrics["width"] > 40
+        assert metrics["left"] >= metrics["rowLeft"] - 1
+        assert metrics["right"] <= metrics["rowRight"] + 1
+
+    def test_the_arabic_drawer_opens_from_the_right(
+        self, page, live_server, login, manager, app_config
+    ):
+        page.set_viewport_size({"width": 390, "height": 844})
+        login("manager")
+        page.context.add_cookies(
+            [
+                {
+                    "name": settings.LANGUAGE_COOKIE_NAME,
+                    "value": "ar",
+                    "url": live_server.url,
+                }
+            ]
+        )
+        page.goto(f"{live_server.url}/")
+
+        page.click("#navToggle")
+        page.wait_for_selector("#sideNav.is-open")
+        page.wait_for_function(
+            """() => {
+                const box = document.getElementById('sideNav').getBoundingClientRect();
+                return box.right <= window.innerWidth + 1 && box.left >= 0;
+            }"""
+        )
+        box = page.locator("#sideNav").bounding_box()
+        assert box["x"] + box["width"] <= 391
+        assert box["x"] >= 390 - 240 - 1

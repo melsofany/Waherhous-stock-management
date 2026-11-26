@@ -5,21 +5,40 @@
     <meta charset="UTF-8">
     <title>{% trans "Item cards" %}</title>
     <style>
+        :root {
+            --card-ink: #1d2d3e;
+            --card-brand: #003d7d;
+            --card-line: #b8c4cf;
+            --card-band: #e9edf1;
+            --card-page: #f4f6f8;
+            --card-danger: #bb0000;
+            --card-space-1: 1.5mm;
+            --card-space-2: 2.5mm;
+            --card-space-3: 3mm;
+            --card-space-4: 4mm;
+            --card-space-5: 5mm;
+            --card-space-6: 6mm;
+            --card-font: "Segoe UI", Tahoma, Arial, sans-serif;
+            --card-mono: "Courier New", monospace;
+        }
+
         * { box-sizing: border-box; }
 
         body {
             margin: 0;
-            padding: 1rem;
-            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-            background: #f4f6f8;
-            color: #1d2d3e;
+            padding: var(--card-space-4);
+            font-family: var(--card-font);
+            background: var(--card-page);
+            color: var(--card-ink);
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
         .cards-toolbar {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: var(--card-space-4);
+            margin-bottom: var(--card-space-4);
         }
 
         .cards-toolbar h1 { font-size: 1.1rem; margin: 0; }
@@ -30,20 +49,28 @@
             border-radius: 0.4rem;
             background: #0a6ed1;
             color: #fff;
+            font: inherit;
             font-size: 0.9rem;
             cursor: pointer;
         }
 
-        .cards-error { color: #bb0000; font-size: 0.9rem; }
+        .cards-toolbar button:hover { background: #085caf; }
+        .cards-toolbar button:active { background: #06467f; }
+        .cards-toolbar button:focus-visible {
+            outline: 2px solid #06467f;
+            outline-offset: 2px;
+        }
+
+        .cards-error { color: var(--card-danger); font-size: 0.9rem; }
 
         /* One card per item, the same block as the stock card sheet. */
         .card {
             width: 190mm;
             max-width: 100%;
-            margin: 0 auto 6mm;
+            margin: 0 auto var(--card-space-6);
             background: #fff;
-            border: 1px solid #b8c4cf;
-            padding: 4mm 5mm;
+            border: 1px solid var(--card-line);
+            padding: var(--card-space-4) var(--card-space-5);
             break-inside: avoid;
             page-break-inside: avoid;
         }
@@ -51,10 +78,10 @@
         .card__head {
             display: flex;
             align-items: center;
-            gap: 4mm;
-            border-bottom: 2px solid #003d7d;
-            padding-bottom: 3mm;
-            margin-bottom: 3mm;
+            gap: var(--card-space-4);
+            border-bottom: 2px solid var(--card-brand);
+            padding-bottom: var(--card-space-3);
+            margin-bottom: var(--card-space-3);
         }
 
         .card__logo { height: 14mm; width: auto; }
@@ -63,29 +90,38 @@
             flex: 1;
             display: flex;
             justify-content: space-between;
-            gap: 4mm;
-            background: #e9edf1;
-            padding: 1.5mm 3mm;
+            gap: var(--card-space-4);
+            background: var(--card-band);
+            padding: var(--card-space-1) var(--card-space-3);
             font-style: italic;
             font-size: 10pt;
         }
+
+        .card__project-code { white-space: nowrap; }
 
         .card__rows { margin: 0; }
 
         .card__row {
             display: grid;
             grid-template-columns: 38mm 1fr;
-            column-gap: 3mm;
+            column-gap: var(--card-space-3);
             align-items: start;
-            margin-bottom: 2.5mm;
+            margin-bottom: var(--card-space-2);
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         .card__rows dt {
             font-weight: 700;
             font-size: 10pt;
+            direction: ltr;
+            text-align: end;
         }
 
-        .card__rows dt::after { content: " :"; }
+        .card__rows dt::after {
+            content: ":";
+            margin-inline-start: 0.25em;
+        }
 
         .card__rows dd {
             margin: 0;
@@ -94,12 +130,15 @@
         }
 
         .card__rows .mono {
-            font-family: "Courier New", monospace;
+            font-family: var(--card-mono);
             font-weight: 700;
             letter-spacing: 0.03em;
+            direction: ltr;
+            text-align: end;
+            unicode-bidi: isolate;
         }
 
-        .card__barcode { margin-top: 1.5mm; }
+        .card__barcode { margin-top: var(--card-space-1); }
         .card__barcode svg { height: 13mm; width: auto; max-width: 100%; }
 
         .card__arabic {
@@ -112,7 +151,11 @@
         @media print {
             body { background: #fff; padding: 0; }
             .cards-toolbar { display: none; }
-            .card { border: 0; margin: 0 0 6mm; padding: 2mm 0; }
+            .card {
+                border: 0;
+                margin: 0 0 var(--card-space-6);
+                padding: 2mm 0;
+            }
         }
     </style>
 </head>
@@ -134,7 +177,7 @@
             <img class="card__logo" src="{% static 'img/company-logo.png' %}" alt="">
             <div class="card__project">
                 <span>{{ project.name|default:"—" }}</span>
-                <span>{% trans "Code" %} : {{ project.code|default:"—" }}</span>
+                <span class="card__project-code" dir="ltr">{% trans "Code" %} : {{ project.code|default:"—" }}</span>
             </div>
         </header>
 

@@ -78,5 +78,7 @@
 
 {% block scripts %}
 {{ js_messages|json_script:"i18n-js" }}
-<script src="{% static 'js/warehouse.js' %}"></script>
+<script src="{% static 'js/warehouse-core.js' %}"></script>
+<script src="{% static 'js/warehouse-tables.js' %}"></script>
+<script src="{% static 'js/warehouse-items.js' %}"></script>
 {% endblock %}

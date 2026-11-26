@@ -12,6 +12,7 @@ application silently. These tests pin the contract:
 """
 
 import re
+from pathlib import Path
 
 import pytest
 from django.conf import settings
@@ -87,27 +88,46 @@ class TestDashboardTheme:
         ):
             assert marker in html, marker
 
-    def test_every_id_the_page_script_selects_exists(self, client, manager, app_config):
+    def test_every_id_the_page_scripts_select_exists(self, client, manager, app_config):
         """A renamed element id would break the UI without any server error."""
         from django.contrib.staticfiles import finders
 
         client.force_login(manager)
-        script = ""
-        with open(finders.find("js/warehouse.js"), encoding="utf-8") as handle:
-            script = handle.read()
+        script_dir = Path(finders.find("js/warehouse-core.js")).parent
+        script = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in sorted(script_dir.glob("warehouse-*.js"))
+        )
+        assert script, "expected the page scripts to exist"
 
         selected = set(
             re.findall(r"""\$\(\s*['"]#([A-Za-z][A-Za-z0-9_-]*)['"]""", script)
         )
-        assert selected, "expected the page script to select elements by id"
+        assert selected, "expected the page scripts to select elements by id"
 
-        # The script serves two pages, so each id must exist on one of them.
+        # The scripts serve two pages, so each id must exist on one of them.
         dashboard = client.get("/").content.decode()
         items = client.get("/stock/").content.decode()
         missing = sorted(
             i for i in selected if f'id="{i}"' not in dashboard and f'id="{i}"' not in items
         )
         assert missing == []
+
+    def test_each_page_loads_its_own_script(self, client, manager, app_config):
+        client.force_login(manager)
+
+        dashboard = client.get("/").content.decode()
+        items = client.get("/stock/").content.decode()
+
+        assert "js/warehouse-core.js" in dashboard
+        assert "js/warehouse-tables.js" in dashboard
+        assert "js/warehouse-dashboard.js" in dashboard
+        assert "js/warehouse-items.js" not in dashboard
+
+        assert "js/warehouse-core.js" in items
+        assert "js/warehouse-tables.js" in items
+        assert "js/warehouse-items.js" in items
+        assert "js/warehouse-dashboard.js" not in items
 
 
 class TestStylesheet:
@@ -121,6 +141,23 @@ class TestStylesheet:
 
         assert ".d-none" in css
         assert "display: none !important" in css
+
+    def test_one_stylesheet_serves_both_directions(self):
+        """RTL is the same rules read in another direction, not a second copy."""
+        path = finders.find(STYLESHEET)
+        with open(path, encoding="utf-8") as handle:
+            css = handle.read()
+
+        physical = re.findall(
+            r"(?:margin|padding|border)-(?:left|right)\s*:|(?:^|[;{\s])(?:left|right)\s*:",
+            css,
+            re.MULTILINE,
+        )
+        assert physical == []
+
+        overrides = re.findall(r'\[dir="rtl"\][^{]*\{[^}]*\}', css)
+        assert len(overrides) == 3
+        assert all("transform" in rule for rule in overrides)
 
 
 class TestPasswordChangePages:

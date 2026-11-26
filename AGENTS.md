@@ -53,7 +53,7 @@ suggestions (`COMMON_UNITS` in `documents.py`). Rules that the tests pin:
 
 ## Tests
 
-`python -m pytest -q tests/` — 392 pass, 3 skip (a user-supplied, gitignored
+`python -m pytest -q tests/` — 824 pass, 3 skip (a user-supplied, gitignored
 `spreadsheet_convert.py`). `pip install Pillow` and
 `python -m playwright install chromium` are needed for the full run; the e2e
 suites skip themselves when Chromium is missing.
@@ -95,7 +95,7 @@ the partial — never a copy per shell.
   sign-in, document decisions, password changes (including a self-service one,
   via `AuditedPasswordChangeView`), and a setting change written as
   «Edit lock: on/off» rather than `edit_lock=False`.
-- `python -m pytest -q` — 473 pass, 3 skip.
+- `python -m pytest -q` — 824 pass, 3 skip.
 
 ## A deploy onto a database older than the migrations (the "already exists" build)
 
@@ -172,10 +172,24 @@ the copies drifting.
   the `.po` catalog of the active language, so a template message is translatable
   from the script with no second list. Deleting the dead map is safe because the
   catalog is collected from templates, not from that dict.
-- **Page scripts live in `stock_manager/static/js/warehouse.js`** (tracked, loaded
-  by `base_app.html` after jQuery). It was never in git before this refactor —
-  the script was inline in `index.html` — so a static-file check that passes
-  locally can still 404 in production if the file is not committed.
+- **Page scripts are four modules in `stock_manager/static/js/`** (tracked and
+  loaded after jQuery): `warehouse-core.js` (state, AJAX, notifications, edit
+  lock, paging/sorting, role tailoring), `warehouse-tables.js` (the table
+  renderer), `warehouse-items.js` (only `/stock/`) and
+  `warehouse-dashboard.js` (only `/`). `tests/test_ui_theme.py` reads all four
+  and checks each page loads the modules it owns. The files were untracked
+  before the split, so a static-file check that passes locally can still 404 in
+  production if one is not committed.
+- **`ssm-sap.css` is written in logical properties** (`border-inline-*`,
+  `inset-inline-*`, `margin-inline-*`, `text-align: start/end`), so one rule
+  serves both `dir="ltr"` and `dir="rtl"`. The only `[dir="rtl"]` overrides left
+  are transforms that have no logical equivalent (the switch thumb and the
+  phone drawer). Reintroducing physical `left`/`right` or a duplicate RTL block
+  is the drift this refactor removed.
+- **The phone shell bar keeps the logo whole.** At `max-width: 640px` the
+  product title is hidden, the language icon goes, gaps shrink and the logo
+  image is capped at `5rem`; otherwise the flex row clips the wordmark to its
+  last few letters (measured in a 390px viewport).
 - **`sap-msgstrip-error` vs `sap-msgstrip--error`**: the shell template emitted
   the single-dash class for error messages while the stylesheet defines the BEM
   double-dash one, so an error rendered unstyled. Any modifier class in
@@ -663,7 +677,7 @@ item: every Oracle code keeps its own row, quantity, movements and documents.
   always win over the group.
 - **The stock table stacks a group**: `?grouped=1` paginates by internal code,
   not by row, so a group can never be split across pages and print its total
-  twice; `warehouse.js` draws the internal code and the total as two `rowspan`
+  twice; `warehouse-tables.js` draws the internal code and the total as two `rowspan`
   cells. The total belongs in its **own column** (after warehouse qty), not
   beside the code — putting it beside the code shifted every cell after it (the
   browser caught this; the API tests could not).
@@ -684,6 +698,12 @@ item: every Oracle code keeps its own row, quantity, movements and documents.
   `internal_group_id` is NULL, so `ItemSerializer` checks for no group **first**
   and reports the row's own quantity and size 1. Reversing that order made a
   legacy row read as quantity 0.
+- **The printed card keeps English labels and an RTL layout** (`{% language 'en' %}`
+  plus `dir="rtl"`). Its own CSS uses `--card-*` tokens and `@page` A4; codes sit
+  in `direction: ltr` blocks aligned with `text-align: end`, so `ORA-1001` and the
+  internal number stay on the right under an Arabic page without re-ordering
+  their punctuation. The barcode follows the internal code instead of sitting at
+  the far edge.
 - Tests: `tests/test_item_codes.py` (18), `tests/test_barcodes.py` (17) + the
   migration cases in `tests/test_migrations_adopt_existing_db.py` (5). Full run:
-  **803 passed, 3 skipped** (Chromium installed, so the E2E suites ran).
+  **824 passed, 3 skipped** (Chromium installed, so the E2E suites ran).
