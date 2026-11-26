@@ -77,9 +77,10 @@ class TestOneImplementation:
     def test_the_viewsets_delegate_instead_of_repeating_the_branches(self):
         from pathlib import Path
 
-        source = (
-            Path(__file__).resolve().parent.parent / "stock_manager" / "views.py"
-        ).read_text(encoding="utf-8")
+        views = Path(__file__).resolve().parent.parent / "stock_manager" / "views"
+        source = "\n".join(
+            path.read_text(encoding="utf-8") for path in sorted(views.glob("*.py"))
+        )
 
         assert source.count("apply_ordering(") == 3
         # The branches themselves must not reappear in the views.
