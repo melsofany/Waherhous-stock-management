@@ -64,10 +64,10 @@
                 <table class="sap-table sap-table--dense" id="permitRows">
                     <thead>
                         <tr>
-                            <th>{% trans "Permit number" %}</th>
-                            <th>{% trans "Amount" %}</th>
-                            <th>{% trans "Note" %}</th>
-                            <th class="sap-table__wide">{% trans "Items this permit covers" %}</th>
+                            <th scope="col">{% trans "Permit number" %}</th>
+                            <th scope="col">{% trans "Amount" %}</th>
+                            <th scope="col">{% trans "Note" %}</th>
+                            <th scope="col" class="sap-table__wide">{% trans "Items this permit covers" %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -157,11 +157,11 @@
             <table class="sap-table sap-table--dense" id="permitLines">
                 <thead>
                     <tr>
-                        <th>{% trans "Item code" %}</th>
-                        <th class="sap-table__wide">{% trans "Description" %}</th>
-                        <th>{% trans "Quantity" %}</th>
-                        <th>{% trans "Value" %}</th>
-                        <th>{% trans "Company permit" %}</th>
+                        <th scope="col">{% trans "Item code" %}</th>
+                        <th scope="col" class="sap-table__wide">{% trans "Description" %}</th>
+                        <th scope="col">{% trans "Quantity" %}</th>
+                        <th scope="col">{% trans "Value" %}</th>
+                        <th scope="col">{% trans "Company permit" %}</th>
                     </tr>
                 </thead>
                 <tbody>

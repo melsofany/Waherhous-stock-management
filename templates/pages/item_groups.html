@@ -60,12 +60,12 @@
                 <table class="sap-table" id="oracleCodesTable">
                     <thead>
                         <tr>
-                            <th><input type="checkbox" id="checkAllCodes" aria-label="{% trans 'Select all' %}"></th>
-                            <th>{% trans "Internal code" %}</th>
-                            <th>{% trans "Oracle code" %}</th>
-                            <th>{% trans "Description" %}</th>
-                            <th class="sap-table__num">{% trans "Quantity" %}</th>
-                            <th class="sap-table__num">{% trans "Internal total" %}</th>
+                            <th scope="col"><input type="checkbox" id="checkAllCodes" aria-label="{% trans 'Select all' %}"></th>
+                            <th scope="col">{% trans "Internal code" %}</th>
+                            <th scope="col">{% trans "Oracle code" %}</th>
+                            <th scope="col">{% trans "Description" %}</th>
+                            <th scope="col" class="sap-table__num">{% trans "Quantity" %}</th>
+                            <th scope="col" class="sap-table__num">{% trans "Internal total" %}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -106,11 +106,11 @@
             <table class="sap-table" id="internalCodesTable">
                 <thead>
                     <tr>
-                        <th>{% trans "Internal code" %}</th>
-                        <th class="sap-table__num">{% trans "Internal total" %}</th>
-                        <th>{% trans "Oracle code" %}</th>
-                        <th>{% trans "Description" %}</th>
-                        <th class="sap-table__num">{% trans "Quantity" %}</th>
+                        <th scope="col">{% trans "Internal code" %}</th>
+                        <th scope="col" class="sap-table__num">{% trans "Internal total" %}</th>
+                        <th scope="col">{% trans "Oracle code" %}</th>
+                        <th scope="col">{% trans "Description" %}</th>
+                        <th scope="col" class="sap-table__num">{% trans "Quantity" %}</th>
                     </tr>
                 </thead>
                 <tbody>
