@@ -111,6 +111,17 @@ class TestSigningIn:
         assert response.status_code == 401
         assert response.json()["code"] == "bad_password"
 
+    def test_a_wrong_password_says_how_many_tries_are_left(
+        self, client, phone_user, settings
+    ):
+        settings.AXES_ENABLED = True
+
+        response = sign_in(client, password="wrong")
+
+        error = response.json()["error"]
+        assert "كلمة المرور غير صحيحة" in error
+        assert "المحاولات المتبقية: 2" in error
+
     def test_a_disabled_account_is_refused(self, client, phone_user):
         phone_user.is_active = False
         phone_user.save(update_fields=["is_active"])

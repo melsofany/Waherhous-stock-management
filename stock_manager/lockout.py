@@ -110,3 +110,18 @@ def clear(username):
         return 0
     deleted, _ = AccessAttempt.objects.filter(username__iexact=username).delete()
     return deleted
+
+
+def remaining_attempts(username):
+    """How many failed sign-ins are left before the username is locked.
+
+    ``None`` means the question has no answer: axes is not keeping a count for
+    this username (no attempt yet, or no limit configured), so the caller must
+    not invent a number. The count is read after the failure that just happened,
+    which is why the first wrong password reports ``limit - 1``.
+    """
+    current = state(username)
+    if not current["limit"] or not current["failures"]:
+        return None
+    return max(current["limit"] - current["failures"], 0)
+

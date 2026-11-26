@@ -109,6 +109,10 @@ ARABIC = {
     "This account signs in from the phone app only. Open the app, or ask a warehouse manager to allow web sign-in for it.": "الحساب ده بيدخل من تطبيق الموبايل بس. افتح التطبيق، أو اطلب من مدير المخزن يسمح له بالدخول من الويب.",
     "This account is closed. Ask a warehouse manager to reopen it.":
         "الحساب ده مغلق. اطلب من مدير المخزن إعادة فتحه.",
+    "Incorrect password.": "كلمة المرور غير صحيحة.",
+    "Incorrect password. Remaining attempts: %(remaining)s.":
+        "كلمة المرور غير صحيحة. المحاولات المتبقية: %(remaining)s.",
+    "Remaining attempts: 0.": "المحاولات المتبقية: 0.",
     "Locked": "مقفول",
     "Locked after %(failures)s failed attempts (limit %(limit)s)":
         "مقفول بعد %(failures)s محاولة فاشلة (الحد %(limit)s)",
@@ -460,7 +464,8 @@ ARABIC = {
     "The issued quantity must be a whole number.": "الكمية المصروفة يجب أن تكون رقمًا صحيحًا.",
     "The issued quantity must be greater than zero.": "الكمية المصروفة يجب أن تكون أكبر من صفر.",
     "The item and its stock history will be removed.": "سيتم حذف الصنف وسجل مخزونه.",
-    "The limit is {{ failure_limit }} failed attempts. Access is restored automatically once the cool-off period ends.": "الحد هو {{ failure_limit }} محاولة فاشلة. يُستعاد الوصول تلقائيًا بعد انتهاء فترة الانتظار.",
+    "The limit is": "الحد هو",
+    "failed attempts. Access is restored automatically once the cool-off period ends.": "محاولة فاشلة. يُستعاد الوصول تلقائيًا بعد انتهاء فترة الانتظار.",
     "The password could not be changed.": "لم يتم تغيير كلمة المرور.",
     "The received quantity must be a whole number.": "الكمية المستلمة يجب أن تكون رقمًا صحيحًا.",
     "The received quantity must be greater than zero.": "الكمية المستلمة يجب أن تكون أكبر من صفر.",

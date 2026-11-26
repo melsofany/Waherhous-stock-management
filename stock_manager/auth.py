@@ -4,11 +4,12 @@ There are two doors: the web sign-in form, and the phone app. A warehouse
 worker may only have the phone, so an "app account" is refused by the web form
 rather than admitted to pages it has no business in.
 
-The refusal is the form's ordinary one, not "this account is app-only": saying
-which numbers have accounts tells an outsider which numbers to attack. The
-sign-in page carries a standing line instead — a worker's account signs in from
-the phone app — so the person reading it knows where to go without the form
-naming anybody.
+The app-only / closed reasons are named only after the password checks out:
+saying which numbers have accounts tells an outsider which numbers to attack.
+A wrong password is named as such, because that sentence is the same whether
+the account exists or not — it reveals no account. The sign-in page carries a
+standing line instead — a worker's account signs in from the phone app — so the
+person reading it knows where to go without the form naming anybody.
 
 The app's own sign-in passes ``app_sign_in=True`` through ``authenticate()``,
 which is why one backend can answer for both doors without a global flag: the
@@ -48,8 +49,10 @@ def axes_username(request, credentials=None):
 class WarehouseBackend(ModelBackend):
     """The project's password backend: one refusal, for the app-only accounts.
 
-    A refusal is only *named* after the password checks out: telling an outsider
-    which numbers have accounts is exactly what the generic message prevents.
+    An app-only / closed refusal is only *named* after the password checks out:
+    telling an outsider which numbers have accounts is exactly what the generic
+    message prevents. A wrong password is named separately (with the attempts
+    left), and that sentence never varies with whether the account exists.
     """
 
     def authenticate(self, request, username=None, password=None, app_sign_in=False, **kwargs):

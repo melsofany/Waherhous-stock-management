@@ -11,6 +11,7 @@ from django.core.exceptions import NON_FIELD_ERRORS
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as _lazy
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
@@ -19,6 +20,7 @@ from rest_framework.response import (
     Response,
 )  # For returning HTTP responses in REST framework
 
+from .. import lockout
 from ..auth import REFUSAL_APP_ONLY, REFUSAL_INACTIVE
 from ..models import (
     Admin,
@@ -108,13 +110,28 @@ REFUSAL_MESSAGES = {
 
 
 class WarehouseLoginView(LoginView):
-    """The ordinary sign-in form, plus the reason when the credentials were right."""
+    """The sign-in form, with a refusal that says what to do next."""
 
     def form_invalid(self, form):
-        message = REFUSAL_MESSAGES.get(getattr(self.request, "login_refusal", None))
-        if message:
+        refusal = REFUSAL_MESSAGES.get(getattr(self.request, "login_refusal", None))
+        if refusal:
             # The credentials were CORRECT, so "enter a correct username and
             # password" is simply untrue — it is replaced, not added to.
             form.errors.pop(NON_FIELD_ERRORS, None)
-            form.add_error(None, message)
+            form.add_error(None, refusal)
+            return super().form_invalid(form)
+
+        # Missing username/password is a field error, not a rejected password.
+        if form.errors.get("username") or form.errors.get("password"):
+            return super().form_invalid(form)
+
+        remaining = lockout.remaining_attempts(self.request.POST.get("username", ""))
+        if remaining is None:
+            message = _("Incorrect password.")
+        else:
+            message = _(
+                "Incorrect password. Remaining attempts: %(remaining)s."
+            ) % {"remaining": remaining}
+        form.errors.pop(NON_FIELD_ERRORS, None)
+        form.add_error(None, message)
         return super().form_invalid(form)

@@ -110,8 +110,3 @@ def _serialize_document(document):
     }
 
 
-#: The sign-in page names the refusal — but only when the password was RIGHT.
-#: A wrong password still gets the form's ordinary message, so the page never
-#: tells an outsider which accounts exist or how they may sign in.
-#: Each message is ONE literal: the translation collector reads source text, and
-#: a string split over two lines produces a msgid nobody can match.

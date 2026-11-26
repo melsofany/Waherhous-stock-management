@@ -658,6 +658,12 @@ msgstr "الرصيد الحالي"
 msgid "Inactive"
 msgstr "غير نشط"
 
+msgid "Incorrect password."
+msgstr "كلمة المرور غير صحيحة."
+
+msgid "Incorrect password. Remaining attempts: %(remaining)s."
+msgstr "كلمة المرور غير صحيحة. المحاولات المتبقية: %(remaining)s."
+
 msgid "Install the app"
 msgstr "تنصيب التطبيق"
 
@@ -1285,6 +1291,9 @@ msgstr "مرفوض / مرتجع للمورد"
 msgid "Release notes"
 msgstr "ملاحظات الإصدار"
 
+msgid "Remaining attempts: 0."
+msgstr "المحاولات المتبقية: 0."
+
 msgid "Remove"
 msgstr "حذف"
 
@@ -1672,8 +1681,8 @@ msgstr "الكمية المصروفة يجب أن تكون أكبر من صفر.
 msgid "The item and its stock history will be removed."
 msgstr "سيتم حذف الصنف وسجل مخزونه."
 
-msgid "The limit is {{ failure_limit }} failed attempts. Access is restored automatically once the cool-off period ends."
-msgstr "الحد هو {{ failure_limit }} محاولة فاشلة. يُستعاد الوصول تلقائيًا بعد انتهاء فترة الانتظار."
+msgid "The limit is"
+msgstr "الحد هو"
 
 msgid "The list of published builds could not be read just now."
 msgstr "مش قادرين نقرأ قائمة النسخ المنشورة دلوقتي."
@@ -2001,6 +2010,9 @@ msgstr "مثال: قطعة، متر، كجم"
 
 msgid "events"
 msgstr "حدث"
+
+msgid "failed attempts. Access is restored automatically once the cool-off period ends."
+msgstr "محاولة فاشلة. يُستعاد الوصول تلقائيًا بعد انتهاء فترة الانتظار."
 
 msgid "items"
 msgstr "صنف"

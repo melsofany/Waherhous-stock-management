@@ -53,7 +53,7 @@ suggestions (`COMMON_UNITS` in `documents.py`). Rules that the tests pin:
 
 ## Tests
 
-`python -m pytest -q tests/` — 833 pass, 3 skip (a user-supplied, gitignored
+`python -m pytest -q tests/` — 837 pass, 3 skip (a user-supplied, gitignored
 `spreadsheet_convert.py`). `pip install Pillow` and
 `python -m playwright install chromium` are needed for the full run; the e2e
 suites skip themselves when Chromium is missing.
@@ -95,7 +95,7 @@ the partial — never a copy per shell.
   sign-in, document decisions, password changes (including a self-service one,
   via `AuditedPasswordChangeView`), and a setting change written as
   «Edit lock: on/off» rather than `edit_lock=False`.
-- `python -m pytest -q` — 833 pass, 3 skip.
+- `python -m pytest -q` — 837 pass, 3 skip.
 
 ## A deploy onto a database older than the migrations (the "already exists" build)
 
@@ -462,11 +462,14 @@ line: a wrong password, an account that is **app-only** (the web form refuses it
 by design), and an account that is **closed**. Someone wrote "I cannot sign in"
 and nothing on the page answered it.
 
-- **The reason is named only after the password checks out.** `WarehouseBackend`
-  sets `request.login_refusal`, and `WarehouseLoginView.form_invalid` replaces
-  the "enter a correct username and password" line with it. A wrong password
-  still gets the generic message, so the page never tells an outsider which
-  accounts exist or which door they use.
+- **An app-only / closed reason is named only after the password checks out.**
+  `WarehouseBackend` sets `request.login_refusal`, and
+  `WarehouseLoginView.form_invalid` replaces the "enter a correct username and
+  password" line with it. A wrong password says so, and counts the attempts
+  left (`lockout.remaining_attempts`, first failure reports 2 of 3). That
+  sentence is identical whether the username exists or not, so it still does
+  not tell an outsider which accounts exist or which door they use. The phone
+  API returns the same sentence, so both doors answer one question one way.
 - **A closed account is not a wrong password.** `ModelBackend` refuses both with
   `None`; the backend re-checks the password itself before saying "closed", so
   the answer goes to the person who owns the account.
@@ -736,4 +739,4 @@ item: every Oracle code keeps its own row, quantity, movements and documents.
   the far edge.
 - Tests: `tests/test_item_codes.py` (18), `tests/test_barcodes.py` (17) + the
   migration cases in `tests/test_migrations_adopt_existing_db.py` (5). Full run:
-  **833 passed, 3 skipped** (Chromium installed, so the E2E suites ran).
+  **837 passed, 3 skipped** (Chromium installed, so the E2E suites ran).

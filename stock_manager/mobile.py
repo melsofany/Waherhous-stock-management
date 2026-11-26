@@ -18,7 +18,7 @@ from django.contrib.auth.models import Group, User
 from django.db import transaction
 from django.utils import timezone
 
-from . import audit
+from . import audit, lockout
 from .models import (
     AuditEvent,
     MobileProfile,
@@ -183,6 +183,19 @@ def clear_device(user, by=None):
     return had_device
 
 
+def _wrong_password_message(user):
+    """The app's refusal: the password is wrong, and how many tries are left."""
+    remaining = lockout.remaining_attempts(user.get_username())
+    if remaining is None:
+        return "كلمة المرور غير صحيحة."
+    if remaining <= 0:
+        return (
+            "كلمة المرور غير صحيحة. لا توجد محاولات متبقية. "
+            "انتظر انتهاء مدة الإيقاف أو راجع مدير المخزن."
+        )
+    return f"كلمة المرور غير صحيحة. المحاولات المتبقية: {remaining}."
+
+
 def login(identifier, password, device="", device_id="", request=None):
     """Sign in with a phone number or a user name, and the account's password.
 
@@ -196,14 +209,14 @@ def login(identifier, password, device="", device_id="", request=None):
             "أدخل رقم الهاتف أو اسم المستخدم.", status=400, code="phone_required"
         )
 
-    user = resolve_user(identifier)
-    if user is None:
+    account = resolve_user(identifier)
+    if account is None:
         raise MobileError(
             "هذا الرقم أو اسم المستخدم غير مسجَّل في النظام. راجع مدير المخزن.",
             status=401,
             code="phone_unknown",
         )
-    if not user.is_active:
+    if not account.is_active:
         raise MobileError(
             "هذا الحساب موقوف. راجع مدير المخزن.", status=403, code="account_disabled"
         )
@@ -216,13 +229,13 @@ def login(identifier, password, device="", device_id="", request=None):
     # here, and the refusal has to be decided with the credential, not globally.
     user = authenticate(
         request=request,
-        username=user.get_username(),
+        username=account.get_username(),
         password=str(password or ""),
         app_sign_in=True,
     )
     if user is None or not user.is_active:
         raise MobileError(
-            "كلمة المرور غير صحيحة.", status=401, code="bad_password"
+            _wrong_password_message(account), status=401, code="bad_password"
         )
 
     # django writes last_login from login(); this path does not call it, so

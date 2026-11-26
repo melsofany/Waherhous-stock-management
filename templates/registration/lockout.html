@@ -19,7 +19,8 @@
     <div>
         <span class="sap-msgstrip__title">{% trans "Sign-in is paused for this username." %}</span>
         {% if failure_limit %}
-        <p>{% blocktrans %}The limit is {{ failure_limit }} failed attempts. Access is restored automatically once the cool-off period ends.{% endblocktrans %}</p>
+        <p>{% trans "The limit is" %} {{ failure_limit }} {% trans "failed attempts. Access is restored automatically once the cool-off period ends." %}</p>
+        <p>{% trans "Remaining attempts: 0." %}</p>
         {% endif %}
         <p>{% trans "Wait for the lock to expire, or ask the system administrator to reset it." %}</p>
     </div>
