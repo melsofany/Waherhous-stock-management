@@ -496,6 +496,8 @@ ARABIC = {
     "Create item": "إنشاء صنف",
     "Delete item?": "حذف الصنف؟",
     "Dismiss notification": "إغلاق التنبيه",
+    "Download balances sheet": "تحميل كشف الأرصدة",
+    "A printable sheet with the company logo, the project name, and one row for each Oracle code.": "كشف للطباعة بالشعار واسم المشروع، وصفّ لكل كود أوراكل.",
     "Download stock data": "تنزيل بيانات المخزون",
     "Download the current warehouse and site stock.": "نزّل بيانات المخزن والمواقع الحالية.",
     "Enter more than 0!": "أدخل قيمة أكبر من صفر!",

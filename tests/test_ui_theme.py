@@ -84,6 +84,7 @@ class TestDashboardTheme:
             'id="updateModeToggle"',
             'id="uploadStockDataButton"',
             'id="downloadStockData"',
+            'id="downloadBalances"',
             'id="siteStockTable"',
         ):
             assert marker in html, marker

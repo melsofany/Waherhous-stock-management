@@ -160,6 +160,15 @@ the overview and the site-request queue, so the same table is not rendered twice
                         {% trans "Download stock data" %}
                     </button>
                 </div>
+                <span class="sap-subtitle">{% trans "A printable sheet with the company logo, the project name, and one row for each Oracle code." %}</span>
+                <div class="sap-form-actions">
+                    <button id="downloadBalances" class="sap-btn sap-btn--emphasized d-none" type="button">
+                        <svg class="sap-icon sap-icon--sm" aria-hidden="true">
+                            <use href="#i-download"></use>
+                        </svg>
+                        {% trans "Download balances sheet" %}
+                    </button>
+                </div>
             </div>
             <div class="sap-field" id="importPanel">
                 <label class="sap-label" for="uploadStockData">

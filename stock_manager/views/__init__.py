@@ -36,7 +36,11 @@ from .reconcile import (
     reconciliation_set_receipt_permit,
 )
 from .session import WarehouseLoginView, get_user, index, switch_language
-from .spreadsheet import export_data_excel, import_data_excel
+from .spreadsheet import (
+    export_balances_excel,
+    export_data_excel,
+    import_data_excel,
+)
 from .transfers import (
     TransferItemViewSet,
     complete_transfer,
@@ -56,6 +60,7 @@ __all__ = [
     "decide_stock_document_api",
     "document_detail",
     "document_photo",
+    "export_balances_excel",
     "export_data_excel",
     "get_edit_lock_status",
     "get_user",

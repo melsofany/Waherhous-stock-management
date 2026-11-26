@@ -110,6 +110,11 @@
         window.location.href = url;
     };
 
+    // Download the printable balances sheet (logo, project, one row per code).
+    const downloadBalances = () => {
+        window.location.href = '/api/export_balances/';
+    };
+
     // Handle stock data upload.
     const uploadStockData = async () => {
         const fileInput = document.getElementById('uploadStockData');
@@ -206,6 +211,7 @@
         attachQntChangeColorUpdateListener();
         $('#refreshWarehouse').click(() => W.fetchItems(1));
         $('#downloadStockData').click(() => downloadStockData());
+        $('#downloadBalances').click(() => downloadBalances());
         $('#uploadStockDataButton').click(uploadStockData);
     });
 })();

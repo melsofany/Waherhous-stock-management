@@ -25,6 +25,9 @@ msgstr "المستند يأخذ %(max)s إذن صرف كحد أقصى."
 msgid "A durable address, not a file on this server: the server's disk is wiped on every deploy."
 msgstr "عنوان دائم وليس ملفًّا على هذا الخادم: قرص الخادم يُمحى مع كل نشر."
 
+msgid "A printable sheet with the company logo, the project name, and one row for each Oracle code."
+msgstr "كشف للطباعة بالشعار واسم المشروع، وصفّ لكل كود أوراكل."
+
 msgid "A purchase order from a supplier, a transfer in from another project, or goods returned from a site."
 msgstr "أمر شراء من مورد، أو تحويل وارد من مشروع آخر، أو ارتجاع بضاعة من الموقع."
 
@@ -507,6 +510,9 @@ msgstr "تنزيل"
 
 msgid "Download address"
 msgstr "عنوان التنزيل"
+
+msgid "Download balances sheet"
+msgstr "تحميل كشف الأرصدة"
 
 msgid "Download stock data"
 msgstr "تنزيل بيانات المخزون"

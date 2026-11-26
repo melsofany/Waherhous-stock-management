@@ -53,7 +53,7 @@ suggestions (`COMMON_UNITS` in `documents.py`). Rules that the tests pin:
 
 ## Tests
 
-`python -m pytest -q tests/` — 824 pass, 3 skip (a user-supplied, gitignored
+`python -m pytest -q tests/` — 833 pass, 3 skip (a user-supplied, gitignored
 `spreadsheet_convert.py`). `pip install Pillow` and
 `python -m playwright install chromium` are needed for the full run; the e2e
 suites skip themselves when Chromium is missing.
@@ -95,7 +95,7 @@ the partial — never a copy per shell.
   sign-in, document decisions, password changes (including a self-service one,
   via `AuditedPasswordChangeView`), and a setting change written as
   «Edit lock: on/off» rather than `edit_lock=False`.
-- `python -m pytest -q` — 824 pass, 3 skip.
+- `python -m pytest -q` — 833 pass, 3 skip.
 
 ## A deploy onto a database older than the migrations (the "already exists" build)
 
@@ -197,6 +197,36 @@ the copies drifting.
 - **Printing the label sheet opens a new tab** (`target="_blank"` on the picker
   form): navigating away from the picker to a print page loses the selection the
   operator just made.
+
+## The balances sheet: one row per Oracle code, under the company's name
+
+The operator asked to *pull the balances* as an Excel sheet that can be handed to
+management: the company logo, the project name, and a serial, internal code,
+Oracle code, description, unit and quantity. The existing `/api/export_data/`
+workbook is a data-exchange file, not a report, so this is a second export rather
+than a restyled one.
+
+- **`stock_manager/balances.py` is the sheet.** `balance_rows()` reads active
+  items ordered by internal code then Oracle code; `workbook_bytes()` draws the
+  logo in `A1`, the project name in the merged `B1:F1`, the title in `B2`, and
+  the six Arabic headers in row 4.
+- **One row per Oracle code, never a joined cell.** A group with two Oracle codes
+  is two rows with the internal code repeated, so the sheet stays filterable by
+  Oracle code. `tests/test_balance_export.py` pins the row count, the repeated
+  internal code, the quantities and the individual cells.
+- **The sheet is RTL with LTR-safe codes.** `sheet_view.rightToLeft = True` puts
+  the serial on the right; code cells use `Consolas` and text number format, and
+  `escape_formula` neutralises a description beginning with `=`, `+`, `-` or `@`.
+- **The logo is embedded via `openpyxl.drawing.image`, which needs Pillow.**
+  `Pillow==13.0.0` is in `requirements.txt`; without it the workbook cannot be
+  built, and the production build would fail at request time rather than at
+  install time.
+- **`GET /api/export_balances/`** is open to managers and shop users, matching
+  the existing data export; it is audited as `data_exported` with
+  `entity="balances"`. The button `#downloadBalances` lives in the Items page's
+  Data import / export card and is revealed by the same role tailoring.
+- **The sheet prints A4 portrait**: fit-to-width, rows 4 repeated, header row
+  frozen, filter across the table.
 
 ## Missing paperwork: one page that is also the place you fix it
 
@@ -706,4 +736,4 @@ item: every Oracle code keeps its own row, quantity, movements and documents.
   the far edge.
 - Tests: `tests/test_item_codes.py` (18), `tests/test_barcodes.py` (17) + the
   migration cases in `tests/test_migrations_adopt_existing_db.py` (5). Full run:
-  **824 passed, 3 skipped** (Chromium installed, so the E2E suites ran).
+  **833 passed, 3 skipped** (Chromium installed, so the E2E suites ran).

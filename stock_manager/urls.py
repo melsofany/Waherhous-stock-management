@@ -11,6 +11,7 @@ from .views import (
     set_edit_lock_status,
     get_edit_lock_status,
     submit_transfer_request,
+    export_balances_excel,
     export_data_excel,
     import_data_excel,
     app_config,  # Add this import
@@ -94,6 +95,11 @@ urlpatterns = [
         "api/get_edit_lock_status/", get_edit_lock_status, name="get_edit_lock_status"
     ),
     path("api/export_data/", export_data_excel, name="export_data_excel"),
+    path(
+        "api/export_balances/",
+        export_balances_excel,
+        name="export_balances_excel",
+    ),
     path("api/import_data/", import_data_excel, name="import_data_excel"),
     path("api/app_config/", app_config, name="app_config"),  # Register the endpoint
     # Goods receipts (stock in against a supplier PO) and item labels.

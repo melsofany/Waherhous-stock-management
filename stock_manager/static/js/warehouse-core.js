@@ -381,14 +381,14 @@
         if (isManager) {
             setEditLockStatus(false);
             $("#addItemSection, #updateModeSwitch").removeClass("d-none");
-            $("#downloadStockData, #uploadStockData, #uploadStockDataButton, #importPanel").removeClass("d-none");
+            $("#downloadStockData, #downloadBalances, #uploadStockData, #uploadStockDataButton, #importPanel").removeClass("d-none");
             $("#refreshWarehouse").removeClass("d-none");
         } else {
             $("#importPanel").addClass("d-none");
             if (isShopUser) {
                 $("#submitTransferRequest").removeClass("d-none");
                 $("#refreshWarehouse").removeClass("d-none");
-                $("#downloadStockData").removeClass("d-none");
+                $("#downloadStockData, #downloadBalances").removeClass("d-none");
             }
         }
         if (!isShopUser) {
