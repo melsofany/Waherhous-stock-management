@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.http import require_POST
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -21,6 +22,7 @@ from rest_framework.response import (
 
 from .. import documents as stock_documents
 from .. import issue_report
+from .. import issue_workflow
 from .. import permits as company_permits
 from ..models import (
     Admin,
@@ -105,6 +107,153 @@ def issue_to_site(request):
 
 # ---------------------------------------------------------------------------
 
+def _request_groups(user):
+    """The site queues this reader may see, with totals."""
+    groups = issue_workflow.pending_groups()
+    if not is_warehouse_manager(user):
+        groups = [group for group in groups if group["site"].id == user.id]
+    return groups
+
+
+def _form_date(raw):
+    from datetime import date
+
+    text = (raw or "").strip()
+    if not text:
+        return None
+    try:
+        return date.fromisoformat(text)
+    except ValueError:
+        return None
+
+
+@require_POST
+@login_required
+def create_issue_permit(request):
+    """Close a site's collected requests into one numbered issue permit."""
+    if not is_warehouse_manager(request.user):
+        messages.error(request, _("Only a warehouse manager can create an issue permit."))
+        return HttpResponseRedirect("/issues/")
+
+    try:
+        site_id = int(request.POST.get("site_id") or "")
+    except (TypeError, ValueError):
+        messages.error(request, _("Choose the site for this issue permit."))
+        return HttpResponseRedirect("/issues/")
+    site = User.objects.filter(
+        id=site_id, groups__name="shop_users", is_active=True
+    ).first()
+    if site is None:
+        messages.error(request, _("Choose the site for this issue permit."))
+        return HttpResponseRedirect("/issues/")
+
+    request_ids = request.POST.getlist("request_id")
+    issued = {
+        str(request_id): request.POST.get(f"issued_{request_id}")
+        for request_id in request_ids
+    }
+    try:
+        document = issue_workflow.create_permit(
+            site=site,
+            request_ids=request_ids,
+            issued=issued,
+            permit_no=request.POST.get("permit_no", ""),
+            user=request.user,
+            document_date=_form_date(request.POST.get("document_date")),
+            location=request.POST.get("location", ""),
+            engineer_name=request.POST.get("engineer_name", ""),
+            notes=request.POST.get("notes", ""),
+        )
+    except (issue_workflow.IssuePermitError, stock_documents.DocumentError) as exc:
+        messages.error(request, str(exc))
+        return HttpResponseRedirect("/issues/")
+
+    messages.success(
+        request,
+        _("Issue permit %(permit)s was created; its three copies are ready to print.")
+        % {"permit": document.external_ref},
+    )
+    return HttpResponseRedirect(f"/issues/{document.pk}/print/")
+
+
+@login_required
+def issue_permit_print(request, pk):
+    """The three carbon copies of one issue permit."""
+    document = get_object_or_404(
+        StockDocument.objects.select_related("site", "created_by").prefetch_related(
+            "lines__item__internal_group"
+        ),
+        pk=pk,
+    )
+    if document.direction != StockDocument.OUT or document.doc_type != StockDocument.SITE_ISSUE:
+        messages.error(request, _("Only a site issue permit has three copies."))
+        return HttpResponseRedirect("/issues/")
+    if not is_warehouse_manager(request.user) and document.site_id != request.user.id:
+        messages.error(request, _("This issue permit belongs to another site."))
+        return HttpResponseRedirect("/issues/")
+
+    lines = list(document.lines.all())
+    copies = [
+        {
+            "key": "warehouse",
+            "label": _("Warehouse copy"),
+            "hint": _("Keep this copy in the warehouse file."),
+        },
+        {
+            "key": "site",
+            "label": _("Site copy"),
+            "hint": _("Give this copy to the site receiving the goods."),
+        },
+        {
+            "key": "oracle",
+            "label": _("Oracle copy"),
+            "hint": _("Give this copy to the Oracle clerk to post the deduction."),
+        },
+    ]
+    return render(
+        request,
+        "pages/issue_permit_print.html",
+        {
+            "document": document,
+            "lines": lines,
+            "copies": copies,
+            "permit_no": document.external_ref or document.number,
+            "document_date": document.document_date
+            or (document.applied_at.date() if document.applied_at else None),
+            "total_quantity": sum(line.quantity for line in lines),
+        },
+    )
+
+
+@require_POST
+@login_required
+def mark_oracle_posted(request, pk):
+    """Record that the Oracle copy was handed over and the balance posted."""
+    if not is_warehouse_manager(request.user):
+        messages.error(request, _("Only a warehouse manager can post to Oracle."))
+        return HttpResponseRedirect("/issues/")
+    document = get_object_or_404(StockDocument, pk=pk)
+    try:
+        issue_workflow.mark_oracle_posted(
+            document, user=request.user, note=request.POST.get("note", "")
+        )
+    except issue_workflow.IssuePermitError as exc:
+        messages.error(request, str(exc))
+    else:
+        messages.success(
+            request,
+            _("Issue permit %(permit)s is posted to Oracle.") % {
+                "permit": document.external_ref or document.number
+            },
+        )
+    next_url = request.POST.get("next") or f"/documents/{document.pk}/"
+    if not url_has_allowed_host_and_scheme(
+        next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+    ):
+        next_url = f"/documents/{document.pk}/"
+    return HttpResponseRedirect(next_url)
+
+
 @ensure_csrf_cookie
 @login_required
 def issues_page(request):
@@ -143,6 +292,8 @@ def issues_page(request):
             )
             .prefetch_related("lines")
             .filter(direction=StockDocument.OUT)[:RECENT_DOCUMENTS],
+            "request_groups": _request_groups(request.user),
+            "oracle_queue": issue_workflow.oracle_queue(),
             "is_manager": is_warehouse_manager(request.user),
             "form_title": _("New issue"),
             "form_hint": _("Stock goes OUT"),

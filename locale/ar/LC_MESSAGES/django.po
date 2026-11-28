@@ -139,6 +139,9 @@ msgstr "المبلغ"
 msgid "An error occurred."
 msgstr "حدث خطأ."
 
+msgid "An issue permit belongs to one site; choose requests from one site only."
+msgstr "إذن الصرف يخص موقعًا واحدًا؛ اختر طلبات من موقع واحد فقط."
+
 msgid "An unexpected error occurred while issuing the stock."
 msgstr "حدث خطأ غير متوقع أثناء صرف المخزون."
 
@@ -211,6 +214,9 @@ msgstr "العودة إلى لوحة التحكم"
 msgid "Back to sign in"
 msgstr "العودة لتسجيل الدخول"
 
+msgid "Back to the document"
+msgstr "رجوع إلى المستند"
+
 msgid "Back to the report"
 msgstr "رجوع إلى التقرير"
 
@@ -280,6 +286,9 @@ msgstr "اختر كود أوراكل."
 msgid "Choose at least one Oracle code."
 msgstr "اختر كود أوراكل واحدًا على الأقل."
 
+msgid "Choose at least one site request."
+msgstr "اختر طلب موقع واحدًا على الأقل."
+
 msgid "Choose the Oracle sheet first."
 msgstr "اختر شيت الأوراكل أولًا."
 
@@ -291,6 +300,9 @@ msgstr "اختر الأصناف ثم اطبع ملصقاتها."
 
 msgid "Choose the site"
 msgstr "اختر الموقع"
+
+msgid "Choose the site for this issue permit."
+msgstr "اختر الموقع الخاص بإذن الصرف."
 
 msgid "Choose the type of addition."
 msgstr "اختر نوع الإضافة."
@@ -327,6 +339,12 @@ msgstr "الكود أو الوصف"
 
 msgid "Codes without an internal code"
 msgstr "أكواد بلا كود داخلي"
+
+msgid "Collect a site's requests, decide the issued quantity, then write one numbered permit and print its three copies."
+msgstr "اجمع طلبات الموقع، وحدّد الكمية المصروفة، ثم اكتب إذنًا واحدًا برقم واطبع نسخه الثلاث."
+
+msgid "Collect into an issue permit"
+msgstr "تجميعها في إذن صرف"
 
 msgid "Company item code"
 msgstr "كود الصنف في نظام الشركة"
@@ -390,6 +408,9 @@ msgstr "إنشاء الحساب"
 
 msgid "Create the app account"
 msgstr "إنشاء حساب التطبيق"
+
+msgid "Create the issue permit and print"
+msgstr "إنشاء إذن الصرف والطباعة"
 
 msgid "Create the user"
 msgstr "إنشاء المستخدم"
@@ -571,6 +592,9 @@ msgstr "أدخل رقم البناء (رقم صحيح يزيد فقط)."
 msgid "Enter the company voucher number."
 msgstr "أدخل رقم إذن الشركة."
 
+msgid "Enter the issue permit number."
+msgstr "أدخل رقم إذن الصرف."
+
 msgid "Enter the permit amount as a number."
 msgstr "أدخل مبلغ الإذن كرقم."
 
@@ -594,6 +618,9 @@ msgstr "كل حركة خلال فترة محددة."
 
 msgid "Every recorded action: who did what, and when."
 msgstr "كل إجراء مسجل: من فعله ومتى."
+
+msgid "Every released permit is posted to Oracle."
+msgstr "كل إذن صرف تم تسجيله في الأوراكل."
 
 msgid "Everything that left the warehouse in the chosen period: what, to where, and who sent it."
 msgstr "كل ما خرج من المخزن في الفترة المختارة: ماذا، وإلى أين، ومن صرفه."
@@ -649,6 +676,12 @@ msgstr "GitHub رفض الطلب مؤقتًا (حد الاستخدام في ال
 msgid "GitHub refused the request for now (its hourly limit). The phones are offered the last build this server has seen; it catches up by itself."
 msgstr "GitHub رفض الطلب مؤقتًا (حد الساعة). الموبايلات بتعرض لها آخر نسخة شافها السيرفر، ويرجع يتظبط لوحده."
 
+msgid "Give this copy to the Oracle clerk to post the deduction."
+msgstr "سلّم هذه النسخة لمسئول الأوراكل لتنزيل المصروف من الرصيد."
+
+msgid "Give this copy to the site receiving the goods."
+msgstr "سلّم هذه النسخة للموقع المستلم للبضاعة."
+
 msgid "Group Oracle codes"
 msgstr "تجميع أكواد أوراكل"
 
@@ -678,6 +711,12 @@ msgstr "الرصيد الحالي"
 
 msgid "Inactive"
 msgstr "غير نشط"
+
+msgid "Include"
+msgstr "تضمين"
+
+msgid "Include this request"
+msgstr "تضمين هذا الطلب"
 
 msgid "Incorrect password."
 msgstr "كلمة المرور غير صحيحة."
@@ -724,6 +763,24 @@ msgstr "صرف غير معتمد"
 msgid "Issue not approved — it never reaches the issues report"
 msgstr "صرف لم يُعتمد — لن يظهر في تقرير الصرفيات"
 
+msgid "Issue permit"
+msgstr "إذن صرف"
+
+msgid "Issue permit %(permit)s is posted to Oracle."
+msgstr "تم تسجيل إذن الصرف %(permit)s في الأوراكل."
+
+msgid "Issue permit %(permit)s was created; its three copies are ready to print."
+msgstr "تم إنشاء إذن الصرف %(permit)s، ونسخه الثلاث جاهزة للطباعة."
+
+msgid "Issue permit number"
+msgstr "رقم إذن الصرف"
+
+msgid "Issue permit posted to Oracle"
+msgstr "تسجيل إذن الصرف في الأوراكل"
+
+msgid "Issue permits not posted to Oracle"
+msgstr "إذون صرف لم تُسجل في الأوراكل"
+
 msgid "Issue stock to a site and it appears here."
 msgstr "اصرف مخزونًا لموقع وسيظهر هنا."
 
@@ -744,6 +801,9 @@ msgstr "صرفه"
 
 msgid "Issued lines"
 msgstr "البنود المصروفة"
+
+msgid "Issued quantity"
+msgstr "الكمية المصروفة"
 
 msgid "Issues"
 msgstr "الصرف"
@@ -810,6 +870,9 @@ msgstr "أصناف مسجَّلة لموقعك"
 
 msgid "Items this permit covers"
 msgstr "البنود التي يغطيها هذا الإذن"
+
+msgid "Keep this copy in the warehouse file."
+msgstr "احتفظ بهذه النسخة في ملف المخزن."
 
 msgid "Key figures"
 msgstr "المؤشرات الرئيسية"
@@ -900,6 +963,12 @@ msgstr "إلزامي"
 
 msgid "Mandatory: the app blocks use until this build is installed."
 msgstr "إلزامي: يمنع التطبيق الاستخدام حتى تثبيت هذا البناء."
+
+msgid "Manual issue permit"
+msgstr "إذن صرف يدوي"
+
+msgid "Mark posted to Oracle"
+msgstr "تسجيلها في الأوراكل"
 
 msgid "Matched"
 msgstr "مطابق"
@@ -1030,6 +1099,9 @@ msgstr "غير موجود في المخزن"
 msgid "Not needed while the list above is readable. Use it to pin a build that is not on GitHub yet, or to keep the phones on an older one."
 msgstr "مش مطلوب طالما القائمة فوق مقروءة. استخدمه لتثبيت بناء لسه مش على GitHub، أو لتثبيت الموبايلات على بناء أقدم."
 
+msgid "Not posted"
+msgstr "غير مُسجل"
+
 msgid "Not signed in"
 msgstr "غير مسجَّل الدخول"
 
@@ -1063,11 +1135,17 @@ msgstr "الصرفية الواحدة قد تُسدد بأكثر من إذن ص�
 msgid "One issue can be paid against several permits."
 msgstr "الصرفية الواحدة قد تُسدد بعدة أذون صرف."
 
+msgid "One of the requests changed while you were reading it. Reload and try again."
+msgstr "أحد الطلبات تغيّر أثناء القراءة. أعد تحميل الصفحة وحاول مرة أخرى."
+
 msgid "One row per Oracle code."
 msgstr "صف واحد لكل كود أوراكل."
 
 msgid "One row per line, not per document."
 msgstr "سطر لكل بند، لا لكل مستند."
+
+msgid "Only a site issue permit has three copies."
+msgstr "إذن الصرف الخاص بالموقع فقط هو الذي له ثلاث نسخ."
 
 msgid "Only a warehouse manager can approve documents."
 msgstr "اعتماد الأذون متاح لأمين المخزن فقط."
@@ -1075,11 +1153,17 @@ msgstr "اعتماد الأذون متاح لأمين المخزن فقط."
 msgid "Only a warehouse manager can complete the paperwork."
 msgstr "مدير المخزن فقط هو من يكمل الورق."
 
+msgid "Only a warehouse manager can create an issue permit."
+msgstr "مدير المخزن فقط هو من ينشئ إذن الصرف."
+
 msgid "Only a warehouse manager can issue stock to a site."
 msgstr "أمين المخزن فقط يمكنه الصرف لموقع."
 
 msgid "Only a warehouse manager can open this page."
 msgstr "مدير المخزن وحده هو من يفتح هذه الصفحة."
+
+msgid "Only a warehouse manager can post to Oracle."
+msgstr "مدير المخزن فقط هو من يسجل في الأوراكل."
 
 msgid "Only a warehouse manager can publish a build."
 msgstr "مدير المخزن وحده هو من ينشر إصدارًا."
@@ -1089,6 +1173,12 @@ msgstr "مدير المخزن وحده يسجّل أذون الصرف."
 
 msgid "Only a warehouse manager can upload the Oracle sheet."
 msgstr "مدير المخزن فقط يمكنه رفع شيت الأوراكل."
+
+msgid "Only an approved issue permit can be posted to Oracle."
+msgstr "إذن الصرف المعتمد فقط هو ما يمكن تسجيله في الأوراكل."
+
+msgid "Only an issue permit is posted to Oracle."
+msgstr "إذن الصرف فقط هو ما يُسجل في الأوراكل."
 
 msgid "Open"
 msgstr "فتح"
@@ -1117,6 +1207,9 @@ msgstr "الأوراكل"
 msgid "Oracle balance"
 msgstr "رصيد الأوراكل"
 
+msgid "Oracle clerk"
+msgstr "مسئول الأوراكل"
+
 msgid "Oracle code"
 msgstr "كود أوراكل"
 
@@ -1128,6 +1221,15 @@ msgstr "أكواد أوراكل"
 
 msgid "Oracle codes grouped under an internal code"
 msgstr "أكواد أوراكل مجمّعة تحت كود داخلي"
+
+msgid "Oracle copy"
+msgstr "نسخة الأوراكل"
+
+msgid "Oracle note (optional)"
+msgstr "ملاحظة الأوراكل (اختياري)"
+
+msgid "Oracle posting"
+msgstr "تسجيل الأوراكل"
 
 msgid "Oracle quantity"
 msgstr "كمية الأوراكل"
@@ -1186,6 +1288,9 @@ msgstr "رقم الإذن"
 msgid "Permits and the items each one covers"
 msgstr "الأذون والبنود التي يغطيها كل إذن"
 
+msgid "Permits not posted to Oracle"
+msgstr "إذون صرف لم تُسجل في الأوراكل"
+
 msgid "Permits total"
 msgstr "إجمالي الأذون"
 
@@ -1222,6 +1327,12 @@ msgstr "برجاء التأكيد"
 msgid "Please select a file to upload."
 msgstr "اختر ملفًا للرفع."
 
+msgid "Posted"
+msgstr "مُسجل"
+
+msgid "Posted to Oracle by"
+msgstr "سجّلها في الأوراكل"
+
 msgid "Previous"
 msgstr "السابق"
 
@@ -1245,6 +1356,9 @@ msgstr "طباعة كروت الأصناف"
 
 msgid "Print labels"
 msgstr "طباعة الملصقات"
+
+msgid "Print the three copies"
+msgstr "طباعة النسخ الثلاث"
 
 msgid "Publish"
 msgstr "نشر"
@@ -1309,6 +1423,9 @@ msgstr "استلام من المورد (أمر شراء)"
 msgid "Received by"
 msgstr "استلمه"
 
+msgid "Receiver"
+msgstr "المستلم"
+
 msgid "Receiving (PO)"
 msgstr "الاستلام (أمر شراء)"
 
@@ -1372,8 +1489,23 @@ msgstr "حذف السطر"
 msgid "Reopen"
 msgstr "إعادة فتح"
 
+msgid "Request %(code)s has no item in the catalogue."
+msgstr "الطلب %(code)s ليس له صنف في الدليل."
+
+msgid "Request %(code)s: the issued quantity cannot be negative."
+msgstr "الطلب %(code)s: الكمية المصروفة لا يمكن أن تكون سالبة."
+
+msgid "Request %(code)s: the issued quantity must be a whole number."
+msgstr "الطلب %(code)s: الكمية المصروفة يجب أن تكون رقمًا صحيحًا."
+
+msgid "Request %(code)s: you cannot issue %(issued)s when the site asked for %(requested)s."
+msgstr "الطلب %(code)s: لا يمكن صرف %(issued)s والموقع طلب %(requested)s."
+
 msgid "Request items from the warehouse to build your site stock."
 msgstr "اطلب أصنافًا من المخزن لبناء مخزون موقعك."
+
+msgid "Requested"
+msgstr "المطلوب"
 
 msgid "Requested phone"
 msgstr "الرقم المطلوب"
@@ -1561,6 +1693,9 @@ msgstr "الموقع / المشروع"
 msgid "Site / supplier"
 msgstr "الموقع / المورد"
 
+msgid "Site copy"
+msgstr "نسخة الموقع"
+
 msgid "Site not found."
 msgstr "الموقع غير موجود."
 
@@ -1572,6 +1707,9 @@ msgstr "طلبات المواقع"
 
 msgid "Site requests awaiting dispatch"
 msgstr "طلبات المواقع في انتظار الصرف"
+
+msgid "Site requests waiting for an issue permit"
+msgstr "طلبات المواقع المنتظرة لإذن صرف"
 
 msgid "Site stock"
 msgstr "مخزون المواقع"
@@ -1626,6 +1764,9 @@ msgstr "المخزون يدخل"
 
 msgid "Stock goes OUT"
 msgstr "المخزون يخرج"
+
+msgid "Stock issue permit"
+msgstr "إذن صرف مخزني"
 
 msgid "Stock issued to each construction site"
 msgstr "المخزون المصروف لكل موقع إنشاءات"
@@ -1686,6 +1827,12 @@ msgstr "تعذّر قراءة ملف .csv."
 
 msgid "The .xlsx file could not be read."
 msgstr "تعذّر قراءة ملف .xlsx."
+
+msgid "The Oracle clerk posts it."
+msgstr "مسئول الأوراكل هو من يسجلها."
+
+msgid "The Oracle clerk posts this permit."
+msgstr "مسئول الأوراكل هو من يسجل هذا الإذن."
 
 msgid "The Oracle sheet is uploaded by a warehouse manager."
 msgstr "شيت الأوراكل يرفعه مدير المخزن."
@@ -1771,6 +1918,9 @@ msgstr "الكود الداخلي وإجماليه مدموجان على الص�
 msgid "The internal codes and their Oracle codes"
 msgstr "الأكواد الداخلية وأكواد أوراكل التابعة لها"
 
+msgid "The issue permit number is too long."
+msgstr "رقم إذن الصرف أطول من المسموح."
+
 msgid "The issued quantity must be a whole number."
 msgstr "الكمية المصروفة يجب أن تكون رقمًا صحيحًا."
 
@@ -1786,6 +1936,9 @@ msgstr "الحد هو"
 msgid "The list of published builds could not be read just now."
 msgstr "مش قادرين نقرأ قائمة النسخ المنشورة دلوقتي."
 
+msgid "The number written on the permit book"
+msgstr "الرقم المكتوب في دفتر إذن الصرف"
+
 msgid "The old .xls format is not supported. Save the sheet as .xlsx or .csv."
 msgstr "صيغة .xls القديمة غير مدعومة. احفظ الشيت بصيغة .xlsx أو .csv."
 
@@ -1800,6 +1953,9 @@ msgstr "تم تغيير كلمة السر."
 
 msgid "The permit amount cannot be negative."
 msgstr "مبلغ الإذن لا يكون سالبًا."
+
+msgid "The permit has no issued quantity."
+msgstr "لا توجد كمية مصروفة في الإذن."
 
 msgid "The permit number is too long."
 msgstr "رقم الإذن أطول من المسموح."
@@ -1836,6 +1992,9 @@ msgstr "تم رفض طلب %(name)s."
 
 msgid "The selected codes are now under internal code %(code)s."
 msgstr "الأكواد المحددة أصبحت تحت الكود الداخلي %(code)s."
+
+msgid "The selected request is not valid."
+msgstr "الطلب المحدد غير صالح."
 
 msgid "The server address is built into the app; there is no field on the phone to change it."
 msgstr "عنوان السيرفر مبني جوّه التطبيق، ومفيش خانة على الموبايل تغيّره."
@@ -1882,8 +2041,14 @@ msgstr "تم حفظ المستخدم."
 msgid "The voucher"
 msgstr "بيانات المستند"
 
+msgid "The warehouse already released the stock. This records the Oracle copy after the clerk posts the deduction — it does not move stock a second time."
+msgstr "المخزن صرف البضاعة بالفعل. هذا يسجل نسخة الأوراكل بعد ما ينزّل المسئول الخصم — ولا يحرك المخزون مرة ثانية."
+
 msgid "The warehouse is in maintenance mode. Stock movements are disabled."
 msgstr "المخزن في وضع الصيانة. حركة المخزون معطّلة."
+
+msgid "The warehouse released these permits; the Oracle clerk still has to post the deduction."
+msgstr "المخزن صرف هذه الإذونات؛ ومسئول الأوراكل لسه عنده ينزّل الخصم من الرصيد."
 
 msgid "This account is closed. Ask a warehouse manager to reopen it."
 msgstr "الحساب ده مغلق. اطلب من مدير المخزن إعادة فتحه."
@@ -1896,6 +2061,12 @@ msgstr "لا يمكن التراجع عن هذا الإجراء. هل تريد �
 
 msgid "This is the last warehouse manager."
 msgstr "هذا آخر مدير مخزن."
+
+msgid "This issue permit belongs to another site."
+msgstr "إذن الصرف ده تابع لموقع آخر."
+
+msgid "This issue permit was already posted to Oracle."
+msgstr "إذن الصرف ده مسجل بالفعل في الأوراكل."
 
 msgid "This number is the account. The app cannot change it."
 msgstr "هذا الرقم هو الحساب نفسه. التطبيق لا يستطيع تغييره."
@@ -1996,6 +2167,9 @@ msgstr "وقت الرفع"
 msgid "Uploaded by"
 msgstr "رفعه"
 
+msgid "Use the manual form for a permit that did not come from a site request. For collected requests, use the numbered form above."
+msgstr "استخدم النموذج اليدوي لإذن لم يأتِ من طلب موقع. للطلبات المجمعة استخدم النموذج المرقّم بالأعلى."
+
 msgid "Use your new password the next time you sign in."
 msgstr "استخدم كلمة المرور الجديدة في المرة القادمة."
 
@@ -2065,8 +2239,14 @@ msgstr "المخزن والأوراكل"
 msgid "Warehouse and site inventory at a glance"
 msgstr "مخزون المخزن والمواقع في نظرة واحدة"
 
+msgid "Warehouse copy"
+msgstr "نسخة المخزن"
+
 msgid "Warehouse items"
 msgstr "أصناف المخزن"
+
+msgid "Warehouse keeper"
+msgstr "أمين المخزن"
 
 msgid "Warehouse maintenance is in progress."
 msgstr "صيانة المخزن جارية."
@@ -2085,6 +2265,9 @@ msgstr "حالة المخزن"
 
 msgid "Warehouse stock"
 msgstr "مخزون المخزن"
+
+msgid "Warehouse stock movement"
+msgstr "حركة صرف من المخزن"
 
 msgid "We could not sign you in."
 msgstr "تعذّر تسجيل الدخول."
@@ -2153,7 +2336,7 @@ msgid "failed attempts. Access is restored automatically once the cool-off perio
 msgstr "محاولة فاشلة. يُستعاد الوصول تلقائيًا بعد انتهاء فترة الانتظار."
 
 msgid "items"
-msgstr "صنف"
+msgstr "بنود"
 
 msgid "left empty: taken from the phone"
 msgstr "اتركه فارغًا ليُؤخذ من الرقم"

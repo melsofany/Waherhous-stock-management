@@ -1,0 +1,108 @@
+{% load i18n %}
+{% comment %}
+The collected site requests, grouped by site.
+
+Each site's card is one issue permit form: the manager chooses the quantities
+actually released and one number from the paper permit book. A request released
+in part stays on the queue with its remainder; a request released in full is
+removed in the same transaction. The live rules are in
+``stock_manager/issue_workflow.py`` — this partial only renders them.
+{% endcomment %}
+{% if request_groups %}
+<section class="sap-card" id="siteRequestGroups">
+    <div class="sap-card__header">
+        <div class="sap-card__heading">
+            <h2 class="sap-card__title">{% trans "Site requests waiting for an issue permit" %}</h2>
+            <p class="sap-card__subtitle">
+                {% trans "Collect a site's requests, decide the issued quantity, then write one numbered permit and print its three copies." %}
+            </p>
+        </div>
+    </div>
+    <div class="sap-card__body">
+        {% for group in request_groups %}
+        <form method="post" action="/issues/permits/" class="sap-request-group" id="requestGroup{{ group.site.id }}">
+            {% csrf_token %}
+            <input type="hidden" name="site_id" value="{{ group.site.id }}">
+            <div class="sap-request-group__header">
+                <h3 class="sap-subheading">
+                    {{ group.site.username }}
+                    <span class="sap-pill sap-pill--info" dir="ltr">{{ group.item_count }} {% trans "items" %}</span>
+                    <span class="sap-pill sap-pill--neutral">{% trans "Requested" %}: <span dir="ltr">{{ group.total_quantity }}</span></span>
+                </h3>
+            </div>
+            <div class="sap-form-grid">
+                <label class="sap-field">
+                    <span class="sap-label">{% trans "Issue permit number" %}</span>
+                    <input class="sap-input" type="text" name="permit_no" maxlength="80" required
+                        placeholder="{% trans 'The number written on the permit book' %}">
+                </label>
+                <label class="sap-field">
+                    <span class="sap-label">{% trans "Document date" %}</span>
+                    <input class="sap-input" type="date" name="document_date" value="{% now 'Y-m-d' %}">
+                </label>
+                <label class="sap-field">
+                    <span class="sap-label">{% trans "Used at / installed at" %}</span>
+                    <input class="sap-input" type="text" name="location" maxlength="200"
+                        value="{{ group.site.username }}">
+                </label>
+                <label class="sap-field">
+                    <span class="sap-label">{% trans "Signed by (engineer)" %}</span>
+                    <input class="sap-input" type="text" name="engineer_name" maxlength="120">
+                </label>
+                <label class="sap-field">
+                    <span class="sap-label">{% trans "Notes" %}</span>
+                    <input class="sap-input" type="text" name="notes" maxlength="200">
+                </label>
+            </div>
+            <div class="sap-tablewrap">
+                <table class="sap-table sap-table--dense">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans "Include" %}</th>
+                            <th scope="col">{% trans "Internal code" %}</th>
+                            <th scope="col">{% trans "Oracle code" %}</th>
+                            <th scope="col">{% trans "Description" %}</th>
+                            <th scope="col">{% trans "Requested" %}</th>
+                            <th scope="col">{% trans "Issued quantity" %}</th>
+                            <th scope="col">{% trans "Unit" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in group.requests %}
+                        <tr>
+                            <td>
+                                <input class="sap-check" type="checkbox" name="request_id"
+                                    value="{{ request.pk }}" checked
+                                    aria-label="{% trans 'Include this request' %}">
+                            </td>
+                            <td dir="ltr">{{ request.item.internal_code|default:"—" }}</td>
+                            <td dir="ltr">{{ request.item.sku }}</td>
+                            <td>{{ request.item.description }}</td>
+                            <td dir="ltr">{{ request.quantity }}</td>
+                            <td>
+                                <input class="sap-input sap-input--qty" type="number" min="0"
+                                    max="{{ request.quantity }}" step="1"
+                                    name="issued_{{ request.pk }}" value="{{ request.quantity }}"
+                                    aria-label="{% trans 'Issued quantity' %}">
+                            </td>
+                            <td>{{ request.item.unit|default:"—" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if is_manager %}
+            <div class="sap-form-actions">
+                <button type="submit" class="sap-btn sap-btn--emphasized">
+                    <svg class="sap-icon sap-icon--sm" aria-hidden="true"><use href="#i-upload"></use></svg>
+                    {% trans "Create the issue permit and print" %}
+                </button>
+            </div>
+            {% else %}
+            <p class="sap-muted">{% trans "Only a warehouse manager can create an issue permit." %}</p>
+            {% endif %}
+        </form>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}

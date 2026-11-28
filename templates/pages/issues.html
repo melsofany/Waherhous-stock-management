@@ -9,7 +9,74 @@
 {% endblock %}
 
 {% block content %}
+{% include "partials/site_request_queue.html" %}
+
+<div class="sap-card" id="oracleQueue">
+    <div class="sap-card__header">
+        <div class="sap-card__heading">
+            <h2 class="sap-card__title">{% trans "Issue permits not posted to Oracle" %}</h2>
+            <p class="sap-card__subtitle">
+                {% trans "The warehouse released these permits; the Oracle clerk still has to post the deduction." %}
+            </p>
+        </div>
+    </div>
+    <div class="sap-card__body sap-card__body--flush">
+        <div class="sap-tablewrap">
+            <table class="sap-table sap-table--dense">
+                <thead>
+                    <tr>
+                        <th scope="col">{% trans "Permit number" %}</th>
+                        <th scope="col">{% trans "Document" %}</th>
+                        <th scope="col">{% trans "Site / project" %}</th>
+                        <th scope="col">{% trans "Items" %}</th>
+                        <th scope="col">{% trans "Date" %}</th>
+                        <th scope="col">{% trans "Action" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for document in oracle_queue %}
+                    <tr>
+                        <td dir="ltr">{{ document.external_ref|default:"—" }}</td>
+                        <td><a href="/documents/{{ document.id }}/">{{ document.number }}</a></td>
+                        <td>{% if document.site %}{{ document.site.username }}{% else %}{{ document.counterparty|default:"—" }}{% endif %}</td>
+                        <td>
+                            {% for line in document.lines.all %}
+                            <span class="sap-pill sap-pill--neutral" dir="ltr">{{ line.sku }} × {{ line.quantity }}</span>
+                            {% endfor %}
+                        </td>
+                        <td dir="ltr">{{ document.applied_at|date:"Y-m-d" }}</td>
+                        <td>
+                            {% if is_manager %}
+                            <form method="post" action="/issues/{{ document.id }}/oracle-posted/">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="/issues/">
+                                <button class="sap-btn sap-btn--positive sap-btn--sm" type="submit">
+                                    {% trans "Mark posted to Oracle" %}
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="sap-muted">{% trans "The Oracle clerk posts it." %}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="sap-empty">
+                            <span class="sap-empty__title">{% trans "Every released permit is posted to Oracle." %}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<h2 class="sap-subheading">{% trans "Manual issue permit" %}</h2>
 {% include "partials/document_form.html" %}
+<p class="sap-muted">
+    {% trans "Use the manual form for a permit that did not come from a site request. For collected requests, use the numbered form above." %}
+</p>
 
 {% include "partials/pending_documents.html" %}
 
@@ -28,11 +95,13 @@
                 <thead>
                     <tr>
                         <th scope="col">{% trans "Document" %}</th>
+                        <th scope="col">{% trans "Permit number" %}</th>
                         <th scope="col">{% trans "Type" %}</th>
                         <th scope="col">{% trans "Site / project" %}</th>
                         <th scope="col">{% trans "Items" %}</th>
                         <th scope="col">{% trans "Quantity" %}</th>
                         <th scope="col">{% trans "Status" %}</th>
+                        <th scope="col">{% trans "Oracle" %}</th>
                         <th scope="col">{% trans "Issued by" %}</th>
                         <th scope="col">{% trans "Approved by" %}</th>
                         <th scope="col">{% trans "Date" %}</th>
@@ -41,7 +110,14 @@
                 <tbody>
                     {% for document in recent %}
                     <tr>
-                        <td><a href="/documents/{{ document.id }}/">{{ document.number }}</a></td>
+                        <td>
+                            <a href="/documents/{{ document.id }}/">{{ document.number }}</a>
+                            {% if document.doc_type == "site_issue" and document.status == "approved" %}
+                            <a class="sap-link-quiet" href="/issues/{{ document.id }}/print/" target="_blank" rel="noopener"
+                                title="{% trans 'Print the three copies' %}">{% trans "Print" %}</a>
+                            {% endif %}
+                        </td>
+                        <td dir="ltr">{{ document.external_ref|default:"—" }}</td>
                         <td>{{ document.type_label }}</td>
                         <td>{% if document.site %}{{ document.site.username }}{% else %}{{ document.counterparty }}{% endif %}</td>
                         <td>{{ document.lines.all|length }}</td>
@@ -55,13 +131,22 @@
                             <span class="sap-pill sap-pill--critical">{% trans "Rejected" %}</span>
                             {% endif %}
                         </td>
+                        <td>
+                            {% if document.oracle_posted_at %}
+                            <span class="sap-pill sap-pill--positive">{% trans "Posted" %}</span>
+                            {% elif document.status == "approved" and document.direction == "out" %}
+                            <span class="sap-pill sap-pill--warning">{% trans "Not posted" %}</span>
+                            {% else %}
+                            <span class="sap-muted">—</span>
+                            {% endif %}
+                        </td>
                         <td>{{ document.created_by.username|default:"—" }}</td>
                         <td>{{ document.decided_by.username|default:"—" }}</td>
                         <td dir="ltr">{{ document.created_at|date:"Y-m-d H:i" }}</td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="9" class="sap-empty">
+                        <td colspan="11" class="sap-empty">
                             <span class="sap-empty__title">{% trans "No issues yet." %}</span>
                         </td>
                     </tr>

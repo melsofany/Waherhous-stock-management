@@ -358,6 +358,18 @@ class StockDocument(models.Model):
     decided_at = models.DateTimeField(null=True, blank=True)
     decision_note = models.TextField(blank=True, default="")
     applied_at = models.DateTimeField(null=True, blank=True)
+    # The issue permit is handed to the Oracle clerk after the warehouse
+    # releases the stock. This records that hand-off; it is not a second stock
+    # movement, so the warehouse quantity is never touched here.
+    oracle_posted_at = models.DateTimeField(null=True, blank=True)
+    oracle_posted_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="oracle_posted_documents",
+    )
+    oracle_note = models.CharField(max_length=200, blank=True, default="")
 
     # --- the paper the site hands over -------------------------------------
     # These four describe the signed voucher that arrives from site, and they
@@ -501,6 +513,7 @@ class AuditEvent(models.Model):
     DOCUMENT_APPROVED = "document_approved"
     DOCUMENT_REJECTED = "document_rejected"
     DOCUMENT_PERMIT = "document_permit"
+    DOCUMENT_ORACLE_POSTED = "document_oracle_posted"
     ITEM_CREATED = "item_created"
     ITEM_UPDATED = "item_updated"
     ITEM_DELETED = "item_deleted"
@@ -531,6 +544,7 @@ class AuditEvent(models.Model):
         (DOCUMENT_APPROVED, _lazy("Document approved")),
         (DOCUMENT_REJECTED, _lazy("Document rejected")),
         (DOCUMENT_PERMIT, _lazy("Company voucher recorded")),
+        (DOCUMENT_ORACLE_POSTED, _lazy("Issue permit posted to Oracle")),
         (ITEM_CREATED, _lazy("Item created")),
         (ITEM_UPDATED, _lazy("Item changed")),
         (ITEM_DELETED, _lazy("Item deleted")),
@@ -572,6 +586,7 @@ class AuditEvent(models.Model):
         DOCUMENT_CREATED: "documents",
         DOCUMENT_APPROVED: "documents",
         DOCUMENT_REJECTED: "documents",
+        DOCUMENT_ORACLE_POSTED: "documents",
         ITEM_CREATED: "items",
         ITEM_UPDATED: "items",
         ITEM_DELETED: "items",

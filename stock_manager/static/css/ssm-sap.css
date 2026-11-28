@@ -2326,3 +2326,43 @@ body.sap-login {
 .sap-table--wraphead thead th {
     white-space: normal;
 }
+
+/* The site-request queue: each site is one permit form. The form's border
+   separates it from the next site, so the manager can see where one paper
+   permit ends and the next begins. */
+.sap-request-group {
+    padding-block: var(--sap-space-4);
+    border-top: 1px solid var(--sap-border);
+}
+
+.sap-request-group:first-of-type {
+    padding-block-start: 0;
+    border-top: 0;
+}
+
+.sap-request-group__header {
+    margin-block-end: var(--sap-space-2);
+}
+
+.sap-request-group .sap-form-grid {
+    margin-block-end: var(--sap-space-3);
+}
+
+.sap-request-group .sap-tablewrap {
+    margin-block-end: var(--sap-space-3);
+}
+
+.sap-request-group .sap-form-actions {
+    margin-block-start: 0;
+}
+
+.sap-link-quiet {
+    margin-inline-start: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--sap-text-muted);
+}
+
+.sap-pill--warning {
+    background: #fff4d6;
+    color: #8a5a00;
+}

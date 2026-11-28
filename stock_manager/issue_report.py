@@ -149,6 +149,7 @@ def build_report(date_from: date, date_to: date, *, doc_types=None):
                     if line.permit_id in permit_by_id
                     else ""
                 ),
+                "oracle_posted": document.oracle_posted_at is not None,
             }
             rows.append(row)
             _add(by_day, day, row, label=day)
@@ -168,6 +169,9 @@ def build_report(date_from: date, date_to: date, *, doc_types=None):
         "permit_value_display": money(permit_total),
         # A line with no permit is the gap the operator chases.
         "uncovered_lines": sum(1 for row in rows if not row["permit_no"]),
+        "oracle_pending": len(
+            {row["number"] for row in rows if not row["oracle_posted"]}
+        ),
     }
     return {
         "date_from": date_from,
@@ -253,6 +257,7 @@ def workbook_bytes(report) -> bytes:
             "Approved by",
             "Notes",
             "Company permit",
+            "Oracle posted",
         ],
         [
             [
@@ -273,10 +278,11 @@ def workbook_bytes(report) -> bytes:
                 row["approved_by"],
                 row["notes"],
                 row.get("permit_no", ""),
+                "Yes" if row.get("oracle_posted") else "No",
             ]
             for row in report["rows"]
         ],
-        [12, 16, 26, 22, 22, 16, 16, 18, 40, 10, 8, 12, 14, 14, 14, 30, 18],
+        [12, 16, 26, 22, 22, 16, 16, 18, 40, 10, 8, 12, 14, 14, 14, 30, 18, 14],
     )
     detail.append([])
     detail.append(

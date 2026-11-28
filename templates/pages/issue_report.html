@@ -63,6 +63,10 @@
         <span class="sap-tile__label">{% trans "Lines with no permit" %}</span>
         <span class="sap-tile__value" id="kpiUncoveredLines">{{ report.totals.uncovered_lines }}</span>
     </div>
+    <div class="sap-tile {% if report.totals.oracle_pending %}sap-tile--critical{% endif %}">
+        <span class="sap-tile__label">{% trans "Permits not posted to Oracle" %}</span>
+        <span class="sap-tile__value" id="kpiOraclePending">{{ report.totals.oracle_pending }}</span>
+    </div>
 </div>
 
 <div class="sap-card">
@@ -89,6 +93,7 @@
                         <th scope="col">{% trans "Unit" %}</th>
                         <th scope="col">{% trans "Value" %}</th>
                         <th scope="col">{% trans "Company permit" %}</th>
+                        <th scope="col">{% trans "Oracle" %}</th>
                         <th scope="col">{% trans "Issued by" %}</th>
                         <th scope="col">{% trans "Approved by" %}</th>
                     </tr>
@@ -114,12 +119,19 @@
                             <span class="sap-muted">—</span>
                             {% endif %}
                         </td>
+                        <td>
+                            {% if row.oracle_posted %}
+                            <span class="sap-pill sap-pill--positive">{% trans "Posted" %}</span>
+                            {% else %}
+                            <span class="sap-pill sap-pill--warning">{% trans "Not posted" %}</span>
+                            {% endif %}
+                        </td>
                         <td>{{ row.issued_by|default:"—" }}</td>
                         <td>{{ row.approved_by|default:"—" }}</td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="14" class="sap-empty">
+                        <td colspan="15" class="sap-empty">
                             <span class="sap-empty__title">{% trans "Nothing was issued in this period." %}</span>
                             <span class="sap-empty__text">{% trans "Change the dates or record an issue first." %}</span>
                         </td>

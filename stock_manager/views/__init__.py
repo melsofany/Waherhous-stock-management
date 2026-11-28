@@ -22,10 +22,13 @@ from .config import app_config, get_edit_lock_status, set_edit_lock_status
 from .document_api import decide_stock_document_api, stock_documents_api
 from .document_pages import decide_document, document_detail, document_photo, stock_page
 from .issues import (
+    create_issue_permit,
+    issue_permit_print,
     issue_permits_page,
     issue_to_site,
     issues_page,
     issues_report_page,
+    mark_oracle_posted,
 )
 from .items import ItemViewSet, ShopItemViewSet
 from .labels import item_barcode, print_item_cards, print_labels
@@ -68,6 +71,8 @@ __all__ = [
     "get_user",
     "import_data_excel",
     "index",
+    "create_issue_permit",
+    "issue_permit_print",
     "issue_permits_page",
     "issue_to_site",
     "issues_page",
@@ -75,6 +80,7 @@ __all__ = [
     "item_barcode",
     "list_receipts",
     "list_sites",
+    "mark_oracle_posted",
     "oracle_balance_page",
     "print_item_cards",
     "print_labels",

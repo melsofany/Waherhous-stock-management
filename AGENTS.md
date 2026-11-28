@@ -53,7 +53,7 @@ suggestions (`COMMON_UNITS` in `documents.py`). Rules that the tests pin:
 
 ## Tests
 
-`python -m pytest -q tests/` — 860 pass, 3 skip (a user-supplied, gitignored
+`python -m pytest -q tests/` — 877 pass, 3 skip (a user-supplied, gitignored
 `spreadsheet_convert.py`). `pip install Pillow` and
 `python -m playwright install chromium` are needed for the full run; the e2e
 suites skip themselves when Chromium is missing.
@@ -95,7 +95,7 @@ the partial — never a copy per shell.
   sign-in, document decisions, password changes (including a self-service one,
   via `AuditedPasswordChangeView`), and a setting change written as
   «Edit lock: on/off» rather than `edit_lock=False`.
-- `python -m pytest -q` — 860 pass, 3 skip.
+- `python -m pytest -q` — 877 pass, 3 skip.
 
 ## A deploy onto a database older than the migrations (the "already exists" build)
 
@@ -278,7 +278,7 @@ warehouse. Oracle code is the only join key: descriptions change, codes do not.
 - Tests: `tests/test_oracle_balance.py` (21) covers the real sheet's Arabic
   decimals, headers, duplicate summing, both missing directions, filters,
   manager-only upload, audit and Arabic rendering. The full suite is
-  **860 passed, 3 skipped**.
+  **877 passed, 3 skipped**.
 
 ## Missing paperwork: one page that is also the place you fix it
 
@@ -324,6 +324,53 @@ document is listed **until it is completed from the list**, then it disappears.
   (row listed → voucher saved → banner «Voucher recorded on …» → row gone, count
   16 → 15) and the Arabic RTL layout was checked by setting the
   `django_language` cookie, since the language switcher is a POST form.
+
+## Site request → issue permit → Oracle (the operator's loop)
+
+The warehouse works one loop, not three screens: a site asks for items, the
+warehouse collects that site's requests, decides what is released, writes **one
+numbered issue permit**, prints its **three carbon copies**, and hands the
+Oracle copy to the clerk who posts the deduction.
+
+- **The primitives already existed; the rule set is new.**
+  `TransferItem` is a site's requested line, `StockDocument` (type
+  `site_issue`) is the numbered permit, and `StockDocumentLine` is what the
+  permit released. `stock_manager/issue_workflow.py` is the single place that
+  turns a set of requests into a permit; `DocumentPermit` remains the separate
+  company-authorisation number and is not the paper permit.
+- **One permit belongs to one site.** Requests are grouped by site on
+  `/issues/`; a crafted POST mixing two sites is refused before anything
+  changes. A line may be released in part: the remainder stays on the queue.
+  A line released in full is deleted in the same transaction.
+- **The number is mandatory and unique.** The manager types the number from the
+  paper book into `StockDocument.external_ref`; the existing unique index is
+  the referee, and the form refuses a duplicate before stock moves.
+- **The stock movement is the existing approval path.** `create_permit` calls
+  `documents.create_document(..., pending=False)`, so the conditional
+  `Item.quantity` decrement and the site-stock mirror happen once, under the
+  same shelf check as every other issue. The request rows and the document are
+  one transaction: a failure leaves the queue untouched.
+- **The three copies are one template and one loop.**
+  `/issues/<pk>/print/` renders `pages/issue_permit_print.html` three times —
+  warehouse, site, Oracle — with page breaks. The permit number, site, items,
+  quantities, unit and signature lines appear on every copy.
+- **Oracle posting is a hand-off, not a second movement.**
+  `StockDocument.oracle_posted_at` / `oracle_posted_by` / `oracle_note`
+  (migration `0016`) record that the clerk received the copy and posted the
+  deduction. The action never touches `Item.quantity`; the release already did.
+  The issues page has an Oracle queue, the document page has the action, the
+  report and the Excel export carry the status.
+- **Management is one path**: only a warehouse manager can create a permit or
+  mark it posted; a site user sees only their own queue and can print their
+  copy. The page's forms post to `/issues/permits/`, not to the old per-item
+  dispatch endpoint, so the paper trail exists from the first click.
+- **The migration adopts the live schema.** `0016_issue_permit_workflow`
+  uses `ensure_models` like the other migrations: the three new columns are
+  added only where absent, so a database built by `--run-syncdb` still deploys.
+- Tests: `tests/test_issue_workflow.py` (17) covers grouping, full and partial
+  release, mixed sites, insufficient stock, duplicate permit numbers,
+  manager-only actions, the three-copy print page and the Oracle hand-off.
+  `tests/test_issue_report.py` pins the report status.
 
 ## Company permits (إذن صرف): one issue, several permits, each with its items
 
@@ -791,4 +838,4 @@ item: every Oracle code keeps its own row, quantity, movements and documents.
   the far edge.
 - Tests: `tests/test_item_codes.py` (18), `tests/test_barcodes.py` (17) + the
   migration cases in `tests/test_migrations_adopt_existing_db.py` (5). Full run:
-  **860 passed, 3 skipped** (Chromium installed, so the E2E suites ran).
+  **877 passed, 3 skipped** (Chromium installed, so the E2E suites ran).

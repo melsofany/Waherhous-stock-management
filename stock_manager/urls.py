@@ -30,6 +30,9 @@ from .views import (
     document_photo,
     issues_report_page,
     issue_permits_page,
+    create_issue_permit,
+    issue_permit_print,
+    mark_oracle_posted,
     oracle_balance_page,
     reconciliation_page,
     reconciliation_set_permit,
@@ -147,6 +150,7 @@ urlpatterns = [
     path("receipts/", receipts_page, name="receipts_page"),
     path("issues/", issues_page, name="issues_page"),
     path("issues/report/", issues_report_page, name="issues_report"),
+    path("issues/permits/", create_issue_permit, name="create_issue_permit"),
     path("issues/<int:pk>/permits/", issue_permits_page, name="issue_permits"),
     path("reconciliation/", reconciliation_page, name="reconciliation_page"),
     path(
@@ -164,6 +168,8 @@ urlpatterns = [
         reconciliation_export,
         name="reconciliation_export",
     ),
+    path("issues/<int:pk>/print/", issue_permit_print, name="issue_permit_print"),
+    path("issues/<int:pk>/oracle-posted/", mark_oracle_posted, name="mark_oracle_posted"),
     path("issues/<int:pk>/<str:action>/", decide_document, name="decide_document"),
     # The paper behind a document: header, lines and the photographed voucher.
     path("documents/<int:pk>/", document_detail, name="document_detail"),
