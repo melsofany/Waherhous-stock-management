@@ -1,0 +1,250 @@
+{% extends "base_app.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Spending sheets" %}{% endblock %}
+{% block crumb %}{% trans "Spending sheets" %}{% endblock %}
+{% block heading %}{% trans "Spending sheets" %}{% endblock %}
+{% block subheading %}
+{% trans "Collect the issued lines on a draft sheet, copy it into the voucher book, write each voucher number back, then follow the Oracle deduction." %}
+{% endblock %}
+
+{% block content %}
+<form method="get" action="/spending/" class="sap-card" id="openFilter">
+    <div class="sap-card__body">
+        <div class="sap-form-grid">
+            <label class="sap-field">
+                <span class="sap-label">{% trans "From" %}</span>
+                <input class="sap-input" type="date" name="from" value="{{ date_from|date:'Y-m-d' }}">
+            </label>
+            <label class="sap-field">
+                <span class="sap-label">{% trans "To" %}</span>
+                <input class="sap-input" type="date" name="to" value="{{ date_to|date:'Y-m-d' }}">
+            </label>
+        </div>
+        <div class="sap-form-actions">
+            <button class="sap-btn sap-btn--ghost" type="submit">
+                <svg class="sap-icon sap-icon--sm" aria-hidden="true"><use href="#i-search"></use></svg>
+                {% trans "Show" %}
+            </button>
+        </div>
+    </div>
+</form>
+
+<form method="post" action="/spending/" class="sap-card" id="openLines">
+    {% csrf_token %}
+    <div class="sap-card__header">
+        <div class="sap-card__heading">
+            <h2 class="sap-card__title">{% trans "Issued lines not on a spending sheet yet" %}</h2>
+            <p class="sap-card__subtitle">
+                {% trans "These quantities already left the warehouse. Choose what goes on the next draft sheet." %}
+            </p>
+        </div>
+    </div>
+    <div class="sap-card__body sap-card__body--flush">
+        <div class="sap-tablewrap">
+            <table class="sap-table sap-table--dense">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            <input class="sap-check" type="checkbox" data-check-all="line" checked
+                                aria-label="{% trans 'Select all' %}">
+                        </th>
+                        <th scope="col">{% trans "Date" %}</th>
+                        <th scope="col">{% trans "Request number" %}</th>
+                        <th scope="col">{% trans "Issued to" %}</th>
+                        <th scope="col">{% trans "Oracle code" %}</th>
+                        <th scope="col">{% trans "Internal code" %}</th>
+                        <th scope="col" class="sap-table__wide">{% trans "Description" %}</th>
+                        <th scope="col">{% trans "Quantity" %}</th>
+                        <th scope="col">{% trans "Unit" %}</th>
+                        <th scope="col">{% trans "Signed by (engineer)" %}</th>
+                        <th scope="col">{% trans "Representative" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in open_rows %}
+                    <tr>
+                        <td>
+                            <input class="sap-check" type="checkbox" name="line" value="{{ row.line.pk }}" checked
+                                aria-label="{% trans 'Select this line' %}">
+                        </td>
+                        <td dir="ltr">{{ row.line.document.applied_at|date:"Y-m-d" }}</td>
+                        <td dir="ltr"><a href="/documents/{{ row.line.document.pk }}/">{{ row.request_number }}</a></td>
+                        <td>{{ row.place|default:"—" }}</td>
+                        <td dir="ltr">{{ row.line.sku }}</td>
+                        <td dir="ltr">{{ row.line.item.internal_code|default:"—" }}</td>
+                        <td class="sap-table__wide">{{ row.line.description }}</td>
+                        <td dir="ltr">{{ row.line.quantity }}</td>
+                        <td>{{ row.line.unit|default:"—" }}</td>
+                        <td>{{ row.line.document.engineer_name|default:"—" }}</td>
+                        <td>{{ row.line.document.representative|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="11" class="sap-empty">
+                            <span class="sap-empty__title">{% trans "Every issued line is already on a sheet." %}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if open_rows %}
+    <div class="sap-card__body">
+        <div class="sap-form-actions">
+            <button class="sap-btn sap-btn--emphasized" type="submit">
+                <svg class="sap-icon sap-icon--sm" aria-hidden="true"><use href="#i-plus"></use></svg>
+                {% trans "Create the draft sheet" %}
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</form>
+
+<div class="sap-card" id="sheetList">
+    <div class="sap-card__header">
+        <h2 class="sap-card__title">{% trans "Draft sheets" %}</h2>
+    </div>
+    <div class="sap-card__body sap-card__body--flush">
+        <div class="sap-tablewrap">
+            <table class="sap-table">
+                <thead>
+                    <tr>
+                        <th scope="col">{% trans "Sheet" %}</th>
+                        <th scope="col">{% trans "Date" %}</th>
+                        <th scope="col">{% trans "By" %}</th>
+                        <th scope="col">{% trans "Lines" %}</th>
+                        <th scope="col">{% trans "Lines with a voucher" %}</th>
+                        <th scope="col">{% trans "Status" %}</th>
+                        <th scope="col">{% trans "Action" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sheet in sheets %}
+                    <tr>
+                        <td dir="ltr"><a href="/spending/{{ sheet.pk }}/">{{ sheet.number }}</a></td>
+                        <td dir="ltr">{{ sheet.created_at|date:"Y-m-d H:i" }}</td>
+                        <td>{{ sheet.created_by.username|default:"—" }}</td>
+                        <td>{{ sheet.line_count }}</td>
+                        <td>{{ sheet.numbered_count }}</td>
+                        <td>
+                            {% if sheet.numbered_count == sheet.line_count %}
+                            <span class="sap-pill sap-pill--positive">{% trans "All lines numbered" %}</span>
+                            {% else %}
+                            <span class="sap-pill sap-pill--warning">{% trans "Waiting for voucher numbers" %}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="sap-btn sap-btn--ghost sap-btn--sm" href="/spending/{{ sheet.pk }}/print/"
+                                target="_blank" rel="noopener">{% trans "Print the draft" %}</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="sap-empty">
+                            <span class="sap-empty__title">{% trans "No spending sheet yet." %}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="sap-card" id="oracleQueue">
+    <div class="sap-card__header">
+        <div class="sap-card__heading">
+            <h2 class="sap-card__title">{% trans "Vouchers waiting for Oracle" %}</h2>
+            <p class="sap-card__subtitle">
+                {% trans "Mark a voucher once the Oracle clerk has deducted it. The warehouse stock does not change again." %}
+            </p>
+        </div>
+    </div>
+    <div class="sap-card__body sap-card__body--flush">
+        <div class="sap-tablewrap">
+            <table class="sap-table sap-table--dense">
+                <thead>
+                    <tr>
+                        <th scope="col">{% trans "Issue voucher" %}</th>
+                        <th scope="col">{% trans "Voucher date" %}</th>
+                        <th scope="col">{% trans "Issued to" %}</th>
+                        <th scope="col" class="sap-table__wide">{% trans "Items" %}</th>
+                        <th scope="col">{% trans "Action" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in pending_vouchers %}
+                    <tr>
+                        <td dir="ltr">{{ entry.voucher.number }}</td>
+                        <td dir="ltr">{{ entry.voucher.voucher_date|date:"Y-m-d"|default:"—" }}</td>
+                        <td>{{ entry.places|join:"، "|default:"—" }}</td>
+                        <td class="sap-table__wide">
+                            {% for row in entry.rows %}
+                            <div><span dir="ltr">{{ row.sku }}</span> × <span dir="ltr">{{ row.quantity }}</span> {{ row.unit }}{% if row.place %} · {{ row.place }}{% endif %}</div>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <form method="post" action="/spending/vouchers/{{ entry.voucher.pk }}/posted/" class="sap-inline-actions">
+                                {% csrf_token %}
+                                <input class="sap-input" type="text" name="note" maxlength="200"
+                                    placeholder="{% trans 'Oracle note (optional)' %}"
+                                    aria-label="{% trans 'Oracle note (optional)' %}">
+                                <button class="sap-btn sap-btn--positive sap-btn--sm" type="submit">
+                                    {% trans "Deducted in Oracle" %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="sap-empty">
+                            <span class="sap-empty__title">{% trans "No voucher is waiting for Oracle." %}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if posted_vouchers %}
+<div class="sap-card" id="postedVouchers">
+    <div class="sap-card__header">
+        <h2 class="sap-card__title">{% trans "Recently deducted in Oracle" %}</h2>
+    </div>
+    <div class="sap-card__body sap-card__body--flush">
+        <div class="sap-tablewrap">
+            <table class="sap-table sap-table--dense">
+                <thead>
+                    <tr>
+                        <th scope="col">{% trans "Issue voucher" %}</th>
+                        <th scope="col">{% trans "Issued to" %}</th>
+                        <th scope="col">{% trans "By" %}</th>
+                        <th scope="col">{% trans "Date" %}</th>
+                        <th scope="col">{% trans "Note" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in posted_vouchers %}
+                    <tr>
+                        <td dir="ltr">{{ entry.voucher.number }}</td>
+                        <td>{{ entry.places|join:"، "|default:"—" }}</td>
+                        <td>{{ entry.voucher.oracle_posted_by.username|default:"—" }}</td>
+                        <td dir="ltr">{{ entry.voucher.oracle_posted_at|date:"Y-m-d H:i" }}</td>
+                        <td>{{ entry.voucher.oracle_note|default:"—" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% include "partials/check_all.html" %}
+{% endblock %}

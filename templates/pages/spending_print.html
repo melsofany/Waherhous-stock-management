@@ -1,0 +1,120 @@
+{% load i18n %}{% get_current_language as CURRENT_LANGUAGE %}<!DOCTYPE html>
+<html lang="{{ CURRENT_LANGUAGE }}" dir="{% if CURRENT_LANGUAGE == 'ar' %}rtl{% else %}ltr{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Draft spending sheet" %} {{ sheet.number }}</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 1rem;
+            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+            background: #f4f6f8;
+            color: #1d2d3e;
+        }
+        .draft-toolbar { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
+        .draft-toolbar button, .draft-toolbar a {
+            padding: 0.5rem 1rem;
+            border: 0;
+            border-radius: 0.4rem;
+            background: #0a6ed1;
+            color: #fff;
+            font: inherit;
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .draft-toolbar a { background: #e8edf2; color: #1d2d3e; }
+        .draft { max-width: 297mm; margin: 0 auto; padding: 10mm; background: #fff; overflow-x: auto; }
+        .draft__head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            border-bottom: 2px solid #1d2d3e;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .draft__head h1 { margin: 0; font-size: 1.25rem; }
+        .draft__meta { margin-top: 0.25rem; font-size: 0.85rem; }
+        .draft__stamp {
+            border: 2px dashed #b42318;
+            color: #b42318;
+            font-weight: 700;
+            padding: 0.35rem 0.9rem;
+            white-space: nowrap;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+        th, td { border: 1px solid #6b7785; padding: 0.3rem 0.4rem; vertical-align: top; text-align: start; }
+        th { background: #e8edf2; }
+        tr { break-inside: avoid; page-break-inside: avoid; }
+        .code { white-space: nowrap; }
+        .number { font-weight: 700; white-space: nowrap; }
+        .voucher { width: 32mm; font-weight: 700; }
+        .draft__foot { margin-top: 0.75rem; font-size: 0.8rem; color: #46525f; }
+        @media print {
+            body { background: #fff; padding: 0; }
+            .draft-toolbar { display: none; }
+            .draft { max-width: none; padding: 0; overflow: visible; }
+            th, .draft__stamp { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            @page { size: A4 landscape; margin: 10mm; }
+        }
+    </style>
+</head>
+<body>
+<div class="draft-toolbar">
+    <button type="button" onclick="window.print()">{% trans "Print" %}</button>
+    <a href="/spending/{{ sheet.pk }}/">{% trans "Back to the sheet" %}</a>
+</div>
+
+<main class="draft">
+    <div class="draft__head">
+        <div>
+            <h1>{% trans "Spending sheet" %} <span dir="ltr">{{ sheet.number }}</span></h1>
+            <div class="draft__meta">
+                {% trans "Date" %}: <span dir="ltr">{{ sheet.created_at|date:"Y-m-d" }}</span>
+                · {% trans "Prepared by" %}: {{ sheet.created_by.username|default:"—" }}
+                · {% trans "Lines" %}: <span dir="ltr">{{ rows|length }}</span>
+            </div>
+        </div>
+        <div class="draft__stamp">{% trans "DRAFT — not an issue voucher" %}</div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">{% trans "Oracle code" %}</th>
+                <th scope="col">{% trans "Internal code" %}</th>
+                <th scope="col">{% trans "Description" %}</th>
+                <th scope="col">{% trans "Quantity" %}</th>
+                <th scope="col">{% trans "Unit" %}</th>
+                <th scope="col">{% trans "Issued to" %}</th>
+                <th scope="col">{% trans "Requests" %}</th>
+                <th scope="col" class="voucher">{% trans "Issue voucher number" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td class="code" dir="ltr">{{ row.sku }}</td>
+                <td class="code" dir="ltr">{{ row.internal_code|default:"—" }}</td>
+                <td>{{ row.description }}</td>
+                <td class="number" dir="ltr">{{ row.quantity }}</td>
+                <td>{{ row.unit|default:"—" }}</td>
+                <td>{{ row.place|default:"—" }}</td>
+                <td dir="ltr">{{ row.requests|join:", " }}</td>
+                <td class="voucher" dir="ltr">{% if row.voucher %}{{ row.voucher.number }}{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="draft__foot">
+        {% trans "Copy these lines into the company voucher book, then record each voucher number in the app." %}
+    </p>
+</main>
+</body>
+</html>

@@ -46,17 +46,11 @@
             {% if document.source == "mobile" %}
             <span class="sap-pill sap-pill--neutral">{% trans "From the Android app" %}</span>
             {% endif %}
-            {% if document.doc_type == "site_issue" and document.status == "approved" %}
-            <a class="sap-btn sap-btn--ghost sap-btn--sm" href="/issues/{{ document.id }}/print/" target="_blank" rel="noopener">
-                <svg class="sap-icon sap-icon--sm" aria-hidden="true"><use href="#i-package"></use></svg>
-                {% trans "Print the three copies" %}
-            </a>
-            {% endif %}
         </div>
     </div>
     <div class="sap-card__body">
         <dl class="sap-defs">
-            <dt>{% trans "Voucher number" %}</dt>
+            <dt>{% if document.doc_type == "site_issue" %}{% trans "Request number" %}{% else %}{% trans "Voucher number" %}{% endif %}</dt>
             <dd dir="ltr">{{ document.external_ref|default:"—" }}</dd>
 
             <dt>{% trans "Used at / installed at" %}</dt>
@@ -64,6 +58,11 @@
 
             <dt>{% trans "Signed by (engineer)" %}</dt>
             <dd>{{ document.engineer_name|default:"—" }}</dd>
+
+            {% if document.direction == "out" %}
+            <dt>{% trans "Representative" %}</dt>
+            <dd>{{ document.representative|default:"—" }}</dd>
+            {% endif %}
 
             {% if document.site or document.counterparty %}
             <dt>{% trans "Site" %}</dt>
@@ -89,6 +88,11 @@
             {% if document.decision_note %}
             <dt>{% trans "Decision note" %}</dt>
             <dd>{{ document.decision_note }}</dd>
+            {% endif %}
+
+            {% if document.oracle_posted_at %}
+            <dt>{% trans "Posted to Oracle by" %}</dt>
+            <dd>{{ document.oracle_posted_by.username|default:"—" }} · <span dir="ltr">{{ document.oracle_posted_at|date:"Y-m-d H:i" }}</span>{% if document.oracle_note %} · {{ document.oracle_note }}{% endif %}</dd>
             {% endif %}
         </dl>
     </div>
@@ -127,6 +131,9 @@
                         <th scope="col">{% trans "Quantity" %}</th>
                         <th scope="col">{% trans "Unit" %}</th>
                         <th scope="col">{% trans "In stock now" %}</th>
+                        {% if document.doc_type == "site_issue" and document.status == "approved" %}
+                        <th scope="col">{% trans "Issue voucher" %}</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -140,6 +147,27 @@
                         <td>
                             {% if line.item %}{{ line.item.quantity }}{% else %}<span class="sap-muted">—</span>{% endif %}
                         </td>
+                        {% if document.doc_type == "site_issue" and document.status == "approved" %}
+                        <td>
+                            {% if line.voucher %}
+                            <span class="sap-pill sap-pill--info" dir="ltr">{{ line.voucher.number }}</span>
+                            {% if line.voucher.oracle_posted_at %}
+                            <span class="sap-pill sap-pill--positive">{% trans "Posted to Oracle" %}</span>
+                            {% else %}
+                            <span class="sap-pill sap-pill--warning">{% trans "Waiting for Oracle" %}</span>
+                            {% endif %}
+                            {% endif %}
+                            {% if line.sheet %}
+                            {% if is_manager %}
+                            <a class="sap-link-quiet" href="/spending/{{ line.sheet.pk }}/" dir="ltr">{{ line.sheet.number }}</a>
+                            {% else %}
+                            <span class="sap-muted" dir="ltr">{{ line.sheet.number }}</span>
+                            {% endif %}
+                            {% elif not line.voucher %}
+                            <span class="sap-muted">—</span>
+                            {% endif %}
+                        </td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -147,42 +175,6 @@
         </div>
     </div>
 </div>
-
-{% if document.direction == "out" and document.status == "approved" %}
-<div class="sap-card" id="oraclePosting">
-    <div class="sap-card__header">
-        <h2 class="sap-card__title">{% trans "Oracle posting" %}</h2>
-    </div>
-    <div class="sap-card__body">
-        {% if document.oracle_posted_at %}
-        <p class="sap-muted">
-            {% trans "Posted to Oracle by" %}
-            {{ document.oracle_posted_by.username|default:"—" }}
-            · <span dir="ltr">{{ document.oracle_posted_at|date:"Y-m-d H:i" }}</span>
-        </p>
-        {% if document.oracle_note %}<p>{{ document.oracle_note }}</p>{% endif %}
-        {% elif is_manager %}
-        <p class="sap-muted">
-            {% trans "The warehouse already released the stock. This records the Oracle copy after the clerk posts the deduction — it does not move stock a second time." %}
-        </p>
-        <form method="post" action="/issues/{{ document.id }}/oracle-posted/" class="sap-form">
-            {% csrf_token %}
-            <input type="hidden" name="next" value="/documents/{{ document.id }}/">
-            <label class="sap-field">
-                <span class="sap-label">{% trans "Oracle note (optional)" %}</span>
-                <input class="sap-input" type="text" name="note" maxlength="200">
-            </label>
-            <button class="sap-btn sap-btn--positive" type="submit">
-                <svg class="sap-icon sap-icon--sm" aria-hidden="true"><use href="#i-check"></use></svg>
-                {% trans "Mark posted to Oracle" %}
-            </button>
-        </form>
-        {% else %}
-        <p class="sap-muted">{% trans "The Oracle clerk posts this permit." %}</p>
-        {% endif %}
-    </div>
-</div>
-{% endif %}
 
 {% if document.status == "pending" %}
 <div class="sap-card">

@@ -15,10 +15,10 @@ Four reasons, one per gap:
     An addition is still waiting for approval, so the stock was never increased
     — the goods are on the shelf with nothing in the system saying so.
 ``permit_missing``
-    The document moved stock but carries no company voucher number, so it cannot
-    be matched to the company's own paper. When the issue is split across
-    company permits (``DocumentPermit``), the line is documented as soon as a
-    permit covers it — only the lines no permit covers stay on this page.
+    The document moved stock but carries no paper number (the request number or
+    a voucher number), so it cannot be matched to the company's own paper. A
+    line is documented as soon as an issue voucher or a company permit
+    (``DocumentPermit``) covers it — only uncovered lines stay on this page.
 ``receipt_without_permit``
     Goods were delivered against a purchase order and booked straight onto the
     shelf by the receipts screen — which writes no stock document at all — and
@@ -52,7 +52,7 @@ RECEIPT_WITHOUT_PERMIT = "receipt_without_permit"
 REASON_LABELS = {
     ISSUE_PENDING: _("Issue not approved — it never reaches the issues report"),
     ADDITION_PENDING: _("Addition not approved — the stock was never increased"),
-    PERMIT_MISSING: _("Moved with no company voucher number"),
+    PERMIT_MISSING: _("Moved with no paper number"),
     RECEIPT_WITHOUT_PERMIT: _(
         "Delivered against a purchase order with no company voucher number"
     ),
@@ -185,9 +185,11 @@ def _document_rows(date_from, date_to, site) -> list[MissingLine]:
         if not reason:
             continue
         for line in document.lines.all():
-            # A line the company permit covers is documented, even when the
-            # document as a whole is split across several permits.
-            if reason == PERMIT_MISSING and line.permit_id is not None:
+            # A line an issue voucher or a company permit covers is
+            # documented, even when the document as a whole is split.
+            if reason == PERMIT_MISSING and (
+                line.permit_id is not None or line.voucher_id is not None
+            ):
                 continue
             rows.append(
                 MissingLine(
@@ -221,6 +223,11 @@ def _reason_for(document: StockDocument) -> str:
             if document.direction == StockDocument.OUT
             else ADDITION_PENDING
         )
+    # A site issue's number is the request-book number, not the voucher: each
+    # of its lines still needs an issue voucher or a company permit, which the
+    # per-line check below looks for.
+    if document.doc_type == StockDocument.SITE_ISSUE:
+        return PERMIT_MISSING
     if not (document.external_ref or "").strip():
         return PERMIT_MISSING
     return ""

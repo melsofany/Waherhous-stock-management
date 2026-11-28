@@ -59,7 +59,9 @@ def documents_in_range(date_from: date, date_to: date, *, direction=None, includ
     """Approved documents whose stock moved inside the window."""
     start = timezone.make_aware(datetime.combine(date_from, datetime.min.time()))
     end = timezone.make_aware(datetime.combine(date_to, datetime.max.time()))
-    queryset = StockDocument.objects.prefetch_related("lines__item__internal_group", "permits").filter(
+    queryset = StockDocument.objects.prefetch_related(
+        "lines__item__internal_group", "lines__voucher", "permits"
+    ).filter(
         applied_at__gte=start, applied_at__lte=end
     )
     if not include_pending:
@@ -91,7 +93,11 @@ def build_report(date_from: date, date_to: date, *, doc_types=None):
         for line in lines:
             if line.permit_id is not None:
                 permit_lines.setdefault(line.permit_id, []).append(line)
-        uncovered = [line for line in lines if line.permit_id is None]
+        # A line is documented by a handwritten issue voucher or, for older
+        # issues, by a company permit.
+        uncovered = [
+            line for line in lines if line.permit_id is None and line.voucher_id is None
+        ]
         if uncovered:
             needs_permits.append(
                 {
@@ -149,7 +155,8 @@ def build_report(date_from: date, date_to: date, *, doc_types=None):
                     if line.permit_id in permit_by_id
                     else ""
                 ),
-                "oracle_posted": document.oracle_posted_at is not None,
+                "voucher_no": line.voucher.number if line.voucher_id else "",
+                "oracle": _oracle_state(document, line),
             }
             rows.append(row)
             _add(by_day, day, row, label=day)
@@ -167,10 +174,17 @@ def build_report(date_from: date, date_to: date, *, doc_types=None):
         "permits": len(permits),
         "permit_value": permit_total,
         "permit_value_display": money(permit_total),
-        # A line with no permit is the gap the operator chases.
-        "uncovered_lines": sum(1 for row in rows if not row["permit_no"]),
-        "oracle_pending": len(
-            {row["number"] for row in rows if not row["oracle_posted"]}
+        # A line on no paper at all is the gap the operator chases.
+        "uncovered_lines": sum(
+            1 for row in rows if not row["permit_no"] and not row["voucher_no"]
+        ),
+        "vouchers": len({row["voucher_no"] for row in rows if row["voucher_no"]}),
+        "vouchers_pending": len(
+            {
+                row["voucher_no"]
+                for row in rows
+                if row["voucher_no"] and row["oracle"] == ORACLE_WAITING
+            }
         ),
     }
     return {
@@ -184,6 +198,18 @@ def build_report(date_from: date, date_to: date, *, doc_types=None):
         "by_site": sorted(by_site.values(), key=lambda item: -item["quantity"]),
         "by_item": sorted(by_item.values(), key=lambda item: -item["quantity"]),
     }
+
+
+ORACLE_POSTED = "posted"
+ORACLE_WAITING = "waiting"
+
+
+def _oracle_state(document, line) -> str:
+    """Where this line stands with the Oracle clerk ("" when unknown)."""
+    if line.voucher_id:
+        return ORACLE_POSTED if line.voucher.oracle_posted_at else ORACLE_WAITING
+    # Posted per document, before vouchers were recorded.
+    return ORACLE_POSTED if document.oracle_posted_at else ""
 
 
 def _destination(document) -> str:
@@ -257,6 +283,7 @@ def workbook_bytes(report) -> bytes:
             "Approved by",
             "Notes",
             "Company permit",
+            "Issue voucher",
             "Oracle posted",
         ],
         [
@@ -278,11 +305,12 @@ def workbook_bytes(report) -> bytes:
                 row["approved_by"],
                 row["notes"],
                 row.get("permit_no", ""),
-                "Yes" if row.get("oracle_posted") else "No",
+                row.get("voucher_no", ""),
+                "Yes" if row.get("oracle") == ORACLE_POSTED else "No",
             ]
             for row in report["rows"]
         ],
-        [12, 16, 26, 22, 22, 16, 16, 18, 40, 10, 8, 12, 14, 14, 14, 30, 18, 14],
+        [12, 16, 26, 22, 22, 16, 16, 18, 40, 10, 8, 12, 14, 14, 14, 30, 18, 18, 14],
     )
     detail.append([])
     detail.append(

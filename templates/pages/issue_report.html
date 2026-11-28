@@ -5,7 +5,7 @@
 {% block crumb %}{% trans "Issues report" %}{% endblock %}
 {% block heading %}{% trans "Issues report" %}{% endblock %}
 {% block subheading %}
-{% trans "Collect site requests into issue permits, follow the Oracle copies, and review everything that left the warehouse in the chosen period." %}
+{% trans "Everything that left the warehouse in the chosen period, with the paper behind each line." %}
 {% endblock %}
 
 {% block actions %}
@@ -17,9 +17,6 @@
 {% endblock %}
 
 {% block content %}
-{% include "partials/site_request_queue.html" %}
-{% include "partials/oracle_queue.html" %}
-
 <form method="get" action="/issues/report/" class="sap-card">
     <div class="sap-card__body">
         <div class="sap-form-grid">
@@ -62,13 +59,17 @@
         <span class="sap-tile__label">{% trans "Company permits" %}</span>
         <span class="sap-tile__value" id="kpiPermits">{{ report.totals.permits }}</span>
     </div>
+    <div class="sap-tile">
+        <span class="sap-tile__label">{% trans "Issue vouchers" %}</span>
+        <span class="sap-tile__value" id="kpiVouchers">{{ report.totals.vouchers }}</span>
+    </div>
     <div class="sap-tile {% if report.totals.uncovered_lines %}sap-tile--critical{% endif %}">
-        <span class="sap-tile__label">{% trans "Lines with no permit" %}</span>
+        <span class="sap-tile__label">{% trans "Lines with no voucher or permit" %}</span>
         <span class="sap-tile__value" id="kpiUncoveredLines">{{ report.totals.uncovered_lines }}</span>
     </div>
-    <div class="sap-tile {% if report.totals.oracle_pending %}sap-tile--critical{% endif %}">
-        <span class="sap-tile__label">{% trans "Permits not posted to Oracle" %}</span>
-        <span class="sap-tile__value" id="kpiOraclePending">{{ report.totals.oracle_pending }}</span>
+    <div class="sap-tile {% if report.totals.vouchers_pending %}sap-tile--critical{% endif %}">
+        <span class="sap-tile__label">{% trans "Vouchers waiting for Oracle" %}</span>
+        <span class="sap-tile__value" id="kpiOraclePending">{{ report.totals.vouchers_pending }}</span>
     </div>
 </div>
 
@@ -96,6 +97,7 @@
                         <th scope="col">{% trans "Unit" %}</th>
                         <th scope="col">{% trans "Value" %}</th>
                         <th scope="col">{% trans "Company permit" %}</th>
+                        <th scope="col">{% trans "Issue voucher" %}</th>
                         <th scope="col">{% trans "Oracle" %}</th>
                         <th scope="col">{% trans "Issued by" %}</th>
                         <th scope="col">{% trans "Approved by" %}</th>
@@ -123,10 +125,19 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if row.oracle_posted %}
-                            <span class="sap-pill sap-pill--positive">{% trans "Posted" %}</span>
+                            {% if row.voucher_no %}
+                            <span class="sap-pill sap-pill--info" dir="ltr">{{ row.voucher_no }}</span>
                             {% else %}
-                            <span class="sap-pill sap-pill--warning">{% trans "Not posted" %}</span>
+                            <span class="sap-muted">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if row.oracle == "posted" %}
+                            <span class="sap-pill sap-pill--positive">{% trans "Posted to Oracle" %}</span>
+                            {% elif row.oracle == "waiting" %}
+                            <span class="sap-pill sap-pill--warning">{% trans "Waiting for Oracle" %}</span>
+                            {% else %}
+                            <span class="sap-muted">—</span>
                             {% endif %}
                         </td>
                         <td>{{ row.issued_by|default:"—" }}</td>
@@ -134,7 +145,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="15" class="sap-empty">
+                        <td colspan="16" class="sap-empty">
                             <span class="sap-empty__title">{% trans "Nothing was issued in this period." %}</span>
                             <span class="sap-empty__text">{% trans "Change the dates or record an issue first." %}</span>
                         </td>

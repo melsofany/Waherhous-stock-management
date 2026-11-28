@@ -1,15 +1,18 @@
-"""The site-request → issue-permit workflow.
+"""Releasing a site's request: the moment stock leaves the warehouse.
 
-The warehouse does not issue one item because one phone asked for it. It
-collects the requests of a site, decides what will actually be released, writes
-one numbered issue permit (إذن صرف), prints its three copies, and hands the
-Oracle copy to the clerk who posts the deduction.
+A request reaches the warehouse on paper — a numbered page of the company's
+request book, signed by the engineer and carried by a representative. Approving
+it deducts the warehouse immediately.
 
-The database already had the primitives: ``TransferItem`` is a site's requested
-line, ``StockDocument`` is the numbered issue permit, and
-``StockDocumentLine`` is what the permit released. This module is the single
-rule set that turns the first into the second, so the dashboard, the web page
-and the API cannot each invent a different release path.
+A request raised from the dashboard sits in ``TransferItem`` until the warehouse
+releases it against that paper; this module turns those rows into one approved
+site-issue :class:`~stock_manager.models.StockDocument` that carries the request
+number. A request typed or photographed directly (the issues page, the Android
+app) is a document already and needs nothing from here.
+
+What happens *after* the release — the draft spending sheet, the handwritten
+issue vouchers and the Oracle hand-off — lives in
+:mod:`stock_manager.spending`.
 """
 
 from __future__ import annotations
@@ -19,11 +22,12 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from . import documents as stock_documents
-from .audit import record
-from .models import AuditEvent, StockDocument, TransferItem
+from .models import StockDocument, TransferItem
+
+MAX_REQUEST_NUMBER_LENGTH = 80
 
 
-class IssuePermitError(ValueError):
+class RequestError(ValueError):
     """A refusal the warehouse manager can act on."""
 
 
@@ -63,17 +67,17 @@ def _issued_quantity(raw, request):
     try:
         quantity = int(str(raw).strip())
     except (TypeError, ValueError):
-        raise IssuePermitError(
+        raise RequestError(
             _("Request %(code)s: the issued quantity must be a whole number.")
             % {"code": request.item.sku}
         )
     if quantity < 0:
-        raise IssuePermitError(
+        raise RequestError(
             _("Request %(code)s: the issued quantity cannot be negative.")
             % {"code": request.item.sku}
         )
     if quantity > request.quantity:
-        raise IssuePermitError(
+        raise RequestError(
             _(
                 "Request %(code)s: you cannot issue %(issued)s when the site asked for %(requested)s."
             )
@@ -86,33 +90,34 @@ def _issued_quantity(raw, request):
     return quantity
 
 
-def create_permit(
+def release_requests(
     *,
     site,
     request_ids,
     issued,
-    permit_no,
+    request_no,
     user,
     document_date=None,
     location="",
     engineer_name="",
+    representative="",
     notes="",
 ):
-    """Turn selected site requests into one numbered, approved issue permit.
+    """Approve one paper request and deduct its quantities from the warehouse.
 
     ``issued`` maps request ids to the quantity actually released. A line may
-    be released in part; the remainder stays on the site's request queue for a
-    later permit. A line released in full is removed from the queue. The stock
+    be released in part; the remainder stays on the site's queue for a later
+    paper. A line released in full is removed from the queue. The stock
     movement and the queue update happen in one transaction, so a failed
-    permit cannot consume a request without a document.
+    release cannot consume a request without a document.
     """
     if site is None:
-        raise IssuePermitError(_("Choose the site for this issue permit."))
-    permit_no = (permit_no or "").strip()
-    if not permit_no:
-        raise IssuePermitError(_("Enter the issue permit number."))
-    if len(permit_no) > 80:
-        raise IssuePermitError(_("The issue permit number is too long."))
+        raise RequestError(_("Choose the site for this request."))
+    request_no = (request_no or "").strip()
+    if not request_no:
+        raise RequestError(_("Enter the request number printed on the paper."))
+    if len(request_no) > MAX_REQUEST_NUMBER_LENGTH:
+        raise RequestError(_("The request number is too long."))
 
     ids = []
     for raw in request_ids or []:
@@ -122,10 +127,19 @@ def create_permit(
         try:
             ids.append(int(text))
         except (TypeError, ValueError):
-            raise IssuePermitError(_("The selected request is not valid."))
+            raise RequestError(_("The selected request is not valid."))
     ids = list(dict.fromkeys(ids))
     if not ids:
-        raise IssuePermitError(_("Choose at least one site request."))
+        raise RequestError(_("Choose at least one site request."))
+
+    booked = StockDocument.objects.filter(external_ref=request_no).first()
+    if booked is not None:
+        raise RequestError(
+            _(
+                "Number %(number)s is already booked as %(document)s; nothing was deducted twice."
+            )
+            % {"number": request_no, "document": booked.number}
+        )
 
     with transaction.atomic():
         requests = list(
@@ -135,19 +149,19 @@ def create_permit(
         )
         found = {request.pk for request in requests}
         if found != set(ids):
-            raise IssuePermitError(
+            raise RequestError(
                 _("One of the requests changed while you were reading it. Reload and try again.")
             )
         if any(request.shop_user_id != site.pk for request in requests):
-            raise IssuePermitError(
-                _("An issue permit belongs to one site; choose requests from one site only.")
+            raise RequestError(
+                _("A paper request belongs to one site; choose lines from one site only.")
             )
 
         released = []
         quantities = {}
         for request in requests:
             if request.item is None:
-                raise IssuePermitError(
+                raise RequestError(
                     _("Request %(code)s has no item in the catalogue.")
                     % {"code": request.item_id or "—"}
                 )
@@ -163,13 +177,13 @@ def create_permit(
                     }
                 )
         if not released:
-            raise IssuePermitError(_("The permit has no issued quantity."))
+            raise RequestError(_("Nothing was entered as issued."))
 
         document = stock_documents.create_document(
             doc_type=StockDocument.SITE_ISSUE,
             lines=released,
             site=site,
-            external_ref=permit_no,
+            external_ref=request_no,
             notes=notes,
             created_by=user,
             source=StockDocument.WEB,
@@ -177,6 +191,7 @@ def create_permit(
             document_date=document_date or timezone.localdate(),
             location=(location or "").strip() or site.username,
             engineer_name=engineer_name,
+            representative=representative,
         )
 
         for request in requests:
@@ -190,47 +205,3 @@ def create_permit(
                 request.save(update_fields=["quantity", "last_updated"])
 
     return document
-
-
-def mark_oracle_posted(document, *, user, note=""):
-    """Record the hand-off to the Oracle clerk without moving stock again."""
-    with transaction.atomic():
-        locked = StockDocument.objects.select_for_update().get(pk=document.pk)
-        if locked.direction != StockDocument.OUT:
-            raise IssuePermitError(_("Only an issue permit is posted to Oracle."))
-        if locked.status != StockDocument.APPROVED:
-            raise IssuePermitError(
-                _("Only an approved issue permit can be posted to Oracle.")
-            )
-        if locked.oracle_posted_at is not None:
-            raise IssuePermitError(
-                _("This issue permit was already posted to Oracle.")
-            )
-        locked.oracle_posted_at = timezone.now()
-        locked.oracle_posted_by = user
-        locked.oracle_note = (note or "").strip()[:200]
-        locked.save(
-            update_fields=["oracle_posted_at", "oracle_posted_by", "oracle_note"]
-        )
-    record(
-        user=user,
-        action=AuditEvent.DOCUMENT_ORACLE_POSTED,
-        entity="stock_document",
-        entity_id=locked.pk,
-        description=f"{locked.number} · {locked.external_ref or ''}".strip(" ·"),
-    )
-    return locked
-
-
-def oracle_queue(limit=50):
-    """Approved issues whose Oracle copy has not been posted yet."""
-    return (
-        StockDocument.objects.select_related("site", "created_by")
-        .prefetch_related("lines__item__internal_group")
-        .filter(
-            direction=StockDocument.OUT,
-            status=StockDocument.APPROVED,
-            oracle_posted_at__isnull=True,
-        )
-        .order_by("-applied_at", "-id")[:limit]
-    )

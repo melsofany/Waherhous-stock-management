@@ -7,7 +7,8 @@ x`` keeps working. Nothing here holds logic.
 - ``items``          the stock table API (items, shop stock)
 - ``transfers``      moving stock to the sites, and the site list
 - ``receipts``       goods receipts against a supplier PO
-- ``issues``         issuing stock to a site, the issues report, company permits
+- ``issues``         approving site requests, the issues report, company permits
+- ``spending``       spending sheets, issue vouchers and the Oracle hand-off
 - ``document_pages`` the stock document pages and the helpers they share
 - ``document_api``   the stock documents API
 - ``reconcile``      missing paperwork: the reconciliation page and its export
@@ -22,13 +23,11 @@ from .config import app_config, get_edit_lock_status, set_edit_lock_status
 from .document_api import decide_stock_document_api, stock_documents_api
 from .document_pages import decide_document, document_detail, document_photo, stock_page
 from .issues import (
-    create_issue_permit,
-    issue_permit_print,
     issue_permits_page,
     issue_to_site,
     issues_page,
     issues_report_page,
-    mark_oracle_posted,
+    release_site_requests,
 )
 from .items import ItemViewSet, ShopItemViewSet
 from .labels import item_barcode, item_card_settings, print_item_cards, print_labels
@@ -41,6 +40,12 @@ from .reconcile import (
     reconciliation_set_receipt_permit,
 )
 from .session import WarehouseLoginView, get_user, index, switch_language
+from .spending import (
+    post_voucher,
+    spending_page,
+    spending_sheet_page,
+    spending_sheet_print,
+)
 from .spreadsheet import (
     export_balances_excel,
     export_data_excel,
@@ -55,6 +60,11 @@ from .transfers import (
 )
 
 __all__ = [
+    "post_voucher",
+    "release_site_requests",
+    "spending_page",
+    "spending_sheet_page",
+    "spending_sheet_print",
     "ItemViewSet",
     "ShopItemViewSet",
     "TransferItemViewSet",
@@ -71,8 +81,6 @@ __all__ = [
     "get_user",
     "import_data_excel",
     "index",
-    "create_issue_permit",
-    "issue_permit_print",
     "issue_permits_page",
     "issue_to_site",
     "issues_page",
@@ -81,7 +89,6 @@ __all__ = [
     "item_card_settings",
     "list_receipts",
     "list_sites",
-    "mark_oracle_posted",
     "oracle_balance_page",
     "print_item_cards",
     "print_labels",

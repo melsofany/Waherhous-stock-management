@@ -11,6 +11,8 @@ from ._adopt import ensure_models
 #: The models the database already had before this app kept migrations.
 #: ``ItemGroup`` is created first because ``Item`` now carries a foreign key to
 #: it: creating ``Item`` before its target table would fail on PostgreSQL.
+#: The same holds for ``StockDocumentLine``, whose foreign keys point at
+#: ``DocumentPermit``, ``SpendingSheet`` and ``IssueVoucher``.
 LEGACY_MODELS = (
     "Admin",
     "ItemGroup",
@@ -20,6 +22,9 @@ LEGACY_MODELS = (
     "GoodsReceipt",
     "GoodsReceiptLine",
     "StockDocument",
+    "DocumentPermit",
+    "SpendingSheet",
+    "IssueVoucher",
     "StockDocumentLine",
 )
 

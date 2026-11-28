@@ -19,7 +19,7 @@ from django.db import IntegrityError, transaction
 from django.utils.translation import gettext_lazy as _
 
 from .audit import record
-from .models import AuditEvent, DocumentPermit, StockDocument
+from .models import AuditEvent, DocumentPermit, IssueVoucher, StockDocument
 
 MAX_PERMIT_LENGTH = 80
 MAX_PERMITS = 20
@@ -118,6 +118,12 @@ def _validate(document, rows) -> list[dict]:
             )
         seen.add(number)
 
+        if IssueVoucher.objects.filter(number=number).exists():
+            raise PermitError(
+                _("Number %(number)s is already recorded as an issue voucher.")
+                % {"number": number}
+            )
+
         other = (
             DocumentPermit.objects.filter(permit_no=number)
             .exclude(document=document)
@@ -180,6 +186,13 @@ def save_permits(document: StockDocument, rows, assignments, *, user=None):
                 permit = by_number.get(wanted)
                 permit_id = permit.pk if permit is not None else None
                 if line.permit_id != permit_id:
+                    # A line on a spending sheet is documented there; covering
+                    # it here too would send it to Oracle twice.
+                    if permit is not None and (line.sheet_id or line.voucher_id):
+                        raise PermitError(
+                            _("%(sku)s is already on a spending sheet; record its voucher there.")
+                            % {"sku": line.sku}
+                        )
                     line.permit = permit
                     line.save(update_fields=["permit"])
     except IntegrityError:

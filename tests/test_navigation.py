@@ -19,7 +19,8 @@ EXPECTED = [
     ("item_groups", "/items/groups/"),
     ("additions", "/receipts/"),
     ("issues", "/issues/"),
-    ("spending", "/issues/report/"),
+    ("spending", "/spending/"),
+    ("issues_report", "/issues/report/"),
     ("labels", "/labels/"),
     ("reconciliation", "/reconciliation/"),
     ("users", "/users/"),
@@ -28,7 +29,7 @@ EXPECTED = [
     ("audit", "/audit/"),
 ]
 
-MANAGER_ONLY = {"item_groups", "users", "card_settings", "audit"}
+MANAGER_ONLY = {"item_groups", "spending", "card_settings", "users", "audit"}
 
 
 def nav_items(response):
@@ -126,7 +127,8 @@ class TestActiveState:
             ("/oracle/", "oracle_balance"),
             ("/receipts/", "additions"),
             ("/issues/", "issues"),
-            ("/issues/report/", "spending"),
+            ("/issues/report/", "issues_report"),
+            ("/spending/", "spending"),
             ("/labels/", "labels"),
             ("/users/", "users"),
             ("/labels/card-settings/", "card_settings"),

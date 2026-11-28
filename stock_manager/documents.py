@@ -10,9 +10,10 @@ Two rules this module exists to enforce:
 
 * **A mobile submission moves nothing.** Documents created from the Android
   app are ``pending`` until a warehouse manager approves them on the web.
-* **A voucher is booked once.** ``external_ref`` is the company voucher
-  number; a repeated mobile retry or an import of the same voucher is refused
-  instead of deducting the quantity a second time.
+* **A paper is booked once.** ``external_ref`` is the number printed on the
+  paper that moved the stock (for a site issue, the request-book number); a
+  repeated mobile retry or an import of the same paper is refused instead of
+  deducting the quantity a second time.
 """
 
 from __future__ import annotations
@@ -224,6 +225,7 @@ def create_document(
     document_date=None,
     location: str = "",
     engineer_name: str = "",
+    representative: str = "",
     photo=None,
     photo_type: str = "",
     photo_name: str = "",
@@ -241,6 +243,7 @@ def create_document(
     external_ref = (external_ref or "").strip() or None
     location = (location or "").strip()[:200]
     engineer_name = (engineer_name or "").strip()[:120]
+    representative = (representative or "").strip()[:120]
 
     # A site account OR a written location: the voucher names the place, and
     # requiring a registered account would refuse a real permit typed by hand.
@@ -297,6 +300,7 @@ def create_document(
         document.document_date = document_date
         document.location = location
         document.engineer_name = engineer_name
+        document.representative = representative
         document.save(
             update_fields=[
                 "photo",
@@ -306,6 +310,7 @@ def create_document(
                 "document_date",
                 "location",
                 "engineer_name",
+                "representative",
             ]
         )
         for sku, quantity, description, unit in parsed:
