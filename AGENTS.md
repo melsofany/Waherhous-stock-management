@@ -53,7 +53,7 @@ suggestions (`COMMON_UNITS` in `documents.py`). Rules that the tests pin:
 
 ## Tests
 
-`python -m pytest -q tests/` — 859 pass, 3 skip (a user-supplied, gitignored
+`python -m pytest -q tests/` — 860 pass, 3 skip (a user-supplied, gitignored
 `spreadsheet_convert.py`). `pip install Pillow` and
 `python -m playwright install chromium` are needed for the full run; the e2e
 suites skip themselves when Chromium is missing.
@@ -95,7 +95,7 @@ the partial — never a copy per shell.
   sign-in, document decisions, password changes (including a self-service one,
   via `AuditedPasswordChangeView`), and a setting change written as
   «Edit lock: on/off» rather than `edit_lock=False`.
-- `python -m pytest -q` — 859 pass, 3 skip.
+- `python -m pytest -q` — 860 pass, 3 skip.
 
 ## A deploy onto a database older than the migrations (the "already exists" build)
 
@@ -268,12 +268,17 @@ warehouse. Oracle code is the only join key: descriptions change, codes do not.
   ``dir="ltr"`` so `961.164` cannot re-order in an RTL page. Mixed units are
   never summed into one quantity tile; the money total does have meaning and is
   shown on the snapshot card.
+- **An upload never moves stock.** `save_snapshot` only inserts the snapshot
+  and its lines; `build_rows` only reads `Item`. A guard uploads a sheet whose
+  description, unit and quantity all differ from the item and then asserts the
+  item's fields, `StockDocument` and `GoodsReceipt` counts are unchanged. The
+  Oracle page is a comparison, not a stock correction.
 - **Uploads are audited** as `DATA_IMPORTED` / `entity="oracle_balance"`, and
   bad files create no snapshot.
-- Tests: `tests/test_oracle_balance.py` (20) covers the real sheet's Arabic
+- Tests: `tests/test_oracle_balance.py` (21) covers the real sheet's Arabic
   decimals, headers, duplicate summing, both missing directions, filters,
   manager-only upload, audit and Arabic rendering. The full suite is
-  **859 passed, 3 skipped**.
+  **860 passed, 3 skipped**.
 
 ## Missing paperwork: one page that is also the place you fix it
 
@@ -786,4 +791,4 @@ item: every Oracle code keeps its own row, quantity, movements and documents.
   the far edge.
 - Tests: `tests/test_item_codes.py` (18), `tests/test_barcodes.py` (17) + the
   migration cases in `tests/test_migrations_adopt_existing_db.py` (5). Full run:
-  **859 passed, 3 skipped** (Chromium installed, so the E2E suites ran).
+  **860 passed, 3 skipped** (Chromium installed, so the E2E suites ran).

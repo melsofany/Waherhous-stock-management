@@ -8,7 +8,14 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from openpyxl import Workbook
 
 from stock_manager import oracle_balance
-from stock_manager.models import AuditEvent, Item, ItemGroup, OracleSnapshot
+from stock_manager.models import (
+    AuditEvent,
+    GoodsReceipt,
+    Item,
+    ItemGroup,
+    OracleSnapshot,
+    StockDocument,
+)
 
 pytestmark = pytest.mark.django_db
 
@@ -249,6 +256,42 @@ class TestUploadPage:
         assert "SKU-1" in body
         assert "Quantity differs" in body
         assert "Oracle balance" in body
+
+    def test_an_upload_does_not_change_warehouse_balances(
+        self, client, manager, make_item
+    ):
+        item = make_item(sku="SKU-1", quantity=10, unit="EA")
+        original = (
+            item.quantity,
+            item.unit,
+            item.retail_price,
+            item.description,
+            item.internal_group_id,
+            item.last_updated,
+        )
+        documents = StockDocument.objects.count()
+        receipts = GoodsReceipt.objects.count()
+        client.force_login(manager)
+
+        upload(
+            client,
+            file=csv_upload(
+                sheet("Project,SKU-1,Changed name,M,500,WY.B,10,5000")
+            ),
+        )
+
+        item.refresh_from_db()
+        assert (
+            item.quantity,
+            item.unit,
+            item.retail_price,
+            item.description,
+            item.internal_group_id,
+            item.last_updated,
+        ) == original
+        assert StockDocument.objects.count() == documents
+        assert GoodsReceipt.objects.count() == receipts
+        assert OracleSnapshot.objects.count() == 1
 
     def test_the_page_shows_the_internal_code_total(self, client, manager, make_item):
         group = ItemGroup.create_next()
