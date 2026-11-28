@@ -57,6 +57,17 @@ def test_it_is_audited_once():
     assert rows.count() == 1
 
 
+def test_an_existing_manager_stops_the_seed_accounts(manager, monkeypatch):
+    monkeypatch.setenv("DJANGO_SUPERUSER_USERNAME", "admin")
+    monkeypatch.setenv("DJANGO_SUPERUSER_PASSWORD", "secret")
+
+    call_command("bootstrap_admin")
+
+    assert not User.objects.filter(username=SEED_USERNAME).exists()
+    assert not User.objects.filter(username="admin").exists()
+    assert User.objects.get(username="manager").groups.filter(name="managers").exists()
+
+
 def test_the_plaintext_is_not_in_the_source():
     from pathlib import Path
 

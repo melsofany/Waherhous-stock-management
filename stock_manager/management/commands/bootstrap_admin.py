@@ -21,7 +21,10 @@ ROLE_GROUPS = ("managers", "shop_users", "receive_mail")
 
 
 class Command(BaseCommand):
-    help = "Create the role groups and, when DJANGO_SUPERUSER_* is set, the first administrator."
+    help = (
+        "Create the role groups and, when no manager exists and "
+        "DJANGO_SUPERUSER_* is set, the first administrator."
+    )
 
     def handle(self, *args, **options):
         groups = {}
@@ -34,8 +37,15 @@ class Command(BaseCommand):
 
         self._reset_when_asked()
 
-        # A first manager account, so a fresh install (or one whose only
-        # manager is locked out) has a way in. Never overwrites an account.
+        # The seed accounts are an emergency door for an installation that has
+        # no manager at all. Once a manager exists, a redeploy must not bring
+        # the seed accounts back after the owner has deliberately removed them.
+        if User.objects.filter(groups__name="managers").exists():
+            self.stdout.write(
+                "bootstrap_admin: a manager account exists; seed accounts were not created."
+            )
+            return
+
         ensure_seed_account(self.stdout.write)
 
         if not username or not password:
