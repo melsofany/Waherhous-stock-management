@@ -31,9 +31,11 @@ from .views import (
     document_photo,
     issues_report_page,
     issue_permits_page,
-    create_issue_permit,
-    issue_permit_print,
-    mark_oracle_posted,
+    release_site_requests,
+    spending_page,
+    spending_sheet_page,
+    spending_sheet_print,
+    post_voucher,
     oracle_balance_page,
     reconciliation_page,
     reconciliation_set_permit,
@@ -146,15 +148,28 @@ urlpatterns = [
         name="mobile_documents",
     ),
     path("audit/", audit_page, name="audit_page"),
-    # One page per job: the warehouse, additions, issues, and the issues report.
+    # One page per job: the warehouse, additions, issues, spending sheets and
+    # the issues report.
     path("stock/", stock_page, name="stock_page"),
     # The daily Oracle export, matched to the warehouse by Oracle code.
     path("oracle/", oracle_balance_page, name="oracle_balance_page"),
     path("receipts/", receipts_page, name="receipts_page"),
     path("issues/", issues_page, name="issues_page"),
     path("issues/report/", issues_report_page, name="issues_report"),
-    path("issues/permits/", create_issue_permit, name="create_issue_permit"),
+    path("issues/requests/", release_site_requests, name="release_site_requests"),
     path("issues/<int:pk>/permits/", issue_permits_page, name="issue_permits"),
+    path("spending/", spending_page, name="spending_page"),
+    path("spending/<int:pk>/", spending_sheet_page, name="spending_sheet"),
+    path(
+        "spending/<int:pk>/print/",
+        spending_sheet_print,
+        name="spending_sheet_print",
+    ),
+    path(
+        "spending/vouchers/<int:pk>/posted/",
+        post_voucher,
+        name="post_voucher",
+    ),
     path("reconciliation/", reconciliation_page, name="reconciliation_page"),
     path(
         "reconciliation/<int:pk>/permit",
@@ -171,8 +186,6 @@ urlpatterns = [
         reconciliation_export,
         name="reconciliation_export",
     ),
-    path("issues/<int:pk>/print/", issue_permit_print, name="issue_permit_print"),
-    path("issues/<int:pk>/oracle-posted/", mark_oracle_posted, name="mark_oracle_posted"),
     path("issues/<int:pk>/<str:action>/", decide_document, name="decide_document"),
     # The paper behind a document: header, lines and the photographed voucher.
     path("documents/<int:pk>/", document_detail, name="document_detail"),

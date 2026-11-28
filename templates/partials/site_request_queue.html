@@ -1,26 +1,26 @@
 {% load i18n %}
 {% comment %}
-The collected site requests, grouped by site.
+The requests the sites sent from the app, grouped by site.
 
-Each site's card is one issue permit form: the manager chooses the quantities
-actually released and one number from the paper permit book. A request released
-in part stays on the queue with its remainder; a request released in full is
-removed in the same transaction. The live rules are in
+Each site's card releases one paper request: the manager types the number
+printed on the request-book page, who signed it and who carried it, and the
+quantities actually released. Approving deducts the warehouse at once. A line
+released in part stays on the queue with its remainder. The rules live in
 ``stock_manager/issue_workflow.py`` — this partial only renders them.
 {% endcomment %}
 {% if request_groups %}
 <section class="sap-card" id="siteRequestGroups">
     <div class="sap-card__header">
         <div class="sap-card__heading">
-            <h2 class="sap-card__title">{% trans "Site requests waiting for an issue permit" %}</h2>
+            <h2 class="sap-card__title">{% trans "Site requests waiting for approval" %}</h2>
             <p class="sap-card__subtitle">
-                {% trans "Collect a site's requests, decide the issued quantity, then write one numbered permit and print its three copies." %}
+                {% trans "Match each request with its signed paper, enter the issued quantities and approve. The warehouse is deducted immediately." %}
             </p>
         </div>
     </div>
     <div class="sap-card__body">
         {% for group in request_groups %}
-        <form method="post" action="/issues/permits/" class="sap-request-group" id="requestGroup{{ group.site.id }}">
+        <form method="post" action="/issues/requests/" class="sap-request-group" id="requestGroup{{ group.site.id }}">
             {% csrf_token %}
             <input type="hidden" name="site_id" value="{{ group.site.id }}">
             <div class="sap-request-group__header">
@@ -30,11 +30,12 @@ removed in the same transaction. The live rules are in
                     <span class="sap-pill sap-pill--neutral">{% trans "Requested" %}: <span dir="ltr">{{ group.total_quantity }}</span></span>
                 </h3>
             </div>
+            {% if is_manager %}
             <div class="sap-form-grid">
                 <label class="sap-field">
-                    <span class="sap-label">{% trans "Issue permit number" %}</span>
-                    <input class="sap-input" type="text" name="permit_no" maxlength="80" required
-                        placeholder="{% trans 'The number written on the permit book' %}">
+                    <span class="sap-label">{% trans "Request number" %}</span>
+                    <input class="sap-input" type="text" name="request_no" maxlength="80" required
+                        placeholder="{% trans 'The number printed on the request' %}">
                 </label>
                 <label class="sap-field">
                     <span class="sap-label">{% trans "Document date" %}</span>
@@ -50,10 +51,15 @@ removed in the same transaction. The live rules are in
                     <input class="sap-input" type="text" name="engineer_name" maxlength="120">
                 </label>
                 <label class="sap-field">
+                    <span class="sap-label">{% trans "Representative" %}</span>
+                    <input class="sap-input" type="text" name="representative" maxlength="120">
+                </label>
+                <label class="sap-field">
                     <span class="sap-label">{% trans "Notes" %}</span>
                     <input class="sap-input" type="text" name="notes" maxlength="200">
                 </label>
             </div>
+            {% endif %}
             <div class="sap-tablewrap">
                 <table class="sap-table sap-table--dense">
                     <thead>
@@ -94,12 +100,12 @@ removed in the same transaction. The live rules are in
             {% if is_manager %}
             <div class="sap-form-actions">
                 <button type="submit" class="sap-btn sap-btn--emphasized">
-                    <svg class="sap-icon sap-icon--sm" aria-hidden="true"><use href="#i-upload"></use></svg>
-                    {% trans "Create the issue permit and print" %}
+                    <svg class="sap-icon sap-icon--sm" aria-hidden="true"><use href="#i-check"></use></svg>
+                    {% trans "Approve and deduct from the warehouse" %}
                 </button>
             </div>
             {% else %}
-            <p class="sap-muted">{% trans "Only a warehouse manager can create an issue permit." %}</p>
+            <p class="sap-muted">{% trans "Only a warehouse manager can approve a request." %}</p>
             {% endif %}
         </form>
         {% endfor %}

@@ -11,7 +11,13 @@ import pytest
 from openpyxl import load_workbook
 
 from stock_manager import documents, reconciliation
-from stock_manager.models import GoodsReceipt, GoodsReceiptLine, StockDocument
+from stock_manager.models import (
+    GoodsReceipt,
+    GoodsReceiptLine,
+    IssueVoucher,
+    StockDocument,
+    StockDocumentLine,
+)
 
 pytestmark = pytest.mark.django_db
 
@@ -123,12 +129,15 @@ class TestWhatIsListed:
 
     def test_a_complete_document_is_not_listed(self, make_item, shop_user):
         make_item(sku="SKU-1", quantity=10)
-        documents.create_document(
+        document = documents.create_document(
             doc_type=StockDocument.SITE_ISSUE,
             lines=[{"sku": "SKU-1", "quantity": 2}],
             site=shop_user,
             external_ref="V-COMPLETE",
         )
+        # The issue voucher, written beside every line, documents the issue.
+        voucher = IssueVoucher.objects.create(number="V-COMPLETE-VOUCHER")
+        StockDocumentLine.objects.filter(document=document).update(voucher=voucher)
 
         assert reconciliation.build_rows() == []
 
@@ -203,6 +212,13 @@ class TestClosingALine:
         ]
 
         reconciliation.record_permit(document, "V-PENDING-1", approve=True)
+        # Approved, but its line still has no issue voucher.
+        assert [row.reason for row in reconciliation.build_rows()] == [
+            reconciliation.PERMIT_MISSING
+        ]
+
+        voucher = IssueVoucher.objects.create(number="V-PENDING-VOUCHER")
+        StockDocumentLine.objects.filter(document=document).update(voucher=voucher)
 
         assert reconciliation.build_rows() == []
 

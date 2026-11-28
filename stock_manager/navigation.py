@@ -45,7 +45,8 @@ NAV_GROUPS: Tuple[NavGroup, ...] = (
             NavItem("item_groups", "item_groups_page", "/items/groups/", "i-package", _("Internal item codes"), manager_only=True),
             NavItem("additions", "receipts_page", "/receipts/", "i-download", _("Additions")),
             NavItem("issues", "issues_page", "/issues/", "i-upload", _("Issues")),
-            NavItem("spending", "issues_report", "/issues/report/", "i-data", _("Issues report")),
+            NavItem("spending", "spending_page", "/spending/", "i-check", _("Spending sheets"), manager_only=True),
+            NavItem("issues_report", "issues_report", "/issues/report/", "i-data", _("Issues report")),
             NavItem("labels", "print_labels", "/labels/", "i-package", _("Barcode printing")),
             NavItem("reconciliation", "reconciliation_page", "/reconciliation/", "i-alert", _("Missing paperwork")),
         ),
@@ -66,6 +67,8 @@ NAV_GROUPS: Tuple[NavGroup, ...] = (
 URL_SECTIONS = {
     item.url_name: item.key for group in NAV_GROUPS for item in group.items
 }
+# Pages reached from an entry keep that entry highlighted.
+URL_SECTIONS["spending_sheet"] = "spending"
 
 
 def visible_groups(is_manager: bool) -> Tuple[NavGroup, ...]:

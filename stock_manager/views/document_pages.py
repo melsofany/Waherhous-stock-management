@@ -72,16 +72,18 @@ def document_from_form(request, doc_type, *, pending=None):
         source=StockDocument.WEB,
         # Only a warehouse manager may move stock without approval.
         pending=not is_warehouse_manager(request.user) if pending is None else pending,
-        # The same paper the phone records: the date on it, where the goods go
-        # and who signed it. Typed on the web, these were previously lost.
-        document_date=_form_date(request.POST.get("document_date")),
+        # The same paper the phone records: the date on it, where the goods go,
+        # who signed it and who carried it. Typed on the web, these were
+        # previously lost.
+        document_date=form_date(request.POST.get("document_date")),
         location=request.POST.get("location", ""),
         engineer_name=request.POST.get("engineer_name", ""),
+        representative=request.POST.get("representative", ""),
     )
 
 
-def _form_date(raw):
-    """The date on the voucher, or None when the form left it empty."""
+def form_date(raw):
+    """A date typed in a form, or None when it was left empty or unreadable."""
     from datetime import date
 
     text = (raw or "").strip()
@@ -172,7 +174,7 @@ def document_detail(request, pk):
     """
     document = (
         StockDocument.objects.select_related("site", "created_by", "decided_by")
-        .prefetch_related("lines")
+        .prefetch_related("lines__voucher")
         .filter(pk=pk)
         .first()
     )
@@ -184,7 +186,9 @@ def document_detail(request, pk):
         "pages/document_detail.html",
         {
             "document": document,
-            "lines": document.lines.select_related("item__internal_group").all(),
+            "lines": document.lines.select_related(
+                "item__internal_group", "sheet", "voucher"
+            ).all(),
             "has_photo": bool(document.photo),
             "is_manager": is_warehouse_manager(request.user),
             "back_url": request.GET.get("next")

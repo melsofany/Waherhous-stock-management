@@ -1,0 +1,19 @@
+<script>
+    // A header box with data-check-all="name" ticks every enabled box of that name.
+    (function () {
+        document.querySelectorAll("[data-check-all]").forEach(function (master) {
+            var boxes = master.form.querySelectorAll(
+                'input[type="checkbox"][name="' + master.dataset.checkAll + '"]:not(:disabled)'
+            );
+            master.addEventListener("change", function () {
+                boxes.forEach(function (box) { box.checked = master.checked; });
+            });
+            master.form.addEventListener("change", function (event) {
+                if (event.target === master) { return; }
+                master.checked = boxes.length > 0 && Array.prototype.every.call(
+                    boxes, function (box) { return box.checked; }
+                );
+            });
+        });
+    })();
+</script>

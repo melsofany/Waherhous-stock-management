@@ -867,3 +867,32 @@ item: every Oracle code keeps its own row, quantity, movements and documents.
 - Tests: `tests/test_item_codes.py` (18), `tests/test_barcodes.py` (17) + the
   migration cases in `tests/test_migrations_adopt_existing_db.py` (5). Full run:
   **886 passed, 3 skipped** (Chromium installed, so the E2E suites ran).
+
+## Spending sheets: approval, draft sheet, voucher number, Oracle
+
+The paper trail follows the company's own order; keep the code matching it.
+
+- **A site request is approved against its paper.** The warehouse keeps the
+  request book's number (`external_ref`, unique). Approving deducts stock at
+  once (`stock_manager/issue_workflow.py::release_requests`). The request is a
+  site-issue `StockDocument`; `representative` records who carried it (المندوب).
+- **Nothing here moves stock after approval.** Spending sheets, voucher numbers
+  and the Oracle hand-off only record which paper an issued line is on.
+- **Draft sheet (`SpendingSheet`, `SH-YYYY-NNNN`).** It freezes the lines it
+  holds, so an issue approved after printing cannot change the printed paper.
+  It prints as DRAFT with the quantities, Oracle code and place; the operator
+  copies it by hand into the three-copy voucher book (the app never replaces it).
+- **Voucher number (`IssueVoucher`).** Typed back against the chosen sheet lines.
+  One sheet spans several vouchers; one voucher may cover several sites. A
+  number already in use needs "add to the existing voucher" ticked; a posted
+  voucher takes no more lines and cannot be cleared.
+- **Open lines** are approved site issues with no sheet, no voucher, no company
+  permit and no per-document Oracle post, so the Oracle balance is never
+  deducted twice.
+- **Oracle** is marked per voucher (`IssueVoucher.oracle_posted_at`). The older
+  per-document Oracle columns stay for documents posted before this change.
+- Pages: `/issues/` (queue + manual paper), `/spending/` (open lines, sheets,
+  Oracle hand-off), `/spending/<id>/` (rows and vouchers),
+  `/spending/<id>/print/` (the DRAFT). `/issues/report/` is the read-only report.
+- The handwritten voucher is «إذن الصرف»; the older company permits keep their
+  wording («إذن مسجّل على المستند») so the two are never confused.

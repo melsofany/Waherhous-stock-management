@@ -15,7 +15,7 @@ from openpyxl import load_workbook
 
 from stock_manager import documents as service
 from stock_manager import issue_report, permits, reconciliation
-from stock_manager.models import DocumentPermit, StockDocument, StockDocumentLine
+from stock_manager.models import DocumentPermit, StockDocument
 
 pytestmark = pytest.mark.django_db
 
@@ -553,11 +553,18 @@ class TestMissingPaperworkFollowsThePermits:
 
         assert reconciliation.build_rows() == []
 
-    def test_a_voucher_on_the_document_still_documents_every_line(
+    def test_a_request_number_alone_does_not_document_a_site_issue(
         self, manager, shop_user, make_item
     ):
+        """A site issue's number is the request-book number, not its voucher.
+
+        Each line still needs its own issue voucher (or company permit) before it
+        leaves the reconciliation page.
+        """
         make_item(sku="SKU-1", quantity=50)
         document = make_issue(manager, shop_user, [{"sku": "SKU-1", "quantity": 1}])
         StockDocument.objects.filter(pk=document.pk).update(external_ref="V-1")
 
-        assert reconciliation.build_rows() == []
+        assert [row.reason for row in reconciliation.build_rows()] == [
+            reconciliation.PERMIT_MISSING
+        ]

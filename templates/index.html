@@ -63,11 +63,11 @@
                 <svg class="sap-icon" aria-hidden="true"><use href="#i-transfer"></use></svg>
                 {% trans "Site requests" %}
             </h2>
-            <p class="sap-card__subtitle">{% trans "What the sites asked for; the spending page turns the requests into issue permits." %}</p>
+            <p class="sap-card__subtitle">{% trans "What the sites asked for; approve each request against its paper on the issues page." %}</p>
         </div>
         <div class="sap-card__header-actions">
-            <a class="sap-btn sap-btn--ghost sap-btn--sm" href="/issues/report/">
-                {% trans "Open the spending page" %}
+            <a class="sap-btn sap-btn--ghost sap-btn--sm" href="/issues/">
+                {% trans "Open the issues page" %}
             </a>
             <button id="refreshTransfersPending" class="sap-btn sap-btn--ghost" type="button">
                 <svg class="sap-icon sap-icon--sm" aria-hidden="true"><use href="#i-refresh"></use></svg>
@@ -126,10 +126,17 @@
                 <span class="sap-quicklink__title">{% trans "Issues" %}</span>
                 <span class="sap-quicklink__text">{% trans "Issue stock to a site or send it back" %}</span>
             </a>
+            {% if nav_is_manager %}
+            <a class="sap-quicklink" href="/spending/">
+                <svg class="sap-icon" aria-hidden="true"><use href="#i-check"></use></svg>
+                <span class="sap-quicklink__title">{% trans "Spending sheets" %}</span>
+                <span class="sap-quicklink__text">{% trans "Print the draft sheet, record voucher numbers and follow Oracle" %}</span>
+            </a>
+            {% endif %}
             <a class="sap-quicklink" href="/issues/report/">
                 <svg class="sap-icon" aria-hidden="true"><use href="#i-data"></use></svg>
                 <span class="sap-quicklink__title">{% trans "Issues report" %}</span>
-                <span class="sap-quicklink__text">{% trans "Collect site requests into issue permits and review every movement" %}</span>
+                <span class="sap-quicklink__text">{% trans "Review every movement and export it to Excel" %}</span>
             </a>
             <a class="sap-quicklink" href="/labels/">
                 <svg class="sap-icon" aria-hidden="true"><use href="#i-package"></use></svg>

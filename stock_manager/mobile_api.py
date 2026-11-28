@@ -335,6 +335,7 @@ class DocumentsView(MobileView):
                 pending=True,
                 document_date=payload["document_date"],
                 engineer_name=payload["engineer_name"],
+                representative=payload["representative"],
                 photo=payload["photo"],
                 photo_type=payload["photo_type"],
                 photo_name=payload["photo_name"],
@@ -450,6 +451,7 @@ def _document_input(request):
         "lines": checked,
         "voucher": voucher,
         "location": location,
+        "representative": str(data.get("representative") or "").strip(),
         "engineer_name": engineer,
         "notes": str(data.get("notes") or "").strip(),
         "document_date": _iso_date(

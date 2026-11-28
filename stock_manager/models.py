@@ -314,9 +314,11 @@ class StockDocument(models.Model):
     mobile app starts ``pending`` and only the web app can approve it, so a
     site user cannot deduct stock on their own.
 
-    ``external_ref`` is the company voucher number. It is unique so a repeated
-    mobile submission or an import of the same voucher cannot deduct the same
-    quantity twice and unbalance the warehouse.
+    ``external_ref`` is the number printed on the paper that moved the stock.
+    For a site issue that is the request-book number (رقم طلب الصرف), not the
+    issue voucher: vouchers are written later and live on the lines
+    (:class:`IssueVoucher`). It is unique so a repeated mobile submission or an
+    import of the same paper cannot deduct the same quantity twice.
     """
 
     IN = "in"
@@ -390,9 +392,9 @@ class StockDocument(models.Model):
     decided_at = models.DateTimeField(null=True, blank=True)
     decision_note = models.TextField(blank=True, default="")
     applied_at = models.DateTimeField(null=True, blank=True)
-    # The issue permit is handed to the Oracle clerk after the warehouse
-    # releases the stock. This records that hand-off; it is not a second stock
-    # movement, so the warehouse quantity is never touched here.
+    # Legacy: Oracle posting used to be recorded per document. It is now recorded
+    # per issue voucher (IssueVoucher); these stay so documents posted before the
+    # change are never offered for a spending sheet and posted a second time.
     oracle_posted_at = models.DateTimeField(null=True, blank=True)
     oracle_posted_by = models.ForeignKey(
         User,
@@ -414,6 +416,8 @@ class StockDocument(models.Model):
     location = models.CharField(max_length=200, blank=True, default="")
     # The engineer who signed the request (اسم المهندس).
     engineer_name = models.CharField(max_length=120, blank=True, default="")
+    # Who carried the signed request to the warehouse (المندوب).
+    representative = models.CharField(max_length=120, blank=True, default="")
 
     # The photographed voucher lives IN the database on purpose. Render's disk
     # is wiped by every deploy, so a file under MEDIA_ROOT is a broken image
@@ -459,6 +463,13 @@ class StockDocument(models.Model):
     def total_quantity(self):
         return sum(line.quantity for line in self.lines.all())
 
+    @property
+    def voucher_numbers(self):
+        """The handwritten issue vouchers that cover this document's lines."""
+        return sorted(
+            {line.voucher.number for line in self.lines.all() if line.voucher_id}
+        )
+
 
 class DocumentPermit(models.Model):
     """A company permit (إذن صرف) covering part of one document.
@@ -495,6 +506,60 @@ class DocumentPermit(models.Model):
         return sum(line.quantity for line in self.lines.all())
 
 
+class SpendingSheet(models.Model):
+    """A draft spending sheet (صرفية): the issued lines collected for the book.
+
+    The sheet is printed as a DRAFT and copied by hand into the company's
+    three-copy voucher book. It freezes which lines it holds, so an issue
+    approved after printing cannot change what the paper says. It never moves
+    stock: the warehouse was deducted when each request was approved.
+    """
+
+    number = models.CharField(max_length=40, unique=True)
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-created_at", "-id")
+        verbose_name = "Spending sheet"
+        verbose_name_plural = "Spending sheets"
+
+    def __str__(self):
+        return self.number
+
+
+class IssueVoucher(models.Model):
+    """An issue voucher (إذن صرف) written by hand in the company's book.
+
+    Only its number is typed back into the app, against the lines it covers; one
+    voucher may cover several requests and several work sites. The Oracle clerk
+    deducts the voucher from the company system, which is recorded here and,
+    again, moves no stock.
+    """
+
+    number = models.CharField(max_length=80, unique=True)
+    voucher_date = models.DateField(null=True, blank=True)
+    created_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    oracle_posted_at = models.DateTimeField(null=True, blank=True)
+    oracle_posted_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name="+"
+    )
+    oracle_note = models.CharField(max_length=200, blank=True, default="")
+
+    class Meta:
+        ordering = ("-created_at", "-id")
+        verbose_name = "Issue voucher"
+        verbose_name_plural = "Issue vouchers"
+
+    def __str__(self):
+        return self.number
+
+
 class StockDocumentLine(models.Model):
     document = models.ForeignKey(
         StockDocument, on_delete=models.CASCADE, related_name="lines"
@@ -512,6 +577,22 @@ class StockDocumentLine(models.Model):
     # several of them. Empty means the line is still undocumented.
     permit = models.ForeignKey(
         DocumentPermit,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="lines",
+    )
+    # The draft spending sheet this line was collected on, and the handwritten
+    # issue voucher whose number was written beside it.
+    sheet = models.ForeignKey(
+        SpendingSheet,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="lines",
+    )
+    voucher = models.ForeignKey(
+        IssueVoucher,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -546,6 +627,11 @@ class AuditEvent(models.Model):
     DOCUMENT_REJECTED = "document_rejected"
     DOCUMENT_PERMIT = "document_permit"
     DOCUMENT_ORACLE_POSTED = "document_oracle_posted"
+    SHEET_CREATED = "sheet_created"
+    SHEET_CHANGED = "sheet_changed"
+    VOUCHER_RECORDED = "voucher_recorded"
+    VOUCHER_CLEARED = "voucher_cleared"
+    VOUCHER_ORACLE_POSTED = "voucher_oracle_posted"
     ITEM_CREATED = "item_created"
     ITEM_UPDATED = "item_updated"
     ITEM_DELETED = "item_deleted"
@@ -577,6 +663,11 @@ class AuditEvent(models.Model):
         (DOCUMENT_REJECTED, _lazy("Document rejected")),
         (DOCUMENT_PERMIT, _lazy("Company voucher recorded")),
         (DOCUMENT_ORACLE_POSTED, _lazy("Issue permit posted to Oracle")),
+        (SHEET_CREATED, _lazy("Spending sheet created")),
+        (SHEET_CHANGED, _lazy("Spending sheet changed")),
+        (VOUCHER_RECORDED, _lazy("Issue voucher number recorded")),
+        (VOUCHER_CLEARED, _lazy("Issue voucher number cleared")),
+        (VOUCHER_ORACLE_POSTED, _lazy("Issue voucher posted to Oracle")),
         (ITEM_CREATED, _lazy("Item created")),
         (ITEM_UPDATED, _lazy("Item changed")),
         (ITEM_DELETED, _lazy("Item deleted")),
@@ -619,6 +710,12 @@ class AuditEvent(models.Model):
         DOCUMENT_APPROVED: "documents",
         DOCUMENT_REJECTED: "documents",
         DOCUMENT_ORACLE_POSTED: "documents",
+        DOCUMENT_PERMIT: "documents",
+        SHEET_CREATED: "documents",
+        SHEET_CHANGED: "documents",
+        VOUCHER_RECORDED: "documents",
+        VOUCHER_CLEARED: "documents",
+        VOUCHER_ORACLE_POSTED: "documents",
         ITEM_CREATED: "items",
         ITEM_UPDATED: "items",
         ITEM_DELETED: "items",

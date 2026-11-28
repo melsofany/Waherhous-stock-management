@@ -13,17 +13,29 @@ msgstr "%(active)s نشِط من %(total)s"
 msgid "%(name)s was not bound to any phone."
 msgstr "حساب %(name)s مش مرتبط بأي هاتف."
 
+msgid "%(sku)s is already on a spending sheet; record its voucher there."
+msgstr "الصنف %(sku)s موجود بالفعل في صرفية؛ سجّل رقم إذنه من هناك."
+
 msgid "(.xlsx — the sheet is the source of truth)"
 msgstr "(‎.xlsx — الملف هو مصدر البيانات)"
 
 msgid "A build published as a release on %(repo)s is the whole step: nothing has to be typed here. Use the form only to pin a build that is not there yet, or to keep the phones on an older one."
 msgstr "نشر النسخة كـrelease على %(repo)s هو الخطوة كلها: مفيش حاجة تتكتب هنا. استخدم الفورم بس لتثبيت نسخة لسه مش موجودة، أو لتخلي الموبايلات على نسخة أقدم."
 
+msgid "A chosen line already has a voucher number; clear it first."
+msgstr "أحد البنود المحددة له رقم إذن بالفعل؛ امسحه أولًا."
+
+msgid "A chosen line is already covered by a company permit."
+msgstr "أحد البنود المحددة مسجّل عليه إذن على المستند بالفعل."
+
 msgid "A document takes at most %(max)s company permits."
 msgstr "المستند يأخذ %(max)s إذن صرف كحد أقصى."
 
 msgid "A durable address, not a file on this server: the server's disk is wiped on every deploy."
 msgstr "عنوان دائم وليس ملفًّا على هذا الخادم: قرص الخادم يُمحى مع كل نشر."
+
+msgid "A paper request belongs to one site; choose lines from one site only."
+msgstr "طلب الصرف الورقي يخص موقعًا واحدًا؛ اختر بنود موقع واحد فقط."
 
 msgid "A printable sheet with the company logo, the project name, and one row for each Oracle code."
 msgstr "كشف للطباعة بالشعار واسم المشروع، وصفّ لكل كود أوراكل."
@@ -97,6 +109,9 @@ msgstr "إضافة صنف"
 msgid "Add line"
 msgstr "إضافة سطر"
 
+msgid "Add to the existing voucher"
+msgstr "إضافة إلى الإذن المسجّل من قبل"
+
 msgid "Addition not approved"
 msgstr "إضافة غير معتمدة"
 
@@ -123,6 +138,9 @@ msgstr "خيارات متقدمة"
 
 msgid "All areas"
 msgstr "كل المجالات"
+
+msgid "All lines numbered"
+msgstr "كل البنود لها رقم إذن"
 
 msgid "All reasons"
 msgstr "كل الأسباب"
@@ -175,8 +193,14 @@ msgstr "تطبيق"
 msgid "Approve"
 msgstr "اعتماد"
 
+msgid "Approve and deduct from the warehouse"
+msgstr "اعتماد وخصم من المخزن"
+
 msgid "Approve and move the stock"
 msgstr "اعتماد وترحيل الرصيد"
+
+msgid "Approve the sites' paper requests, transfer stock to another project, or return it to the supplier."
+msgstr "اعتمد طلبات صرف المواقع، أو حوّل مخزونًا لمشروع آخر، أو أرجعه للمورد."
 
 msgid "Approved"
 msgstr "معتمد"
@@ -222,6 +246,9 @@ msgstr "رجوع إلى المستند"
 
 msgid "Back to the report"
 msgstr "رجوع إلى التقرير"
+
+msgid "Back to the sheet"
+msgstr "الرجوع إلى الصرفية"
 
 msgid "Balance date"
 msgstr "تاريخ الرصيد"
@@ -292,6 +319,9 @@ msgstr "اختر كود أوراكل."
 msgid "Choose at least one Oracle code."
 msgstr "اختر كود أوراكل واحدًا على الأقل."
 
+msgid "Choose at least one line."
+msgstr "اختر بندًا واحدًا على الأقل."
+
 msgid "Choose at least one site request."
 msgstr "اختر طلب موقع واحدًا على الأقل."
 
@@ -309,6 +339,9 @@ msgstr "اختر الموقع"
 
 msgid "Choose the site for this issue permit."
 msgstr "اختر الموقع الخاص بإذن الصرف."
+
+msgid "Choose the site for this request."
+msgstr "اختر موقع هذا الطلب."
 
 msgid "Choose the type of addition."
 msgstr "اختر نوع الإضافة."
@@ -330,6 +363,9 @@ msgstr "مسح الجهاز"
 
 msgid "Clear the phone this account is bound to? The old phone stops working at once."
 msgstr "تمسح الهاتف المرتبط بالحساب؟ الهاتف القديم هيقف عن العمل فورًا."
+
+msgid "Clear the voucher number before removing a line from the sheet."
+msgstr "امسح رقم الإذن قبل إخراج البند من الصرفية."
 
 msgid "Close"
 msgstr "إغلاق"
@@ -358,14 +394,17 @@ msgstr "تجميع طلبات المواقع في إذون صرف ومراجعة
 msgid "Collect site requests into issue permits, follow the Oracle copies, and review everything that left the warehouse in the chosen period."
 msgstr "اجمع طلبات المواقع في إذون صرف، وتابع نسخ الأوراكل، وراجع كل ما خرج من المخزن في الفترة المختارة."
 
+msgid "Collect the issued lines on a draft sheet, copy it into the voucher book, write each voucher number back, then follow the Oracle deduction."
+msgstr "اجمع البنود المصروفة في صرفية مسودة، وانقلها في دفتر إذن الصرف، وسجّل رقم كل إذن، ثم تابع التنزيل من الأوراكل."
+
 msgid "Company item code"
 msgstr "كود الصنف في نظام الشركة"
 
 msgid "Company permit"
-msgstr "إذن الصرف"
+msgstr "إذن مسجّل على المستند"
 
 msgid "Company permits"
-msgstr "أذون الصرف"
+msgstr "أذون مسجّلة على المستندات"
 
 msgid "Company permits and the items each one covers"
 msgstr "أذون الصرف والبنود التي يغطيها كل إذن"
@@ -394,6 +433,9 @@ msgstr "مواقع الإنشاءات"
 msgid "Copies per item"
 msgstr "عدد النسخ لكل صنف"
 
+msgid "Copy these lines into the company voucher book, then record each voucher number in the app."
+msgstr "انقل هذه البنود في دفتر إذن الصرف المعتمد من الشركة، ثم سجّل رقم كل إذن في البرنامج."
+
 msgid "Could not add the transfer."
 msgstr "تعذّرت إضافة طلب النقل."
 
@@ -405,6 +447,9 @@ msgstr "تعذّر إنشاء الصنف."
 
 msgid "Could not delete the item."
 msgstr "تعذّر حذف الصنف."
+
+msgid "Could not number the spending sheet. Try again."
+msgstr "تعذّر ترقيم الصرفية. حاول مرة أخرى."
 
 msgid "Could not send the transfer request."
 msgstr "تعذّر إرسال طلب النقل."
@@ -420,6 +465,9 @@ msgstr "إنشاء الحساب"
 
 msgid "Create the app account"
 msgstr "إنشاء حساب التطبيق"
+
+msgid "Create the draft sheet"
+msgstr "إنشاء صرفية مسودة"
 
 msgid "Create the issue permit and print"
 msgstr "إنشاء إذن الصرف والطباعة"
@@ -442,6 +490,9 @@ msgstr "الرقم الحالي"
 msgid "Current version"
 msgstr "الإصدار الحالي"
 
+msgid "DRAFT — not an issue voucher"
+msgstr "مسودة — ليست إذن صرف"
+
 msgid "Dashboard"
 msgstr "لوحة التحكم"
 
@@ -463,6 +514,9 @@ msgstr "القرار"
 msgid "Decision note"
 msgstr "ملاحظة القرار"
 
+msgid "Deducted in Oracle"
+msgstr "تم التنزيل من الأوراكل"
+
 msgid "Delete"
 msgstr "حذف"
 
@@ -471,6 +525,9 @@ msgstr "حذف الصنف"
 
 msgid "Delete item?"
 msgstr "حذف الصنف؟"
+
+msgid "Delete this draft"
+msgstr "حذف هذه المسودة"
 
 msgid "Deleted."
 msgstr "تم الحذف."
@@ -568,6 +625,15 @@ msgstr "تنزيل بيانات المخزون"
 msgid "Download the current warehouse and site stock."
 msgstr "نزّل بيانات المخزن والمواقع الحالية."
 
+msgid "Draft sheets"
+msgstr "الصرفيات المسودة"
+
+msgid "Draft spending sheet"
+msgstr "صرفية مسودة"
+
+msgid "Draft spending sheet %(number)s is ready to print."
+msgstr "الصرفية المسودة %(number)s جاهزة للطباعة."
+
 msgid "Duplicate Oracle rows merged into their codes:"
 msgstr "صفوف أوراكل مكررة تم جمعها في أكوادها:"
 
@@ -585,6 +651,9 @@ msgstr "قفل التعديل: %(state)s"
 
 msgid "Email"
 msgstr "البريد الإلكتروني"
+
+msgid "Enter a paper request"
+msgstr "إدخال طلب صرف ورقي"
 
 msgid "Enter a quantity greater than zero."
 msgstr "أدخل كمية أكبر من صفر."
@@ -607,6 +676,9 @@ msgstr "أدخل رقم إذن الشركة."
 msgid "Enter the issue permit number."
 msgstr "أدخل رقم إذن الصرف."
 
+msgid "Enter the issue voucher number from the book."
+msgstr "اكتب رقم إذن الصرف من الدفتر."
+
 msgid "Enter the permit amount as a number."
 msgstr "أدخل مبلغ الإذن كرقم."
 
@@ -616,11 +688,17 @@ msgstr "أدخل رقم الإذن أو افرغ السطر."
 msgid "Enter the purchase order number."
 msgstr "أدخل رقم أمر الشراء."
 
+msgid "Enter the request number printed on the paper."
+msgstr "اكتب رقم طلب الصرف المطبوع على الورقة."
+
 msgid "Enter the version."
 msgstr "أدخل الإصدار."
 
 msgid "Events"
 msgstr "الأحداث"
+
+msgid "Every issued line is already on a sheet."
+msgstr "كل البنود المصروفة موجودة في صرفيات."
 
 msgid "Every line that moved without its document: no company voucher, a document still waiting for approval, or goods delivered with nothing recording them. Completing a line here removes it."
 msgstr "كل بند اتحرك من غير ورقته: بلا رقم إذن شركة، أو مستند لسه مستني الاعتماد، أو بضاعة اتسلّمت ومفيش حاجة مسجّلة لها. إكمال البند هنا بيشيله من الصفحة."
@@ -633,6 +711,9 @@ msgstr "كل إجراء مسجل: من فعله ومتى."
 
 msgid "Every released permit is posted to Oracle."
 msgstr "كل إذن صرف تم تسجيله في الأوراكل."
+
+msgid "Everything that left the warehouse in the chosen period, with the paper behind each line."
+msgstr "كل ما خرج من المخزن خلال الفترة المختارة، مع المستند الخاص بكل بند."
 
 msgid "Everything that left the warehouse in the chosen period: what, to where, and who sent it."
 msgstr "كل ما خرج من المخزن في الفترة المختارة: ماذا، وإلى أين، ومن صرفه."
@@ -663,6 +744,9 @@ msgstr "تصفية"
 
 msgid "First name"
 msgstr "الاسم الأول"
+
+msgid "For a site issue, type the number printed on the request. The same number cannot deduct stock twice."
+msgstr "عند الصرف لموقع اكتب الرقم المطبوع على طلب الصرف. لا يمكن لنفس الرقم أن يخصم من المخزون مرتين."
 
 msgid "For example 01012345678"
 msgstr "مثال: 01012345678"
@@ -773,7 +857,7 @@ msgid "Issue not approved"
 msgstr "صرف غير معتمد"
 
 msgid "Issue not approved — it never reaches the issues report"
-msgstr "صرف لم يُعتمد — لن يظهر في تقرير الصرفيات"
+msgstr "صرف لم يُعتمد — لن يظهر في تقرير الصرف"
 
 msgid "Issue permit"
 msgstr "إذن صرف"
@@ -808,14 +892,38 @@ msgstr "صرف لموقع"
 msgid "Issue value"
 msgstr "قيمة الصرفية"
 
+msgid "Issue voucher"
+msgstr "إذن الصرف"
+
+msgid "Issue voucher number"
+msgstr "رقم إذن الصرف"
+
+msgid "Issue voucher number cleared"
+msgstr "مسح رقم إذن صرف"
+
+msgid "Issue voucher number recorded"
+msgstr "تسجيل رقم إذن صرف"
+
+msgid "Issue voucher posted to Oracle"
+msgstr "تنزيل إذن صرف من الأوراكل"
+
+msgid "Issue vouchers"
+msgstr "أذون الصرف"
+
 msgid "Issued by"
 msgstr "صرفه"
 
 msgid "Issued lines"
 msgstr "البنود المصروفة"
 
+msgid "Issued lines not on a spending sheet yet"
+msgstr "بنود مصروفة لم تدخل صرفية بعد"
+
 msgid "Issued quantity"
 msgstr "الكمية المصروفة"
+
+msgid "Issued to"
+msgstr "اتصرفت في"
 
 msgid "Issues"
 msgstr "الصرف"
@@ -824,10 +932,10 @@ msgid "Issues from the warehouse"
 msgstr "الصرف من المخزن"
 
 msgid "Issues report"
-msgstr "الصرفيات"
+msgstr "تقرير الصرف"
 
 msgid "Issues still missing a company permit"
-msgstr "صرفيات بلا إذن صرف"
+msgstr "مستندات صرف بلا إذن"
 
 msgid "Issuing stock is disabled while the warehouse is being maintained."
 msgstr "الصرف معطّل أثناء أعمال الصيانة على المخزن."
@@ -946,8 +1054,17 @@ msgstr "بنود ناقصة الورق"
 msgid "Lines to complete"
 msgstr "بنود تحتاج استكمال"
 
+msgid "Lines with a voucher"
+msgstr "بنود لها رقم إذن"
+
 msgid "Lines with no permit"
 msgstr "بنود بلا إذن"
+
+msgid "Lines with no voucher or permit"
+msgstr "بنود بلا إذن صرف"
+
+msgid "Lines without a voucher"
+msgstr "بنود بلا رقم إذن"
 
 msgid "Loading..."
 msgstr "جارٍ التحميل..."
@@ -994,8 +1111,14 @@ msgstr "إلزامي: يمنع التطبيق الاستخدام حتى تثبي
 msgid "Manual issue permit"
 msgstr "إذن صرف يدوي"
 
+msgid "Mark a voucher once the Oracle clerk has deducted it. The warehouse stock does not change again."
+msgstr "علّم على الإذن بعد أن ينزّله مسئول الأوراكل من الرصيد. رصيد المخزن لا يتغير مرة أخرى."
+
 msgid "Mark posted to Oracle"
 msgstr "تسجيلها في الأوراكل"
+
+msgid "Match each request with its signed paper, enter the issued quantities and approve. The warehouse is deducted immediately."
+msgstr "طابق كل طلب مع ورقته الموقّعة، واكتب الكميات المصروفة ثم اعتمد. يُخصم من المخزن فورًا."
 
 msgid "Matched"
 msgstr "مطابق"
@@ -1017,6 +1140,9 @@ msgstr "نقل إلى الكود أعلاه"
 
 msgid "Moved with no company voucher number"
 msgstr "تحرّك بلا رقم إذن شركة"
+
+msgid "Moved with no paper number"
+msgstr "تحرّك بلا رقم مستند"
 
 msgid "Name"
 msgstr "الاسم"
@@ -1105,8 +1231,14 @@ msgstr "لا توجد طلبات مواقع في الانتظار."
 msgid "No site stock yet"
 msgstr "لا يوجد مخزون بالمواقع بعد"
 
+msgid "No spending sheet yet."
+msgstr "لا توجد صرفيات بعد."
+
 msgid "No stock has been issued to a site yet."
 msgstr "لم يُصرف مخزون لأي موقع بعد."
+
+msgid "No voucher is waiting for Oracle."
+msgstr "لا توجد أذون منتظرة للأوراكل."
 
 msgid "No voucher number"
 msgstr "بلا رقم إذن"
@@ -1150,8 +1282,20 @@ msgstr "لا يوجد ناقص: كل بند له مستنده."
 msgid "Nothing to configure: the app is already tied to this server, and the phone cannot change that address."
 msgstr "لا شيء يُضبط: التطبيق مربوط بهذا الخادم، ولا يستطيع الهاتف تغيير هذا العنوان."
 
+msgid "Nothing was entered as issued."
+msgstr "لم تُدخل أي كمية مصروفة."
+
 msgid "Nothing was issued in this period."
 msgstr "لم يُصرف شيء في هذه الفترة."
+
+msgid "Number %(number)s is already booked as %(document)s; nothing was deducted twice."
+msgstr "الرقم %(number)s مسجّل بالفعل في %(document)s؛ لم يُخصم شيء مرتين."
+
+msgid "Number %(number)s is already recorded as a company permit on %(document)s."
+msgstr "الرقم %(number)s مسجّل بالفعل كإذن على المستند %(document)s."
+
+msgid "Number %(number)s is already recorded as an issue voucher."
+msgstr "الرقم %(number)s مسجّل بالفعل كإذن صرف."
 
 msgid "One code of ours over every Oracle code that names the same item."
 msgstr "كود خاص بنا يجمع كل أكواد أوراكل التي تسمّي الصنف نفسه."
@@ -1171,8 +1315,14 @@ msgstr "صف واحد لكل كود أوراكل."
 msgid "One row per line, not per document."
 msgstr "سطر لكل بند، لا لكل مستند."
 
+msgid "One voucher may cover several sites, and one sheet usually needs several vouchers."
+msgstr "الإذن الواحد قد يغطي أكثر من موقع، والصرفية الواحدة غالبًا تحتاج أكثر من إذن."
+
 msgid "Only a site issue permit has three copies."
 msgstr "إذن الصرف الخاص بالموقع فقط هو الذي له ثلاث نسخ."
+
+msgid "Only a warehouse manager can approve a request."
+msgstr "اعتماد الطلب لمدير المخزن فقط."
 
 msgid "Only a warehouse manager can approve documents."
 msgstr "اعتماد الأذون متاح لأمين المخزن فقط."
@@ -1218,6 +1368,9 @@ msgstr "فتح بالحجم الكامل"
 
 msgid "Open the download link on the phone and install the file (allow installing apps from this source if the phone asks)."
 msgstr "افتح رابط التنزيل على الهاتف ونصّب الملف (واسمح بتثبيت التطبيقات من هذا المصدر إذا طلب الهاتف)."
+
+msgid "Open the issues page"
+msgstr "فتح صفحة الصرف"
 
 msgid "Open the link on the phone once and install the file (allow installing apps from this source if the phone asks)."
 msgstr "افتح اللينك على الموبايل مرة واحدة وثبّت الملف (اسمح بتثبيت التطبيقات من المصدر ده لو الموبايل سأل)."
@@ -1369,8 +1522,14 @@ msgstr "طولي"
 msgid "Posted"
 msgstr "مُسجل"
 
+msgid "Posted to Oracle"
+msgstr "تم التنزيل من الأوراكل"
+
 msgid "Posted to Oracle by"
 msgstr "سجّلها في الأوراكل"
+
+msgid "Prepared by"
+msgstr "أعدّها"
 
 msgid "Previous"
 msgstr "السابق"
@@ -1395,6 +1554,15 @@ msgstr "طباعة كروت الأصناف"
 
 msgid "Print labels"
 msgstr "طباعة الملصقات"
+
+msgid "Print the draft"
+msgstr "طباعة المسودة"
+
+msgid "Print the draft sheet, record voucher numbers and follow Oracle"
+msgstr "اطبع مسودة الصرفية، وسجّل أرقام الأذون، وتابع الأوراكل"
+
+msgid "Print the draft, write it into the voucher book, then tick the lines of each voucher and record its number."
+msgstr "اطبع المسودة وانقلها في الدفتر، ثم علّم بنود كل إذن وسجّل رقمه."
 
 msgid "Print the three copies"
 msgstr "طباعة النسخ الثلاث"
@@ -1492,8 +1660,14 @@ msgstr "أحدث أذون الصرف"
 msgid "Recent receipts"
 msgstr "أحدث التوريدات"
 
+msgid "Recently deducted in Oracle"
+msgstr "آخر ما تم تنزيله من الأوراكل"
+
 msgid "Record a build by hand (fallback)"
 msgstr "تسجيل بناء يدويًا (احتياطي)"
+
+msgid "Record the number on the ticked lines"
+msgstr "تسجيل الرقم على البنود المحددة"
 
 msgid "Record the permits"
 msgstr "تسجيل الأذون"
@@ -1534,8 +1708,14 @@ msgstr "حذف"
 msgid "Remove line"
 msgstr "حذف السطر"
 
+msgid "Remove the number"
+msgstr "مسح الرقم"
+
 msgid "Reopen"
 msgstr "إعادة فتح"
+
+msgid "Representative"
+msgstr "المندوب"
 
 msgid "Request %(code)s has no item in the catalogue."
 msgstr "الطلب %(code)s ليس له صنف في الدليل."
@@ -1549,8 +1729,17 @@ msgstr "الطلب %(code)s: الكمية المصروفة يجب أن تكون 
 msgid "Request %(code)s: you cannot issue %(issued)s when the site asked for %(requested)s."
 msgstr "الطلب %(code)s: لا يمكن صرف %(issued)s والموقع طلب %(requested)s."
 
+msgid "Request %(number)s was approved and deducted from the warehouse."
+msgstr "تم اعتماد الطلب %(number)s وخصمه من المخزن."
+
 msgid "Request items from the warehouse to build your site stock."
 msgstr "اطلب أصنافًا من المخزن لبناء مخزون موقعك."
+
+msgid "Request number"
+msgstr "رقم طلب الصرف"
+
+msgid "Request number / paper number"
+msgstr "رقم طلب الصرف / المستند"
 
 msgid "Requested"
 msgstr "المطلوب"
@@ -1560,6 +1749,9 @@ msgstr "الرقم المطلوب"
 
 msgid "Requested stock movements between the warehouse and the sites"
 msgstr "حركات المخزون المطلوبة بين المخزن والمواقع"
+
+msgid "Requests"
+msgstr "طلبات الصرف"
 
 msgid "Requests submitted from a site account"
 msgstr "طلبات مقدَّمة من حساب موقع"
@@ -1575,6 +1767,9 @@ msgstr "ارتجاع من الموقع إلى المخزن"
 
 msgid "Review"
 msgstr "مراجعة"
+
+msgid "Review every movement and export it to Excel"
+msgstr "راجع كل الحركات وصدّرها إلى إكسل"
 
 msgid "Right to left"
 msgstr "من اليمين لليسار"
@@ -1660,6 +1855,9 @@ msgstr "اختر صنفًا واحدًا على الأقل لطباعة كارت
 msgid "Select the items to label"
 msgstr "اختر الأصناف المطلوب طباعة ملصقاتها"
 
+msgid "Select this line"
+msgstr "اختيار هذا البند"
+
 msgid "Selling price"
 msgstr "سعر البيع"
 
@@ -1683,6 +1881,15 @@ msgstr "الإعدادات"
 
 msgid "Settings changed"
 msgstr "تغيير الإعدادات"
+
+msgid "Sheet"
+msgstr "الصرفية"
+
+msgid "Sheet %(number)s had no lines left and was deleted."
+msgstr "لم يعد في الصرفية %(number)s أي بند فتم حذفها."
+
+msgid "Sheet %(number)s was deleted; its lines are open again."
+msgstr "تم حذف الصرفية %(number)s ورجعت بنودها للقائمة المفتوحة."
 
 msgid "Shop transfers are paused"
 msgstr "نقل المخزون للمواقع متوقف"
@@ -1771,6 +1978,9 @@ msgstr "طلبات المواقع في انتظار الصرف"
 msgid "Site requests waiting for an issue permit"
 msgstr "طلبات المواقع المنتظرة لإذن صرف"
 
+msgid "Site requests waiting for approval"
+msgstr "طلبات المواقع المنتظرة للاعتماد"
+
 msgid "Site stock"
 msgstr "مخزون المواقع"
 
@@ -1801,6 +2011,18 @@ msgstr "حدث خطأ ما."
 msgid "Source file"
 msgstr "اسم الملف"
 
+msgid "Spending sheet"
+msgstr "الصرفية"
+
+msgid "Spending sheet changed"
+msgstr "تعديل صرفية"
+
+msgid "Spending sheet created"
+msgstr "إنشاء صرفية"
+
+msgid "Spending sheets"
+msgstr "الصرفيات"
+
 msgid "Spreadsheet exported"
 msgstr "تصدير جدول"
 
@@ -1824,6 +2046,9 @@ msgstr "المخزون يدخل"
 
 msgid "Stock goes OUT"
 msgstr "المخزون يخرج"
+
+msgid "Stock is deducted as soon as the request is approved. Issue voucher numbers are recorded later on the spending sheets page."
+msgstr "يُخصم من المخزون بمجرد اعتماد الطلب. أرقام أذون الصرف تُسجَّل لاحقًا من صفحة الصرفيات."
 
 msgid "Stock issue permit"
 msgstr "إذن صرف مخزني"
@@ -1867,6 +2092,9 @@ msgstr "اسم المورد أو المشروع"
 msgid "Suppliers · Sites · Inventory"
 msgstr "الموردون · المواقع · المخزون"
 
+msgid "Take off the sheet"
+msgstr "إخراج من الصرفية"
+
 msgid "That permit number was just recorded elsewhere."
 msgstr "رقم الإذن هذا سُجّل للتوّ في موضع آخر."
 
@@ -1881,6 +2109,9 @@ msgstr "اسم المستخدم مستخدم بالفعل."
 
 msgid "That version is already published."
 msgstr "هذا الإصدار منشور بالفعل."
+
+msgid "That voucher number was just recorded elsewhere."
+msgstr "رقم الإذن هذا سُجِّل للتو من مكان آخر."
 
 msgid "The .csv file could not be read."
 msgstr "تعذّر قراءة ملف .csv."
@@ -1948,6 +2179,9 @@ msgstr "تم نشر الإصدار."
 msgid "The checksum must be 64 hexadecimal characters."
 msgstr "البصمة يجب أن تكون 64 حرفًا سادس عشريًا."
 
+msgid "The chosen lines have no voucher number."
+msgstr "البنود المحددة ليس لها رقم إذن."
+
 msgid "The code %(sku)s does not exist."
 msgstr "الكود %(sku)s غير موجود."
 
@@ -1984,6 +2218,9 @@ msgstr "الأكواد الداخلية وأكواد أوراكل التابعة
 msgid "The issue permit number is too long."
 msgstr "رقم إذن الصرف أطول من المسموح."
 
+msgid "The issue voucher number is too long."
+msgstr "رقم إذن الصرف أطول من المسموح."
+
 msgid "The issued quantity must be a whole number."
 msgstr "الكمية المصروفة يجب أن تكون رقمًا صحيحًا."
 
@@ -1999,11 +2236,23 @@ msgstr "تم حفظ بيانات كارت الصنف. تم تحديث %(count)s 
 msgid "The limit is"
 msgstr "الحد هو"
 
+msgid "The lines are back on the open list."
+msgstr "رجعت البنود إلى القائمة المفتوحة."
+
+msgid "The lines changed while you were reading them. Reload and try again."
+msgstr "تغيّرت البنود أثناء العمل عليها. أعد تحميل الصفحة وحاول مرة أخرى."
+
 msgid "The list of published builds could not be read just now."
 msgstr "مش قادرين نقرأ قائمة النسخ المنشورة دلوقتي."
 
 msgid "The name printed at the top of every card"
 msgstr "الاسم المطبوع أعلى كل كارت"
+
+msgid "The number printed in the voucher book"
+msgstr "الرقم المطبوع في دفتر إذن الصرف"
+
+msgid "The number printed on the request"
+msgstr "الرقم المطبوع على الطلب"
 
 msgid "The number written on the permit book"
 msgstr "الرقم المكتوب في دفتر إذن الصرف"
@@ -2056,11 +2305,17 @@ msgstr "تعذّر قراءة قائمة الإصدارات حاليًا."
 msgid "The request is withdrawn; no stock moves."
 msgstr "سيتم سحب الطلب؛ لن تُنقل أي كمية."
 
+msgid "The request number is too long."
+msgstr "رقم الطلب أطول من المسموح."
+
 msgid "The request of %(name)s was refused."
 msgstr "تم رفض طلب %(name)s."
 
 msgid "The selected codes are now under internal code %(code)s."
 msgstr "الأكواد المحددة أصبحت تحت الكود الداخلي %(code)s."
+
+msgid "The selected line is not valid."
+msgstr "البند المحدد غير صالح."
 
 msgid "The selected request is not valid."
 msgstr "الطلب المحدد غير صالح."
@@ -2113,6 +2368,9 @@ msgstr "تم حفظ المستخدم."
 msgid "The voucher"
 msgstr "بيانات المستند"
 
+msgid "The voucher number was removed."
+msgstr "تم مسح رقم الإذن."
+
 msgid "The warehouse already released the stock. This records the Oracle copy after the clerk posts the deduction — it does not move stock a second time."
 msgstr "المخزن صرف البضاعة بالفعل. هذا يسجل نسخة الأوراكل بعد ما ينزّل المسئول الخصم — ولا يحرك المخزون مرة ثانية."
 
@@ -2121,6 +2379,9 @@ msgstr "المخزن في وضع الصيانة. حركة المخزون معط�
 
 msgid "The warehouse released these permits; the Oracle clerk still has to post the deduction."
 msgstr "المخزن صرف هذه الإذونات؛ ومسئول الأوراكل لسه عنده ينزّل الخصم من الرصيد."
+
+msgid "These quantities already left the warehouse. Choose what goes on the next draft sheet."
+msgstr "هذه الكميات خرجت من المخزن بالفعل. اختر ما يدخل في الصرفية القادمة."
 
 msgid "This account is closed. Ask a warehouse manager to reopen it."
 msgstr "الحساب ده مغلق. اطلب من مدير المخزن إعادة فتحه."
@@ -2142,6 +2403,12 @@ msgstr "إذن الصرف ده مسجل بالفعل في الأوراكل."
 
 msgid "This number is the account. The app cannot change it."
 msgstr "هذا الرقم هو الحساب نفسه. التطبيق لا يستطيع تغييره."
+
+msgid "This sheet already carries voucher numbers; clear them first."
+msgstr "الصرفية عليها أرقام أذون؛ امسحها أولًا."
+
+msgid "This sheet has no lines."
+msgstr "لا توجد بنود في هذه الصرفية."
 
 msgid "This table compares the article by the total of all its Oracle codes, not by one code at a time."
 msgstr "هذا الجدول يقارن الصنف بمجموع كل أكواده في الأوراكل، وليس بكود واحد في كل مرة."
@@ -2281,6 +2548,24 @@ msgstr "القيمة"
 msgid "Version"
 msgstr "الإصدار"
 
+msgid "Voucher %(number)s is already recorded. If these lines are on the same paper, tick “Add to the existing voucher”."
+msgstr "الإذن %(number)s مسجّل بالفعل. إذا كانت هذه البنود على نفس الورقة فعلّم «إضافة إلى الإذن المسجّل من قبل»."
+
+msgid "Voucher %(number)s is marked as deducted in Oracle."
+msgstr "تم تعليم الإذن %(number)s أنه نُزِّل من الأوراكل."
+
+msgid "Voucher %(number)s is recorded on the chosen lines."
+msgstr "تم تسجيل الإذن %(number)s على البنود المحددة."
+
+msgid "Voucher %(number)s was already posted to Oracle and cannot be changed."
+msgstr "الإذن %(number)s نُزِّل من الأوراكل ولا يمكن تعديله."
+
+msgid "Voucher %(number)s was already posted to Oracle."
+msgstr "الإذن %(number)s نُزِّل من الأوراكل بالفعل."
+
+msgid "Voucher %(number)s was already posted to Oracle; no line can be added to it."
+msgstr "الإذن %(number)s نُزِّل من الأوراكل؛ لا يمكن إضافة بنود إليه."
+
 msgid "Voucher %(permit)s is already booked as %(number)s."
 msgstr "الإذن %(permit)s مسجّل بالفعل على المستند %(number)s."
 
@@ -2290,8 +2575,14 @@ msgstr "الإذن %(permit)s مسجّل بالفعل على توريد %(po)s."
 msgid "Voucher %(permit)s was just booked on another document."
 msgstr "الإذن %(permit)s سُجّل للتوّ على مستند آخر."
 
+msgid "Voucher date"
+msgstr "تاريخ الإذن"
+
 msgid "Voucher number"
 msgstr "رقم المستند"
+
+msgid "Voucher numbers"
+msgstr "أرقام أذون الصرف"
 
 msgid "Voucher recorded on %(number)s."
 msgstr "تم تسجيل الإذن على %(number)s."
@@ -2299,14 +2590,26 @@ msgstr "تم تسجيل الإذن على %(number)s."
 msgid "Voucher recorded on the delivery of %(po)s."
 msgstr "تم تسجيل الإذن على توريد %(po)s."
 
+msgid "Vouchers on this sheet"
+msgstr "أذون هذه الصرفية"
+
+msgid "Vouchers waiting for Oracle"
+msgstr "أذون منتظرة للأوراكل"
+
 msgid "Wait for the lock to expire, or ask the system administrator to reset it."
 msgstr "انتظر انتهاء القفل أو اطلب من مسؤول النظام إعادة ضبطه."
+
+msgid "Waiting for Oracle"
+msgstr "منتظر الأوراكل"
 
 msgid "Waiting for an issue permit"
 msgstr "منتظر إذن صرف"
 
 msgid "Waiting for approval"
 msgstr "في انتظار الاعتماد"
+
+msgid "Waiting for voucher numbers"
+msgstr "منتظرة أرقام الأذون"
 
 msgid "Warehouse"
 msgstr "المخزن"
@@ -2361,6 +2664,9 @@ msgstr "ويب فقط"
 
 msgid "What the sites asked for, and what is still to dispatch"
 msgstr "ما طلبته المواقع وما زال في انتظار الصرف."
+
+msgid "What the sites asked for; approve each request against its paper on the issues page."
+msgstr "ما طلبته المواقع؛ اعتمد كل طلب على ورقته من صفحة الصرف."
 
 msgid "What the sites asked for; the spending page turns the requests into issue permits."
 msgstr "اللي طلبته المواقع؛ وصفحة الصرفيات هي اللي بتحوّل الطلبات لإذون صرف."
