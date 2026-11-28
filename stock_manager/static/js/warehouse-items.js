@@ -45,7 +45,6 @@
                 return;
             }
             const data = {
-                sku: sku,
                 [fieldName]: value
             };
             $.ajax({
@@ -191,14 +190,26 @@
     $(document).on("blur", ".wh_editable-field", function () {
         const sku = $(this).data("sku");
         const fieldName = $(this).data("field");
-        const newValue = $(this).val();
+        let newValue = $(this).val();
         if (fieldName === 'xfer_qnt') {
             if (Number.isInteger(parseInt(newValue), 10)) {
                 newValue > 0 ? transferItem(sku, newValue) : console.log(W.tr('Enter more than 0!'));
             }
-        } else {
-            updateItem(1, sku, fieldName, newValue);
+            return;
         }
+        if (fieldName === 'sku') {
+            newValue = String(newValue || '').trim();
+            if (!newValue) {
+                $(this).val(sku);
+                return;
+            }
+            if (newValue === String(sku)) {
+                $(this).val(newValue);
+                return;
+            }
+            $(this).val(newValue);
+        }
+        updateItem(1, sku, fieldName, newValue);
     });
 
     $(document).on("click", ".delete-item-btn", function () {

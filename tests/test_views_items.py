@@ -2,7 +2,15 @@ from decimal import Decimal
 
 import pytest
 
-from stock_manager.models import Item
+from stock_manager import documents as service
+from stock_manager.models import (
+    GoodsReceipt,
+    GoodsReceiptLine,
+    Item,
+    ShopItem,
+    StockDocument,
+    TransferItem,
+)
 
 pytestmark = pytest.mark.django_db
 
@@ -170,6 +178,94 @@ class TestItemUpdate:
             format="json",
         )
         assert response.status_code == 400
+
+    def test_manager_can_change_the_oracle_code(self, manager_client, make_item):
+        make_item(sku="OLD", description="Widget")
+
+        response = manager_client.patch(
+            "/api/items/OLD/", {"sku": "NEW"}, format="json"
+        )
+
+        assert response.status_code == 200
+        assert response.json()["sku"] == "NEW"
+        assert not Item.objects.filter(pk="OLD").exists()
+        assert Item.objects.get(pk="NEW").description == "Widget"
+        assert manager_client.get("/api/items/OLD/").status_code == 404
+        assert manager_client.get("/api/items/NEW/").status_code == 200
+
+    def test_a_code_change_moves_live_references_but_keeps_line_snapshots(
+        self, manager_client, manager, shop_user, make_item
+    ):
+        item = make_item(sku="OLD", quantity=10)
+        document = service.create_document(
+            doc_type=StockDocument.SITE_ISSUE,
+            lines=[{"sku": "OLD", "quantity": 1}],
+            site=shop_user,
+            created_by=manager,
+        )
+        shop_item, _ = ShopItem.objects.update_or_create(
+            shop_user=shop_user, item=item, defaults={"quantity": 2}
+        )
+        transfer = TransferItem.objects.create(
+            shop_user=shop_user, item=item, quantity=1
+        )
+        receipt = GoodsReceipt.objects.create(
+            po_number="PO-1", received_by=manager
+        )
+        receipt_line = GoodsReceiptLine.objects.create(
+            receipt=receipt, item=item, sku="OLD", quantity=1
+        )
+
+        response = manager_client.patch(
+            "/api/items/OLD/", {"sku": "NEW"}, format="json"
+        )
+        assert response.status_code == 200
+
+        line = document.lines.get()
+        shop_item.refresh_from_db()
+        transfer.refresh_from_db()
+        receipt_line.refresh_from_db()
+        assert line.item_id == "NEW"
+        assert line.sku == "OLD"
+        assert shop_item.item_id == "NEW"
+        assert transfer.item_id == "NEW"
+        assert receipt_line.item_id == "NEW"
+        assert receipt_line.sku == "OLD"
+
+    def test_a_duplicate_oracle_code_is_refused(self, manager_client, make_item):
+        make_item(sku="OLD")
+        make_item(sku="TAKEN")
+
+        response = manager_client.patch(
+            "/api/items/OLD/", {"sku": "TAKEN"}, format="json"
+        )
+
+        assert response.status_code == 400
+        assert "sku" in response.json()
+        assert Item.objects.filter(pk="OLD").exists()
+        assert Item.objects.filter(pk="TAKEN").exists()
+
+    def test_a_blank_oracle_code_is_refused(self, manager_client, make_item):
+        make_item(sku="OLD")
+
+        response = manager_client.patch(
+            "/api/items/OLD/", {"sku": "   "}, format="json"
+        )
+
+        assert response.status_code == 400
+        assert Item.objects.filter(pk="OLD").exists()
+
+    def test_a_non_manager_cannot_change_the_oracle_code(
+        self, shop_client, make_item
+    ):
+        make_item(sku="OLD")
+
+        response = shop_client.patch(
+            "/api/items/OLD/", {"sku": "NEW"}, format="json"
+        )
+
+        assert response.status_code == 403
+        assert Item.objects.filter(pk="OLD").exists()
 
 
 class TestItemDestroy:

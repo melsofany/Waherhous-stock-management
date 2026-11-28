@@ -5,6 +5,7 @@ List, search, grouping, create, update and soft delete of items.
 
 
 from django.core.paginator import Paginator
+from django.db import IntegrityError, transaction
 from django.db.models import Count, OuterRef, Q, Subquery, Sum
 from django.db.models.functions import Coalesce
 from rest_framework import status, viewsets
@@ -16,13 +17,43 @@ from rest_framework.response import (
 from .. import audit
 from ..models import (
     AuditEvent,
+    GoodsReceiptLine,
     Item,
     ShopItem,
+    StockDocumentLine,
+    TransferItem,
 )
 from ..ordering import apply_ordering
 from ..pagination import CustomPagination
 from ..permissions import is_warehouse_manager
 from ..serializers import ItemSerializer, ShopItemSerializer
+
+
+def _rename_oracle_code(item, new_sku):
+    """Move every reference before removing the old primary key.
+
+    The document and receipt lines keep their ``sku`` snapshot: a past line
+    still says which Oracle code was written on its paper. Only the catalogue
+    identity and its live references move.
+    """
+    old_sku = item.sku
+    replacement = Item.objects.create(
+        sku=new_sku,
+        description=item.description,
+        retail_price=item.retail_price,
+        quantity=item.quantity,
+        unit=item.unit,
+        sub_inventory=item.sub_inventory,
+        arabic_name=item.arabic_name,
+        internal_group_id=item.internal_group_id,
+        is_active=item.is_active,
+    )
+    StockDocumentLine.objects.filter(item_id=old_sku).update(item_id=new_sku)
+    GoodsReceiptLine.objects.filter(item_id=old_sku).update(item_id=new_sku)
+    ShopItem.objects.filter(item_id=old_sku).update(item_id=new_sku)
+    TransferItem.objects.filter(item_id=old_sku).update(item_id=new_sku)
+    item.delete()
+    return replacement
 
 
 # API View
@@ -166,34 +197,46 @@ class ItemViewSet(viewsets.ModelViewSet):
             return Response(
                 {"detail": "Permission denied."}, status=status.HTTP_403_FORBIDDEN
             )
-        sku = request.data.get("sku")
+        old_sku = kwargs.get("sku")
         try:
-            item = Item.objects.get(sku=sku)
-            if not item.is_active:
-                serializer = ItemSerializer(item, data=request.data, partial=True)
-                if serializer.is_valid():
-                    serializer.save(is_active=True)
-                    return Response(serializer.data, status=status.HTTP_200_OK)
-                else:
-                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            item = Item.objects.get(sku=old_sku)
         except Item.DoesNotExist:
             return Response(
                 {"error": "Item not found."}, status=status.HTTP_404_NOT_FOUND
             )
+
         serializer = ItemSerializer(item, data=request.data, partial=True)
-        if serializer.is_valid():
-            changed = sorted(serializer.validated_data.keys())
-            serializer.save()
-            audit.record(
-                user=request.user,
-                action=AuditEvent.ITEM_UPDATED,
-                entity="item",
-                entity_id=item.sku,
-                description=f"{item.sku} · " + ", ".join(changed),
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
+        if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        changed = sorted(serializer.validated_data.keys())
+        new_sku = serializer.validated_data.get("sku", item.sku)
+        try:
+            with transaction.atomic():
+                if new_sku != item.sku:
+                    item = _rename_oracle_code(item, new_sku)
+                for field, value in serializer.validated_data.items():
+                    if field != "sku":
+                        setattr(item, field, value)
+                if not item.is_active:
+                    item.is_active = True
+                    if "is_active" not in changed:
+                        changed.append("is_active")
+                item.save()
+        except IntegrityError:
+            return Response(
+                {"sku": ["An item with this Oracle code already exists."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        audit.record(
+            user=request.user,
+            action=AuditEvent.ITEM_UPDATED,
+            entity="item",
+            entity_id=item.sku,
+            description=f"{old_sku} → {item.sku} · " + ", ".join(sorted(changed)),
+        )
+        return Response(ItemSerializer(item).data, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         if not is_warehouse_manager(request.user):

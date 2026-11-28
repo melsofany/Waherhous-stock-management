@@ -129,11 +129,14 @@
                             `<input type="text" value="${W.escapeHtml(item.description)}" class="sap-input wh_editable-field" data-sku="${safeSku}" data-field="description">` :
                             W.escapeHtml(item.description);
                         const unitSuffix = item.unit ? `<span class="sap-muted"> · ${W.escapeHtml(item.unit)}</span>` : '';
+                        const skuField = isManager
+                            ? `<input type="text" value="${safeSku}" class="sap-input wh_editable-field wh_sku-field" data-sku="${safeSku}" data-field="sku" dir="ltr" autocomplete="off">`
+                            : safeSku;
                         const transferQuantityField = `<input type="number" min="0" class="sap-input xferQntField wh_editable-field" ${window.editLock ? 'disabled' : ''} value="" placeholder="${W.tr('How many?')}" data-sku="${safeSku}" data-field="xfer_qnt">`;
                         row = `
 <tr class="${groupedMode && groupSpans[index] ? 'sap-table__groupstart' : ''}">
     ${internalCell}
-    <td class="sap-table__sku">${safeSku}</td>
+    <td class="sap-table__sku">${skuField}</td>
     <td>${descriptionField}${unitSuffix}</td>
     <td class="sap-table__num">${retailPriceField}</td>
     <td class="sap-table__num">${quantityField}</td>

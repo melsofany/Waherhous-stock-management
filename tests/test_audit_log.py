@@ -161,6 +161,18 @@ class TestCatalogueEvents:
         event = events(AuditEvent.ITEM_UPDATED).get()
         assert "description" in event.description
 
+    def test_an_oracle_code_change_names_both_codes(self, manager_client, make_item):
+        make_item(sku="OLD")
+
+        response = manager_client.patch(
+            "/api/items/OLD/", {"sku": "NEW"}, format="json"
+        )
+        assert response.status_code == 200
+
+        event = events(AuditEvent.ITEM_UPDATED).get()
+        assert event.entity_id == "NEW"
+        assert "OLD → NEW" in event.description
+
     def test_removing_an_item_is_recorded(self, manager_client, make_item):
         make_item(sku="SKU-1")
 

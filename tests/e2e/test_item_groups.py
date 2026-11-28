@@ -25,8 +25,12 @@ def test_the_default_stock_table_merges_the_rows_of_one_internal_code(
     expect(merged).to_have_count(2)
     expect(merged.first).to_have_text(group.code)
     expect(merged.nth(1)).to_have_text("12")
-    expect(page.locator("#itemTable1")).to_contain_text("ORACLE-A")
-    expect(page.locator("#itemTable1")).to_contain_text("ORACLE-B")
+    expect(
+        page.locator('#itemTable1 input[data-sku="ORACLE-A"][data-field="sku"]')
+    ).to_be_visible()
+    expect(
+        page.locator('#itemTable1 input[data-sku="ORACLE-B"][data-field="sku"]')
+    ).to_be_visible()
 
 
 def test_the_internal_codes_page_shows_the_group_and_its_total(
