@@ -11,6 +11,7 @@ x`` keeps working. Nothing here holds logic.
 - ``document_pages`` the stock document pages and the helpers they share
 - ``document_api``   the stock documents API
 - ``reconcile``      missing paperwork: the reconciliation page and its export
+- ``oracle``         the daily Oracle sheet and the balance comparison
 - ``labels``         barcodes, the label picker and the item cards
 - ``spreadsheet``    Excel export and import
 - ``config``         app configuration and the edit lock
@@ -29,6 +30,7 @@ from .issues import (
 from .items import ItemViewSet, ShopItemViewSet
 from .labels import item_barcode, print_item_cards, print_labels
 from .receipts import list_receipts, receipts_page, receive_from_supplier
+from .oracle import oracle_balance_page
 from .reconcile import (
     reconciliation_export,
     reconciliation_page,
@@ -73,6 +75,7 @@ __all__ = [
     "item_barcode",
     "list_receipts",
     "list_sites",
+    "oracle_balance_page",
     "print_item_cards",
     "print_labels",
     "receipts_page",

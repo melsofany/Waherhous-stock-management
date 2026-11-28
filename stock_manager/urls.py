@@ -30,6 +30,7 @@ from .views import (
     document_photo,
     issues_report_page,
     issue_permits_page,
+    oracle_balance_page,
     reconciliation_page,
     reconciliation_set_permit,
     reconciliation_set_receipt_permit,
@@ -141,6 +142,8 @@ urlpatterns = [
     path("audit/", audit_page, name="audit_page"),
     # One page per job: the warehouse, additions, issues, and the issues report.
     path("stock/", stock_page, name="stock_page"),
+    # The daily Oracle export, matched to the warehouse by Oracle code.
+    path("oracle/", oracle_balance_page, name="oracle_balance_page"),
     path("receipts/", receipts_page, name="receipts_page"),
     path("issues/", issues_page, name="issues_page"),
     path("issues/report/", issues_report_page, name="issues_report"),

@@ -130,6 +130,9 @@ msgstr "كل الأسباب"
 msgid "All sites"
 msgstr "كل المواقع"
 
+msgid "All statuses"
+msgstr "كل الحالات"
+
 msgid "Amount"
 msgstr "المبلغ"
 
@@ -211,6 +214,9 @@ msgstr "العودة لتسجيل الدخول"
 msgid "Back to the report"
 msgstr "رجوع إلى التقرير"
 
+msgid "Balance date"
+msgstr "تاريخ الرصيد"
+
 msgid "Barcode"
 msgstr "الباركود"
 
@@ -274,6 +280,9 @@ msgstr "اختر كود أوراكل."
 msgid "Choose at least one Oracle code."
 msgstr "اختر كود أوراكل واحدًا على الأقل."
 
+msgid "Choose the Oracle sheet first."
+msgstr "اختر شيت الأوراكل أولًا."
+
 msgid "Choose the items"
 msgstr "اختر الأصناف"
 
@@ -312,6 +321,9 @@ msgstr "مغلق"
 
 msgid "Code"
 msgstr "الكود"
+
+msgid "Code or description"
+msgstr "الكود أو الوصف"
 
 msgid "Codes without an internal code"
 msgstr "أكواد بلا كود داخلي"
@@ -448,6 +460,9 @@ msgstr "الوصف (للصنف الجديد)"
 msgid "Details"
 msgstr "التفاصيل"
 
+msgid "Difference"
+msgstr "الفرق"
+
 msgid "Difference (permits − issue)"
 msgstr "الفرق (الأذون − الصرفية)"
 
@@ -520,6 +535,9 @@ msgstr "تنزيل بيانات المخزون"
 msgid "Download the current warehouse and site stock."
 msgstr "نزّل بيانات المخزن والمواقع الحالية."
 
+msgid "Duplicate Oracle rows merged into their codes:"
+msgstr "صفوف أوراكل مكررة تم جمعها في أكوادها:"
+
 msgid "Each receipt line must be an item and a quantity."
 msgstr "كل سطر استلام يجب أن يحتوي على صنف وكمية."
 
@@ -543,6 +561,9 @@ msgstr "أدخل اسم المستخدم."
 
 msgid "Enter more than 0!"
 msgstr "أدخل قيمة أكبر من صفر!"
+
+msgid "Enter the balance date as YYYY-MM-DD."
+msgstr "أدخل تاريخ الرصيد بصيغة YYYY-MM-DD."
 
 msgid "Enter the build number (a whole number that only grows)."
 msgstr "أدخل رقم البناء (رقم صحيح يزيد فقط)."
@@ -679,6 +700,9 @@ msgstr "أُنشئ الكود الداخلي %(code)s للأكواد المحد�
 msgid "Internal codes"
 msgstr "الأكواد الداخلية"
 
+msgid "Internal codes covering several Oracle codes"
+msgstr "أكواد داخلية تجمع أكثر من كود أوراكل"
+
 msgid "Internal item codes"
 msgstr "أكواد الأصناف الداخلية"
 
@@ -802,6 +826,9 @@ msgstr "الاسم الأخير"
 msgid "Last sign-in"
 msgstr "آخر دخول"
 
+msgid "Latest Oracle sheet"
+msgstr "آخر شيت أوراكل"
+
 msgid "Leave a row blank to ignore it."
 msgstr "اترك السطر فارغًا لتجاهله."
 
@@ -874,6 +901,9 @@ msgstr "إلزامي"
 msgid "Mandatory: the app blocks use until this build is installed."
 msgstr "إلزامي: يمنع التطبيق الاستخدام حتى تثبيت هذا البناء."
 
+msgid "Matched"
+msgstr "مطابق"
+
 msgid "Menu"
 msgstr "القائمة"
 
@@ -915,6 +945,9 @@ msgstr "التالي"
 
 msgid "No Oracle code under this internal code."
 msgstr "لا يوجد كود أوراكل تحت هذا الكود الداخلي."
+
+msgid "No Oracle sheet has been uploaded yet."
+msgstr "لم يتم رفع شيت أوراكل بعد."
 
 msgid "No accounts yet."
 msgstr "لا توجد حسابات بعد."
@@ -967,6 +1000,9 @@ msgstr "لا توجد سجلات"
 msgid "No release notes."
 msgstr "لا توجد ملاحظات للإصدار."
 
+msgid "No rows match the filters."
+msgstr "لا توجد صفوف مطابقة للفلاتر."
+
 msgid "No site requests are waiting"
 msgstr "لا توجد طلبات مواقع في الانتظار."
 
@@ -984,6 +1020,12 @@ msgstr "لا توجد أصناف بالمخزن"
 
 msgid "Nobody sends a file or a link: an installed app asks this server for the newest build when it opens, and every six hours while it is closed. A new build is offered to the phone, downloaded and installed after one confirmation."
 msgstr "مش حد بيبعت ملف ولا لينك: التطبيق المثبَّت بيسأل السيرفر عن أحدث نسخة لما يتفتح، وكل ست ساعات وهو مقفول. النسخة الجديدة تظهر على الموبايل، وتنزّل وتتثبّت بعد تأكيد واحد."
+
+msgid "Not in the Oracle sheet"
+msgstr "غير موجود في شيت الأوراكل"
+
+msgid "Not in the warehouse"
+msgstr "غير موجود في المخزن"
 
 msgid "Not needed while the list above is readable. Use it to pin a build that is not on GitHub yet, or to keep the phones on an older one."
 msgstr "مش مطلوب طالما القائمة فوق مقروءة. استخدمه لتثبيت بناء لسه مش على GitHub، أو لتثبيت الموبايلات على بناء أقدم."
@@ -1021,6 +1063,9 @@ msgstr "الصرفية الواحدة قد تُسدد بأكثر من إذن ص�
 msgid "One issue can be paid against several permits."
 msgstr "الصرفية الواحدة قد تُسدد بعدة أذون صرف."
 
+msgid "One row per Oracle code."
+msgstr "صف واحد لكل كود أوراكل."
+
 msgid "One row per line, not per document."
 msgstr "سطر لكل بند، لا لكل مستند."
 
@@ -1041,6 +1086,9 @@ msgstr "مدير المخزن وحده هو من ينشر إصدارًا."
 
 msgid "Only a warehouse manager can record company permits."
 msgstr "مدير المخزن وحده يسجّل أذون الصرف."
+
+msgid "Only a warehouse manager can upload the Oracle sheet."
+msgstr "مدير المخزن فقط يمكنه رفع شيت الأوراكل."
 
 msgid "Open"
 msgstr "فتح"
@@ -1063,6 +1111,12 @@ msgstr "العمليات"
 msgid "Optional"
 msgstr "اختياري"
 
+msgid "Oracle"
+msgstr "الأوراكل"
+
+msgid "Oracle balance"
+msgstr "رصيد الأوراكل"
+
 msgid "Oracle code"
 msgstr "كود أوراكل"
 
@@ -1074,6 +1128,15 @@ msgstr "أكواد أوراكل"
 
 msgid "Oracle codes grouped under an internal code"
 msgstr "أكواد أوراكل مجمّعة تحت كود داخلي"
+
+msgid "Oracle quantity"
+msgstr "كمية الأوراكل"
+
+msgid "Oracle sheet (.xlsx or .csv)"
+msgstr "شيت الأوراكل (.xlsx أو .csv)"
+
+msgid "Oracle value"
+msgstr "قيمة الأوراكل"
 
 msgid "Overview"
 msgstr "نظرة عامة"
@@ -1216,6 +1279,9 @@ msgstr "الكمية"
 msgid "Quantity"
 msgstr "الكمية"
 
+msgid "Quantity differs"
+msgstr "الكمية مختلفة"
+
 msgid "Quantity on hand"
 msgstr "الكمية المتاحة"
 
@@ -1248,6 +1314,9 @@ msgstr "الاستلام (أمر شراء)"
 
 msgid "Receiving is disabled while the warehouse is being maintained."
 msgstr "الاستلام معطّل أثناء أعمال الصيانة على المخزن."
+
+msgid "Recent Oracle sheets"
+msgstr "شيتات أوراكل الأخيرة"
 
 msgid "Recent additions"
 msgstr "أحدث الإضافات"
@@ -1329,6 +1398,15 @@ msgstr "مراجعة"
 
 msgid "Role"
 msgstr "الدور"
+
+msgid "Row %(row)s: %(field)s is empty."
+msgstr "الصف %(row)s: %(field)s فارغ."
+
+msgid "Row %(row)s: %(field)s is not a number: %(value)s."
+msgstr "الصف %(row)s: %(field)s ليس رقمًا: %(value)s."
+
+msgid "Row %(row)s: the Oracle code is longer than %(max)s characters."
+msgstr "الصف %(row)s: كود الأوراكل أطول من %(max)s حرفًا."
 
 msgid "Save"
 msgstr "حفظ"
@@ -1418,7 +1496,7 @@ msgid "Shop transfers are paused"
 msgstr "نقل المخزون للمواقع متوقف"
 
 msgid "Show"
-msgstr "إظهار"
+msgstr "عرض"
 
 msgid "Showing"
 msgstr "عرض"
@@ -1522,6 +1600,9 @@ msgstr "بعض الأصناف بلا كود داخلي. شغّل `python manage.
 msgid "Something went wrong."
 msgstr "حدث خطأ ما."
 
+msgid "Source file"
+msgstr "اسم الملف"
+
 msgid "Spreadsheet exported"
 msgstr "تصدير جدول"
 
@@ -1600,6 +1681,21 @@ msgstr "اسم المستخدم مستخدم بالفعل."
 msgid "That version is already published."
 msgstr "هذا الإصدار منشور بالفعل."
 
+msgid "The .csv file could not be read."
+msgstr "تعذّر قراءة ملف .csv."
+
+msgid "The .xlsx file could not be read."
+msgstr "تعذّر قراءة ملف .xlsx."
+
+msgid "The Oracle sheet is uploaded by a warehouse manager."
+msgstr "شيت الأوراكل يرفعه مدير المخزن."
+
+msgid "The Oracle sheet uploaded for the day, compared with the warehouse by Oracle code."
+msgstr "شيت الأوراكل المرفوع لليوم، مقارنًا برصيد المخزن عن طريق كود الأوراكل."
+
+msgid "The Oracle sheet was uploaded: %(rows)s codes for %(date)s."
+msgstr "تم رفع شيت الأوراكل: %(rows)s كود بتاريخ %(date)s."
+
 msgid "The account may sign in"
 msgstr "الحساب مسموح له بتسجيل الدخول"
 
@@ -1660,6 +1756,9 @@ msgstr "تم مسح الجهاز من حساب %(name)s. يقدر يدخل من 
 msgid "The download address must start with https:// or with /."
 msgstr "يجب أن يبدأ عنوان التنزيل بـ https:// أو بـ /."
 
+msgid "The file is larger than 10 MB."
+msgstr "الملف أكبر من 10 ميجابايت."
+
 msgid "The file must match the exported layout."
 msgstr "يجب أن يطابق الملف تنسيق التصدير."
 
@@ -1686,6 +1785,9 @@ msgstr "الحد هو"
 
 msgid "The list of published builds could not be read just now."
 msgstr "مش قادرين نقرأ قائمة النسخ المنشورة دلوقتي."
+
+msgid "The old .xls format is not supported. Save the sheet as .xlsx or .csv."
+msgstr "صيغة .xls القديمة غير مدعومة. احفظ الشيت بصيغة .xlsx أو .csv."
 
 msgid "The password could not be changed."
 msgstr "لم يتم تغيير كلمة المرور."
@@ -1747,6 +1849,18 @@ msgstr "السيرفر مش قادر يوصل GitHub. الموبايلات بت�
 msgid "The server reads the newest build from %(repo)s every ten minutes. Publishing a release there is the whole step: nothing has to be typed on this page, and every phone is offered the new build on its next start."
 msgstr "السيرفر يقرأ آخر بناء من %(repo)s كل عشر دقائق. نشر إصدار جديد هناك هو كل المطلوب: مفيش حاجة تتكتب في الصفحة دي، وكل موبايل بيتعرض عليه البناء الجديد عند أول تشغيل."
 
+msgid "The sheet has no Oracle codes."
+msgstr "الشيت لا يحتوي على أكواد أوراكل."
+
+msgid "The sheet has too many rows. The limit is %(max)s."
+msgstr "الشيت يحتوي على صفوف أكثر من الحد. الحد %(max)s."
+
+msgid "The sheet must contain a CODE column and an ON_HAND (or QUANTITY) column."
+msgstr "يجب أن يحتوي الشيت على عمود CODE وعمود ON_HAND (أو QUANTITY)."
+
+msgid "The sheet must have the CODE and ON_HAND columns. Duplicate Oracle codes are summed into one line, and every upload is kept as a daily snapshot."
+msgstr "يجب أن يحتوي الشيت على عمودي CODE وON_HAND. الأكواد المكررة تُجمع في سطر واحد، وكل رفع يُحفظ كنسخة يومية."
+
 msgid "The sign-in lockout of %(name)s was cleared. They can sign in now."
 msgstr "اتفتح قفل الدخول للحساب %(name)s. يقدر يدخل دلوقتي."
 
@@ -1785,6 +1899,9 @@ msgstr "هذا آخر مدير مخزن."
 
 msgid "This number is the account. The app cannot change it."
 msgstr "هذا الرقم هو الحساب نفسه. التطبيق لا يستطيع تغييره."
+
+msgid "This table compares the article by the total of all its Oracle codes, not by one code at a time."
+msgstr "هذا الجدول يقارن الصنف بمجموع كل أكواده في الأوراكل، وليس بكود واحد في كل مرة."
 
 msgid "Tick the codes that name the same item, then put them under one internal code."
 msgstr "علّم الأكواد التي تسمّي الصنف نفسه، ثم ضعها تحت كود داخلي واحد."
@@ -1855,11 +1972,29 @@ msgstr "حدّث الوصف والسعر وكمية المخزن."
 msgid "Updated"
 msgstr "آخر تحديث"
 
+msgid "Upload an .xlsx or .csv file."
+msgstr "ارفع ملف .xlsx أو .csv."
+
+msgid "Upload and compare"
+msgstr "ارفع وقارن"
+
 msgid "Upload anyway"
 msgstr "ارفع على أي حال"
 
 msgid "Upload stock data"
 msgstr "رفع بيانات المخزون"
+
+msgid "Upload the Oracle sheet"
+msgstr "رفع شيت الأوراكل"
+
+msgid "Upload the daily export above to start the comparison."
+msgstr "ارفع تصدير اليوم من الأعلى لبدء المقارنة."
+
+msgid "Uploaded at"
+msgstr "وقت الرفع"
+
+msgid "Uploaded by"
+msgstr "رفعه"
 
 msgid "Use your new password the next time you sign in."
 msgstr "استخدم كلمة المرور الجديدة في المرة القادمة."
@@ -1923,6 +2058,9 @@ msgstr "في انتظار الاعتماد"
 
 msgid "Warehouse"
 msgstr "المخزن"
+
+msgid "Warehouse and Oracle"
+msgstr "المخزن والأوراكل"
 
 msgid "Warehouse and site inventory at a glance"
 msgstr "مخزون المخزن والمواقع في نظرة واحدة"
@@ -2038,6 +2176,9 @@ msgstr "طلبات نقل معلّقة"
 msgid "permits cleared"
 msgstr "أُزيلت الأذون"
 
+msgid "quantity"
+msgstr "الكمية"
+
 msgid "selected"
 msgstr "محدد"
 
@@ -2046,6 +2187,12 @@ msgstr "سطر مخزون موقع"
 
 msgid "site stock lines"
 msgstr "سطور مخزون المواقع"
+
+msgid "unit cost"
+msgstr "تكلفة الوحدة"
+
+msgid "value"
+msgstr "القيمة"
 
 msgid "warehouse item"
 msgstr "صنف بالمخزن"

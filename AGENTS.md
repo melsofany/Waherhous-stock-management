@@ -53,7 +53,7 @@ suggestions (`COMMON_UNITS` in `documents.py`). Rules that the tests pin:
 
 ## Tests
 
-`python -m pytest -q tests/` — 837 pass, 3 skip (a user-supplied, gitignored
+`python -m pytest -q tests/` — 859 pass, 3 skip (a user-supplied, gitignored
 `spreadsheet_convert.py`). `pip install Pillow` and
 `python -m playwright install chromium` are needed for the full run; the e2e
 suites skip themselves when Chromium is missing.
@@ -69,7 +69,7 @@ open a PR.
 ## One menu, five pages (users, Android app, audit log, label picker)
 
 The sidebar used to differ per shell: the dashboard listed four pages, every
-other page listed five, and the two sets overlapped. It is now **nine entries
+other page listed five, and the two sets overlapped. It is now **ten entries
 from one partial** (`templates/partials/sidenav.html`), included by both shells,
 with the current entry chosen by URL name in `stock_manager/context.py`
 (`NAV_SECTIONS`). A new page means one entry in `NAV_SECTIONS` and one line in
@@ -95,7 +95,7 @@ the partial — never a copy per shell.
   sign-in, document decisions, password changes (including a self-service one,
   via `AuditedPasswordChangeView`), and a setting change written as
   «Edit lock: on/off» rather than `edit_lock=False`.
-- `python -m pytest -q` — 837 pass, 3 skip.
+- `python -m pytest -q` — 859 pass, 3 skip.
 
 ## A deploy onto a database older than the migrations (the "already exists" build)
 
@@ -227,6 +227,53 @@ than a restyled one.
   Data import / export card and is revealed by the same role tailoring.
 - **The sheet prints A4 portrait**: fit-to-width, rows 4 repeated, header row
   frozen, filter across the table.
+
+## رصيد الأوراكل: the daily Oracle sheet, matched by Oracle code
+
+The operator uploads Oracle's stock export every day and compares it with the
+warehouse. Oracle code is the only join key: descriptions change, codes do not.
+
+- **The page is `/oracle/`** (`oracle_balance_page`, menu entry
+  ``oracle_balance`` after Items). Everyone may read it; only a warehouse
+  manager sees the upload form and may POST a sheet.
+- **A snapshot per upload, never an overwrite.**
+  ``OracleSnapshot`` stores the balance date, uploader, source file name,
+  row/duplicate counts and the Oracle value; ``OracleBalanceLine`` stores each
+  code. The page reads the latest snapshot (date, then upload time), so a
+  corrected upload for the same day wins while history stays available.
+- **The parser accepts `.xlsx` and `.csv`** (`.xls` is refused with a sentence).
+  It finds the header row in the first 20 rows, so a blank/title row above the
+  columns is harmless. Required columns are ``CODE`` and ``ON_HAND`` (aliases
+  ``QUANTITY``/``QTY``); the other sheet columns (``DESCRIPTION``, ``UOM``,
+  ``SUB_INV``, ``UNIT_COST``, ``VALUE``, ``ORGANIZATION_NAME``) are optional.
+- **Arabic numbers are data.** `961٫164` is `961.164`, `1,250.50` is 1250.50,
+  and a decimal comma `1250,50` is 1250.50; a malformed number names its row and
+  is refused before anything is written. This is the same trap the permit
+  amounts hit — stripping every comma silently inflates the value.
+- **Duplicate codes are summed, not rejected.** A code can appear once per
+  sub-inventory; those rows are one article. The snapshot records how many rows
+  were merged, and the page shows that count.
+- **An internal code is compared as a whole, not only code by code.** The
+  per-code table still shows which Oracle code moved, and an internal-code card
+  sums every member code of a group (`grouped_rows`). A split such as A=5 and
+  B=5 in Oracle against A=0 and B=10 in the warehouse reads as a matched
+  article even though the two per-code rows differ — that is the reason the
+  internal code exists. Groups of one code are not repeated in that card.
+- **Both missing directions are visible.** The comparison has four statuses:
+  matched, quantity differs, in Oracle but not the warehouse, and in the
+  warehouse but not Oracle. A warehouse item with zero quantity is not listed
+  (there is nothing to reconcile); an Oracle line is always listed.
+- **Quantities are compared as Decimals, not floats**, and the table shows the
+  warehouse, Oracle, and the signed difference (`warehouse - Oracle`) with
+  ``dir="ltr"`` so `961.164` cannot re-order in an RTL page. Mixed units are
+  never summed into one quantity tile; the money total does have meaning and is
+  shown on the snapshot card.
+- **Uploads are audited** as `DATA_IMPORTED` / `entity="oracle_balance"`, and
+  bad files create no snapshot.
+- Tests: `tests/test_oracle_balance.py` (20) covers the real sheet's Arabic
+  decimals, headers, duplicate summing, both missing directions, filters,
+  manager-only upload, audit and Arabic rendering. The full suite is
+  **859 passed, 3 skipped**.
 
 ## Missing paperwork: one page that is also the place you fix it
 
@@ -739,4 +786,4 @@ item: every Oracle code keeps its own row, quantity, movements and documents.
   the far edge.
 - Tests: `tests/test_item_codes.py` (18), `tests/test_barcodes.py` (17) + the
   migration cases in `tests/test_migrations_adopt_existing_db.py` (5). Full run:
-  **837 passed, 3 skipped** (Chromium installed, so the E2E suites ran).
+  **859 passed, 3 skipped** (Chromium installed, so the E2E suites ran).

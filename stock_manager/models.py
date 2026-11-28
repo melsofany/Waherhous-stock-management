@@ -5,6 +5,7 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from django.core.validators import MinValueValidator
 from django.db.models import IntegerField
 from django.db.models.functions import Cast
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _lazy
 
 from .phones import canonical_phone
@@ -623,6 +624,80 @@ class AuditEvent(models.Model):
     @property
     def action_label(self):
         return _lazy(self.get_action_display())
+
+
+class OracleSnapshot(models.Model):
+    """One uploaded Oracle stock sheet, kept as a daily snapshot.
+
+    The file itself is not stored: Render wipes the disk on every deploy. The
+    rows are enough to compare the warehouse against Oracle, and keeping the
+    snapshot lets a manager see what the balance was on the day it arrived.
+    """
+
+    balance_date = models.DateField(default=timezone.localdate, db_index=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    uploaded_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="oracle_snapshots",
+    )
+    source_name = models.CharField(max_length=200, blank=True, default="")
+    row_count = models.IntegerField(default=0)
+    duplicate_codes = models.IntegerField(default=0)
+    total_quantity = models.DecimalField(
+        max_digits=20, decimal_places=6, default=Decimal("0")
+    )
+    total_value = models.DecimalField(
+        max_digits=24, decimal_places=2, default=Decimal("0.00")
+    )
+
+    class Meta:
+        ordering = ("-balance_date", "-uploaded_at", "-id")
+        verbose_name = "Oracle balance snapshot"
+        verbose_name_plural = "Oracle balance snapshots"
+
+    def __str__(self):
+        return f"{self.balance_date} · {self.source_name or 'Oracle sheet'}"
+
+    @classmethod
+    def latest(cls):
+        return cls.objects.select_related("uploaded_by").first()
+
+
+class OracleBalanceLine(models.Model):
+    """One Oracle code in a snapshot, with the figures the sheet carries."""
+
+    snapshot = models.ForeignKey(
+        OracleSnapshot, on_delete=models.CASCADE, related_name="lines"
+    )
+    oracle_code = models.CharField(max_length=100, db_index=True)
+    organization_name = models.CharField(max_length=200, blank=True, default="")
+    description = models.CharField(max_length=500, blank=True, default="")
+    unit = models.CharField(max_length=20, blank=True, default="")
+    quantity = models.DecimalField(max_digits=20, decimal_places=6)
+    sub_inventory = models.CharField(max_length=120, blank=True, default="")
+    unit_cost = models.DecimalField(
+        max_digits=20, decimal_places=6, default=Decimal("0")
+    )
+    value = models.DecimalField(
+        max_digits=24, decimal_places=2, default=Decimal("0.00")
+    )
+
+    class Meta:
+        ordering = ("oracle_code",)
+        verbose_name = "Oracle balance line"
+        verbose_name_plural = "Oracle balance lines"
+        constraints = [
+            models.UniqueConstraint(
+                fields=("snapshot", "oracle_code"),
+                name="unique_oracle_code_per_snapshot",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.oracle_code} · {self.quantity}"
 
 
 class MobileProfile(models.Model):

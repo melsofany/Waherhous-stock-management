@@ -1,0 +1,284 @@
+{% extends "base_app.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Oracle balance" %}{% endblock %}
+{% block crumb %}{% trans "Oracle balance" %}{% endblock %}
+{% block heading %}{% trans "Oracle balance" %}{% endblock %}
+{% block subheading %}{% trans "The Oracle sheet uploaded for the day, compared with the warehouse by Oracle code." %}{% endblock %}
+
+{% block content %}
+{% if is_manager %}
+<div class="sap-card">
+    <div class="sap-card__header">
+        <h2 class="sap-card__title">{% trans "Upload the Oracle sheet" %}</h2>
+    </div>
+    <div class="sap-card__body">
+        <form method="post" action="/oracle/" enctype="multipart/form-data" id="oracleUpload">
+            {% csrf_token %}
+            <div class="sap-form-grid">
+                <label class="sap-field">
+                    <span class="sap-label">{% trans "Oracle sheet (.xlsx or .csv)" %}</span>
+                    <input class="sap-input" type="file" name="file" accept=".xlsx,.csv" required>
+                </label>
+                <label class="sap-field">
+                    <span class="sap-label">{% trans "Balance date" %}</span>
+                    <input class="sap-input" type="date" name="balance_date"
+                        value="{{ today|date:'Y-m-d' }}">
+                </label>
+            </div>
+            <p class="sap-muted">
+                {% trans "The sheet must have the CODE and ON_HAND columns. Duplicate Oracle codes are summed into one line, and every upload is kept as a daily snapshot." %}
+            </p>
+            <div class="sap-form-actions">
+                <button class="sap-btn sap-btn--emphasized" type="submit">
+                    <svg class="sap-icon sap-icon--sm" aria-hidden="true"><use href="#i-upload"></use></svg>
+                    {% trans "Upload and compare" %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% else %}
+<div class="sap-msgstrip sap-msgstrip--info" role="status">
+    <span class="sap-msgstrip__title">{% trans "The Oracle sheet is uploaded by a warehouse manager." %}</span>
+</div>
+{% endif %}
+
+{% if snapshot %}
+<div class="sap-tiles">
+    <div class="sap-tile sap-tile--neutral">
+        <span class="sap-tile__label">{% trans "Oracle codes" %}</span>
+        <span class="sap-tile__value" id="kpiOracleCodes">{{ summary.oracle_codes }}</span>
+    </div>
+    <div class="sap-tile sap-tile--positive">
+        <span class="sap-tile__label">{% trans "Matched" %}</span>
+        <span class="sap-tile__value" id="kpiOracleMatched">{{ summary.matched }}</span>
+    </div>
+    <div class="sap-tile sap-tile--critical">
+        <span class="sap-tile__label">{% trans "Quantity differs" %}</span>
+        <span class="sap-tile__value" id="kpiOracleDifferent">{{ summary.different }}</span>
+    </div>
+    <div class="sap-tile sap-tile--critical">
+        <span class="sap-tile__label">{% trans "Not in the warehouse" %}</span>
+        <span class="sap-tile__value" id="kpiOracleMissingWarehouse">{{ summary.missing_warehouse }}</span>
+    </div>
+    <div class="sap-tile sap-tile--neutral">
+        <span class="sap-tile__label">{% trans "Not in the Oracle sheet" %}</span>
+        <span class="sap-tile__value" id="kpiOracleMissingOracle">{{ summary.missing_oracle }}</span>
+    </div>
+</div>
+
+<div class="sap-card">
+    <div class="sap-card__header">
+        <h2 class="sap-card__title">{% trans "Latest Oracle sheet" %}</h2>
+    </div>
+    <div class="sap-card__body">
+        <div class="sap-form-grid">
+            <div class="sap-field">
+                <span class="sap-label">{% trans "Balance date" %}</span>
+                <span dir="ltr">{{ snapshot.balance_date|date:"Y-m-d" }}</span>
+            </div>
+            <div class="sap-field">
+                <span class="sap-label">{% trans "Uploaded at" %}</span>
+                <span dir="ltr">{{ snapshot.uploaded_at|date:"Y-m-d H:i" }}</span>
+            </div>
+            <div class="sap-field">
+                <span class="sap-label">{% trans "Uploaded by" %}</span>
+                <span>{{ snapshot.uploaded_by.username|default:"—" }}</span>
+            </div>
+            <div class="sap-field">
+                <span class="sap-label">{% trans "Source file" %}</span>
+                <span dir="ltr">{{ snapshot.source_name|default:"—" }}</span>
+            </div>
+            <div class="sap-field">
+                <span class="sap-label">{% trans "Oracle value" %}</span>
+                <span dir="ltr">{{ total_value_text }}</span>
+            </div>
+        </div>
+        {% if snapshot.duplicate_codes %}
+        <p class="sap-muted">
+            {% trans "Duplicate Oracle rows merged into their codes:" %} {{ snapshot.duplicate_codes }}
+        </p>
+        {% endif %}
+    </div>
+</div>
+
+{% if grouped %}
+<div class="sap-card" id="oracleGroups">
+    <div class="sap-card__header">
+        <h2 class="sap-card__title">{% trans "Internal codes covering several Oracle codes" %}</h2>
+    </div>
+    <div class="sap-card__body">
+        <p class="sap-muted">
+            {% trans "This table compares the article by the total of all its Oracle codes, not by one code at a time." %}
+        </p>
+    </div>
+    <div class="sap-card__body sap-card__body--flush">
+        <div class="sap-tablewrap">
+            <table class="sap-table sap-table--dense">
+                <thead>
+                    <tr>
+                        <th scope="col">{% trans "Status" %}</th>
+                        <th scope="col">{% trans "Internal code" %}</th>
+                        <th scope="col">{% trans "Oracle codes" %}</th>
+                        <th scope="col">{% trans "Warehouse" %}</th>
+                        <th scope="col">{% trans "Oracle" %}</th>
+                        <th scope="col">{% trans "Difference" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group in grouped %}
+                    <tr data-status="{{ group.status }}" data-internal-code="{{ group.internal_code }}">
+                        <td><span class="sap-pill {{ group.status_class }}">{{ group.status_label }}</span></td>
+                        <td dir="ltr">{{ group.internal_code }}</td>
+                        <td dir="ltr">{% if group.oracle_codes %}{{ group.oracle_codes|join:", " }}{% else %}—{% endif %}</td>
+                        <td dir="ltr">{{ group.warehouse_text }}</td>
+                        <td dir="ltr">{{ group.oracle_text }}</td>
+                        <td dir="ltr">{{ group.difference_text }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<form method="get" action="/oracle/" class="sap-card" id="oracleFilters">
+    <div class="sap-card__body">
+        <div class="sap-form-grid">
+            <label class="sap-field">
+                <span class="sap-label">{% trans "Status" %}</span>
+                <select class="sap-input" name="status">
+                    <option value="">{% trans "All statuses" %}</option>
+                    {% for value, label in statuses.items %}
+                    <option value="{{ value }}"{% if filters.status == value %} selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="sap-field">
+                <span class="sap-label">{% trans "Code or description" %}</span>
+                <input class="sap-input" type="search" name="q" value="{{ filters.query }}" placeholder="Oracle code">
+            </label>
+        </div>
+        <div class="sap-form-actions">
+            <button class="sap-btn sap-btn--emphasized" type="submit">
+                <svg class="sap-icon sap-icon--sm" aria-hidden="true"><use href="#i-search"></use></svg>
+                {% trans "Show" %}
+            </button>
+            <a class="sap-btn sap-btn--ghost" href="/oracle/">{% trans "Clear the filters" %}</a>
+        </div>
+    </div>
+</form>
+
+<div class="sap-card">
+    <div class="sap-card__header">
+        <h2 class="sap-card__title">{% trans "Warehouse and Oracle" %}</h2>
+        <div class="sap-card__header-actions">
+            <span class="sap-muted">{% trans "One row per Oracle code." %}</span>
+        </div>
+    </div>
+    <div class="sap-card__body sap-card__body--flush">
+        <div class="sap-tablewrap">
+            <table class="sap-table sap-table--dense" id="oracleRows">
+                <thead>
+                    <tr>
+                        <th scope="col">{% trans "Status" %}</th>
+                        <th scope="col">{% trans "Oracle code" %}</th>
+                        <th scope="col">{% trans "Internal code" %}</th>
+                        <th scope="col">{% trans "Description" %}</th>
+                        <th scope="col">{% trans "Unit" %}</th>
+                        <th scope="col">{% trans "Warehouse" %}</th>
+                        <th scope="col">{% trans "Oracle" %}</th>
+                        <th scope="col">{% trans "Difference" %}</th>
+                        {% if is_manager %}<th scope="col">{% trans "Oracle value" %}</th>{% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                    <tr data-status="{{ row.status }}" data-code="{{ row.oracle_code }}">
+                        <td><span class="sap-pill {{ row.status_class }}">{{ row.status_label }}</span></td>
+                        <td dir="ltr">{{ row.oracle_code }}</td>
+                        <td dir="ltr">{{ row.internal_code|default:"—" }}</td>
+                        <td>{{ row.description|default:"—" }}</td>
+                        <td>{{ row.unit|default:"—" }}</td>
+                        <td dir="ltr">{{ row.warehouse_text }}</td>
+                        <td dir="ltr">{{ row.oracle_text }}</td>
+                        <td dir="ltr">{{ row.difference_text }}</td>
+                        {% if is_manager %}<td dir="ltr">{{ row.value_text }}</td>{% endif %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="{% if is_manager %}9{% else %}8{% endif %}" class="sap-empty">
+                            <span class="sap-empty__title">{% trans "No rows match the filters." %}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if rows.paginator.num_pages > 1 %}
+    <div class="sap-card__footer">
+        <div class="sap-pager">
+            {% if rows.has_previous %}
+            <a class="sap-btn sap-btn--ghost sap-btn--sm"
+                href="{{ page_url_prefix }}page={{ rows.previous_page_number }}">{% trans "Previous" %}</a>
+            {% endif %}
+            <span class="sap-muted" dir="ltr">{{ rows.number }} / {{ rows.paginator.num_pages }}</span>
+            {% if rows.has_next %}
+            <a class="sap-btn sap-btn--ghost sap-btn--sm"
+                href="{{ page_url_prefix }}page={{ rows.next_page_number }}">{% trans "Next" %}</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if recent|length > 1 %}
+<div class="sap-card">
+    <div class="sap-card__header">
+        <h2 class="sap-card__title">{% trans "Recent Oracle sheets" %}</h2>
+    </div>
+    <div class="sap-card__body sap-card__body--flush">
+        <div class="sap-tablewrap">
+            <table class="sap-table sap-table--dense">
+                <thead>
+                    <tr>
+                        <th scope="col">{% trans "Balance date" %}</th>
+                        <th scope="col">{% trans "Uploaded at" %}</th>
+                        <th scope="col">{% trans "Uploaded by" %}</th>
+                        <th scope="col">{% trans "Source file" %}</th>
+                        <th scope="col">{% trans "Oracle codes" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in recent %}
+                    <tr>
+                        <td dir="ltr">{{ item.balance_date|date:"Y-m-d" }}</td>
+                        <td dir="ltr">{{ item.uploaded_at|date:"Y-m-d H:i" }}</td>
+                        <td>{{ item.uploaded_by.username|default:"—" }}</td>
+                        <td dir="ltr">{{ item.source_name|default:"—" }}</td>
+                        <td dir="ltr">{{ item.row_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% else %}
+<div class="sap-card">
+    <div class="sap-card__body">
+        <div class="sap-empty">
+            <span class="sap-empty__title">{% trans "No Oracle sheet has been uploaded yet." %}</span>
+            {% if is_manager %}
+            <span class="sap-empty__hint">{% trans "Upload the daily export above to start the comparison." %}</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -15,6 +15,7 @@ pytestmark = pytest.mark.django_db
 EXPECTED = [
     ("dashboard", "/"),
     ("items", "/stock/"),
+    ("oracle_balance", "/oracle/"),
     ("item_groups", "/items/groups/"),
     ("additions", "/receipts/"),
     ("issues", "/issues/"),
@@ -121,6 +122,7 @@ class TestActiveState:
         [
             ("/", "dashboard"),
             ("/stock/", "items"),
+            ("/oracle/", "oracle_balance"),
             ("/receipts/", "additions"),
             ("/issues/", "issues"),
             ("/issues/report/", "spending"),

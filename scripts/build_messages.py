@@ -598,6 +598,80 @@ ARABIC = {
     "Voucher %(permit)s was just booked on another document.": "الإذن %(permit)s سُجّل للتوّ على مستند آخر.",
     "Voucher recorded on %(number)s.": "تم تسجيل الإذن على %(number)s.",
     "Voucher recorded on the delivery of %(po)s.": "تم تسجيل الإذن على توريد %(po)s.",
+    # --- رصيد الأوراكل: the daily sheet and its comparison -----------------
+    "Oracle balance": "رصيد الأوراكل",
+    "The Oracle sheet uploaded for the day, compared with the warehouse by Oracle code.":
+        "شيت الأوراكل المرفوع لليوم، مقارنًا برصيد المخزن عن طريق كود الأوراكل.",
+    "Upload the Oracle sheet": "رفع شيت الأوراكل",
+    "Oracle sheet (.xlsx or .csv)": "شيت الأوراكل (.xlsx أو .csv)",
+    "Balance date": "تاريخ الرصيد",
+    "The sheet must have the CODE and ON_HAND columns. Duplicate Oracle codes are summed into one line, and every upload is kept as a daily snapshot.":
+        "يجب أن يحتوي الشيت على عمودي CODE وON_HAND. الأكواد المكررة تُجمع في سطر واحد، وكل رفع يُحفظ كنسخة يومية.",
+    "Upload and compare": "ارفع وقارن",
+    "The Oracle sheet is uploaded by a warehouse manager.":
+        "شيت الأوراكل يرفعه مدير المخزن.",
+    "Oracle codes": "أكواد الأوراكل",
+    "Matched": "مطابق",
+    "Quantity differs": "الكمية مختلفة",
+    "Not in the warehouse": "غير موجود في المخزن",
+    "Not in the Oracle sheet": "غير موجود في شيت الأوراكل",
+    "Latest Oracle sheet": "آخر شيت أوراكل",
+    "Uploaded at": "وقت الرفع",
+    "Uploaded by": "رفعه",
+    "Source file": "اسم الملف",
+    "Oracle quantity": "كمية الأوراكل",
+    "Oracle value": "قيمة الأوراكل",
+    "Internal codes covering several Oracle codes": "أكواد داخلية تجمع أكثر من كود أوراكل",
+    "This table compares the article by the total of all its Oracle codes, not by one code at a time.":
+        "هذا الجدول يقارن الصنف بمجموع كل أكواده في الأوراكل، وليس بكود واحد في كل مرة.",
+    "Oracle codes": "أكواد الأوراكل",
+    "Duplicate Oracle rows merged into their codes:": "صفوف أوراكل مكررة تم جمعها في أكوادها:",
+    "Status": "الحالة",
+    "All statuses": "كل الحالات",
+    "Code or description": "الكود أو الوصف",
+    "Show": "عرض",
+    "Clear the filters": "مسح الفلاتر",
+    "Warehouse and Oracle": "المخزن والأوراكل",
+    "One row per Oracle code.": "صف واحد لكل كود أوراكل.",
+    "Oracle code": "كود الأوراكل",
+    "Internal code": "الكود الداخلي",
+    "Description": "الوصف",
+    "Unit": "الوحدة",
+    "Warehouse": "المخزن",
+    "Oracle": "الأوراكل",
+    "Difference": "الفرق",
+    "No rows match the filters.": "لا توجد صفوف مطابقة للفلاتر.",
+    "Previous": "السابق",
+    "Next": "التالي",
+    "Recent Oracle sheets": "شيتات أوراكل الأخيرة",
+    "No Oracle sheet has been uploaded yet.": "لم يتم رفع شيت أوراكل بعد.",
+    "Upload the daily export above to start the comparison.":
+        "ارفع تصدير اليوم من الأعلى لبدء المقارنة.",
+    "Only a warehouse manager can upload the Oracle sheet.":
+        "مدير المخزن فقط يمكنه رفع شيت الأوراكل.",
+    "Choose the Oracle sheet first.": "اختر شيت الأوراكل أولًا.",
+    "Enter the balance date as YYYY-MM-DD.": "أدخل تاريخ الرصيد بصيغة YYYY-MM-DD.",
+    "The Oracle sheet was uploaded: %(rows)s codes for %(date)s.":
+        "تم رفع شيت الأوراكل: %(rows)s كود بتاريخ %(date)s.",
+    "The file is larger than 10 MB.": "الملف أكبر من 10 ميجابايت.",
+    "The old .xls format is not supported. Save the sheet as .xlsx or .csv.":
+        "صيغة .xls القديمة غير مدعومة. احفظ الشيت بصيغة .xlsx أو .csv.",
+    "Upload an .xlsx or .csv file.": "ارفع ملف .xlsx أو .csv.",
+    "The sheet has too many rows. The limit is %(max)s.":
+        "الشيت يحتوي على صفوف أكثر من الحد. الحد %(max)s.",
+    "The .xlsx file could not be read.": "تعذّر قراءة ملف .xlsx.",
+    "The .csv file could not be read.": "تعذّر قراءة ملف .csv.",
+    "The sheet must contain a CODE column and an ON_HAND (or QUANTITY) column.":
+        "يجب أن يحتوي الشيت على عمود CODE وعمود ON_HAND (أو QUANTITY).",
+    "Row %(row)s: %(field)s is empty.": "الصف %(row)s: %(field)s فارغ.",
+    "Row %(row)s: %(field)s is not a number: %(value)s.":
+        "الصف %(row)s: %(field)s ليس رقمًا: %(value)s.",
+    "Row %(row)s: the Oracle code is longer than %(max)s characters.":
+        "الصف %(row)s: كود الأوراكل أطول من %(max)s حرفًا.",
+    "The sheet has no Oracle codes.": "الشيت لا يحتوي على أكواد أوراكل.",
+    "quantity": "الكمية",
+    "unit cost": "تكلفة الوحدة",
+    "value": "القيمة",
 }
 
 
