@@ -19,6 +19,7 @@ from .views import (
     list_receipts,
     list_sites,
     item_barcode,
+    item_card_settings,
     print_item_cards,
     print_labels,
     issue_to_site,
@@ -114,6 +115,8 @@ urlpatterns = [
     path("labels/", labels_page, name="print_labels"),
     # The printable item cards (the stock card layout) for the same selection.
     path("labels/cards/", print_item_cards, name="print_item_cards"),
+    # The project header, card direction and each item's SUB / Arabic name.
+    path("labels/card-settings/", item_card_settings, name="item_card_settings"),
     # Our own code over several Oracle codes: read it, merge, and move.
     path("items/groups/", item_groups_page, name="item_groups_page"),
     path("users/", users_page, name="users_page"),

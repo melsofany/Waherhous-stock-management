@@ -23,11 +23,12 @@ EXPECTED = [
     ("labels", "/labels/"),
     ("reconciliation", "/reconciliation/"),
     ("users", "/users/"),
+    ("card_settings", "/labels/card-settings/"),
     ("android", "/android/"),
     ("audit", "/audit/"),
 ]
 
-MANAGER_ONLY = {"item_groups", "users", "audit"}
+MANAGER_ONLY = {"item_groups", "users", "card_settings", "audit"}
 
 
 def nav_items(response):
@@ -128,6 +129,7 @@ class TestActiveState:
             ("/issues/report/", "spending"),
             ("/labels/", "labels"),
             ("/users/", "users"),
+            ("/labels/card-settings/", "card_settings"),
             ("/android/", "android"),
             ("/audit/", "audit"),
         ],

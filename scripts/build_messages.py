@@ -412,6 +412,32 @@ ARABIC = {
     "Unit": "وحدة القياس",
     "Item Description": "وصف الصنف",
     "Arabic Item": "اسم الصنف بالعربي",
+    "Item card settings": "بيانات كارت الصنف",
+    "Set the project once, then give each item its SUB and Arabic name. Every printed card uses these values.":
+        "اضبط المشروع مرة واحدة، ثم اكتب الـSUB والاسم العربي لكل صنف. كل كارت يُطبع يستخدم هذه القيم.",
+    "Back to barcode printing": "رجوع إلى طباعة الباركود",
+    "Project and card direction": "المشروع واتجاه الكارت",
+    "Project name": "اسم المشروع",
+    "Project code": "كود المشروع",
+    "Card direction": "اتجاه الكارت",
+    "Paper orientation": "اتجاه الورقة",
+    "Right to left": "من اليمين لليسار",
+    "Left to right": "من اليسار لليمين",
+    "Portrait": "طولي",
+    "Landscape": "عرضي",
+    "Items: SUB and Arabic name": "الأصناف: الـSUB والاسم العربي",
+    "Search by item code, description, SUB or Arabic name":
+        "ابحث بكود الصنف أو الوصف أو الـSUB أو الاسم العربي",
+    "The table shows up to 300 active items. Search to reach a longer catalogue.":
+        "الجدول يعرض حتى 300 صنف نشط. استخدم البحث للوصول لباقي الأصناف.",
+    "Save the item card data": "حفظ بيانات كارت الصنف",
+    "Only a warehouse manager can change the item card.":
+        "مدير المخزن فقط هو من يعدّل كارت الصنف.",
+    "The item card settings were saved. %(count)s items were updated.":
+        "تم حفظ بيانات كارت الصنف. تم تحديث %(count)s صنف.",
+    "Item card fields: SUB and Arabic name": "بيانات كارت الصنف: الـSUB والاسم العربي",
+    "The name printed at the top of every card": "الاسم المطبوع أعلى كل كارت",
+    "The code printed beside the name": "الكود المطبوع بجوار الاسم",
     "Select at least one item to print its card.": "اختر صنفًا واحدًا على الأقل لطباعة كارته.",
     "Print a Code 128 label per item. The barcode carries the item code used in the company system.": "اطبع ملصق Code 128 لكل صنف. الباركود يحمل كود الصنف المستخدم في نظام الشركة.",
     "Print labels": "طباعة الملصقات",

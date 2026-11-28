@@ -1,5 +1,5 @@
 {% load static i18n %}{% language 'en' %}<!DOCTYPE html>
-<html lang="en" dir="rtl">
+<html lang="en" dir="{{ card_direction }}">
 
 <head>
     <meta charset="UTF-8">
@@ -134,7 +134,7 @@
             font-weight: 700;
             letter-spacing: 0.03em;
             direction: ltr;
-            text-align: end;
+            text-align: start;
             unicode-bidi: isolate;
         }
 
@@ -146,7 +146,11 @@
             font-weight: 700;
         }
 
-        @page { size: A4; margin: 10mm; }
+        /* The card is A4-wide by default; the landscape choice gives the
+           long rows more room and keeps the same printed content. */
+        .cards-page--landscape .card { width: 267mm; }
+
+        @page { size: A4 {{ card_orientation }}; margin: 10mm; }
 
         @media print {
             body { background: #fff; padding: 0; }
@@ -160,7 +164,7 @@
     </style>
 </head>
 
-<body>
+<body class="cards-page cards-page--{{ card_direction }} cards-page--{{ card_orientation }}">
     <div class="cards-toolbar">
         <h1>{% trans "Item cards" %}</h1>
         <button type="button" onclick="window.print()">{% trans "Print / Save as PDF" %}</button>

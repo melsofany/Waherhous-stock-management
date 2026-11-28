@@ -31,7 +31,7 @@ from .issues import (
     mark_oracle_posted,
 )
 from .items import ItemViewSet, ShopItemViewSet
-from .labels import item_barcode, print_item_cards, print_labels
+from .labels import item_barcode, item_card_settings, print_item_cards, print_labels
 from .receipts import list_receipts, receipts_page, receive_from_supplier
 from .oracle import oracle_balance_page
 from .reconcile import (
@@ -78,6 +78,7 @@ __all__ = [
     "issues_page",
     "issues_report_page",
     "item_barcode",
+    "item_card_settings",
     "list_receipts",
     "list_sites",
     "mark_oracle_posted",

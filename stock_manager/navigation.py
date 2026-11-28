@@ -55,6 +55,7 @@ NAV_GROUPS: Tuple[NavGroup, ...] = (
         _("Administration"),
         (
             NavItem("users", "users_page", "/users/", "i-users", _("Users"), manager_only=True),
+            NavItem("card_settings", "item_card_settings", "/labels/card-settings/", "i-package", _("Item card settings"), manager_only=True),
             NavItem("android", "android_page", "/android/", "i-phone", _("Android app")),
             NavItem("audit", "audit_page", "/audit/", "i-history", _("Audit log"), manager_only=True),
         ),

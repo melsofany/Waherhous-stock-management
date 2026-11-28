@@ -17,6 +17,9 @@
             </label>
             <button class="sap-btn sap-btn--emphasized" type="submit" id="printLabelsBtn">{% trans "Print" %}</button>
             <button class="sap-btn" type="submit" id="printCardsBtn" formaction="{% url 'print_item_cards' %}">{% trans "Print item cards" %}</button>
+            {% if is_manager %}
+            <a class="sap-btn sap-btn--ghost" href="/labels/card-settings/">{% trans "Item card settings" %}</a>
+            {% endif %}
         </div>
     </div>
     <div class="sap-card__body">

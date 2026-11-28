@@ -53,7 +53,7 @@ suggestions (`COMMON_UNITS` in `documents.py`). Rules that the tests pin:
 
 ## Tests
 
-`python -m pytest -q tests/` — 878 pass, 3 skip (a user-supplied, gitignored
+`python -m pytest -q tests/` — 886 pass, 3 skip (a user-supplied, gitignored
 `spreadsheet_convert.py`). `pip install Pillow` and
 `python -m playwright install chromium` are needed for the full run; the e2e
 suites skip themselves when Chromium is missing.
@@ -95,7 +95,7 @@ the partial — never a copy per shell.
   sign-in, document decisions, password changes (including a self-service one,
   via `AuditedPasswordChangeView`), and a setting change written as
   «Edit lock: on/off» rather than `edit_lock=False`.
-- `python -m pytest -q` — 878 pass, 3 skip.
+- `python -m pytest -q` — 886 pass, 3 skip.
 
 ## A deploy onto a database older than the migrations (the "already exists" build)
 
@@ -278,7 +278,7 @@ warehouse. Oracle code is the only join key: descriptions change, codes do not.
 - Tests: `tests/test_oracle_balance.py` (21) covers the real sheet's Arabic
   decimals, headers, duplicate summing, both missing directions, filters,
   manager-only upload, audit and Arabic rendering. The full suite is
-  **878 passed, 3 skipped**.
+  **886 passed, 3 skipped**.
 
 ## Missing paperwork: one page that is also the place you fix it
 
@@ -426,6 +426,32 @@ a way of covering part of an issue.
   refuses it — that is the point), the Arabic round-trip save, and the e2e
   round-trip in Arabic (`'' == '1250.50'` — the browser really does empty the
   field).
+
+## The item card is configured from the app, not from Django admin
+
+The printed stock card needs a project header and per-item text that are not
+part of the stock flow, so they live beside the card settings instead of being
+retyped for every print.
+
+- **`/labels/card-settings/`** is the page: project name/code once, card
+  direction (RTL/LTR), paper orientation (portrait/landscape), then each
+  active item's SUB and Arabic name. It is manager-only and appears under
+  Administration; the barcode picker also links to it.
+- **`Admin.project_name` / `project_code`** already fed the card;
+  `card_direction` / `card_orientation` (migration `0017`, adopted with
+  `ensure_models`) are new. `Admin.get_project()` keeps its exact two-key
+  shape for existing callers; `get_card_settings()` returns all four values.
+- **The card reads the settings, not the request**: `item_cards.html` uses the
+  saved `dir` and emits `@page { size: A4 <orientation>; }`, and the landscape
+  class widens the card. A saved LTR card therefore stays LTR on every print.
+- **A SUB is a fact about the item, not the project**: the Oracle upload writes
+  `Item.sub_inventory`, and the settings table edits it (and `arabic_name`)
+  in bulk for the page's 300 rows. A search reaches the rest of the catalogue.
+- **Every save is audited** (`settings_changed` for the header, `item_updated`
+  for each changed item). A site user is refused before any row is touched.
+- Tests: `tests/test_item_cards.py` covers the saved values reaching the card,
+  the direction/orientation, the page fields, the manager check and the picker
+  link.
 
 ## The phone app (android/) — number or user name, and updates that arrive
 
@@ -840,4 +866,4 @@ item: every Oracle code keeps its own row, quantity, movements and documents.
   the far edge.
 - Tests: `tests/test_item_codes.py` (18), `tests/test_barcodes.py` (17) + the
   migration cases in `tests/test_migrations_adopt_existing_db.py` (5). Full run:
-  **878 passed, 3 skipped** (Chromium installed, so the E2E suites ran).
+  **886 passed, 3 skipped** (Chromium installed, so the E2E suites ran).

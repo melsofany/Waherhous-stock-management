@@ -1,0 +1,111 @@
+{% extends "base_app.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Item card settings" %}{% endblock %}
+{% block crumb %}{% trans "Item card settings" %}{% endblock %}
+{% block heading %}{% trans "Item card settings" %}{% endblock %}
+{% block subheading %}
+{% trans "Set the project once, then give each item its SUB and Arabic name. Every printed card uses these values." %}
+{% endblock %}
+
+{% block actions %}
+<a class="sap-btn sap-btn--ghost" href="/labels/">
+    {% trans "Back to barcode printing" %}
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="sap-toolbar">
+    <form method="get" action="/labels/card-settings/" class="sap-search">
+        <input class="sap-input sap-input--search" type="search" name="q" value="{{ query }}"
+            placeholder="{% trans 'Search by item code, description, SUB or Arabic name' %}">
+        <button class="sap-btn sap-btn--ghost" type="submit">{% trans "Search" %}</button>
+    </form>
+</div>
+
+<form method="post" action="/labels/card-settings/" class="sap-card" id="itemCardSettings">
+    {% csrf_token %}
+    <div class="sap-card__header">
+        <h2 class="sap-card__title">{% trans "Project and card direction" %}</h2>
+    </div>
+    <div class="sap-card__body">
+        <div class="sap-form-grid">
+            <label class="sap-field">
+                <span class="sap-label">{% trans "Project name" %}</span>
+                <input class="sap-input" type="text" name="project_name"
+                    value="{{ config.project_name }}" maxlength="120"
+                    placeholder="{% trans 'The name printed at the top of every card' %}">
+            </label>
+            <label class="sap-field">
+                <span class="sap-label">{% trans "Project code" %}</span>
+                <input class="sap-input" type="text" name="project_code"
+                    value="{{ config.project_code }}" maxlength="20" dir="ltr"
+                    placeholder="{% trans 'The code printed beside the name' %}">
+            </label>
+            <label class="sap-field">
+                <span class="sap-label">{% trans "Card direction" %}</span>
+                <select class="sap-input" name="card_direction">
+                    {% for value, label in directions %}
+                    <option value="{{ value }}"{% if config.card_direction == value %} selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="sap-field">
+                <span class="sap-label">{% trans "Paper orientation" %}</span>
+                <select class="sap-input" name="card_orientation">
+                    {% for value, label in orientations %}
+                    <option value="{{ value }}"{% if config.card_orientation == value %} selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+    </div>
+
+    <div class="sap-card__header">
+        <h2 class="sap-card__title">{% trans "Items: SUB and Arabic name" %}</h2>
+    </div>
+    <div class="sap-card__body">
+        <p class="sap-muted">{% trans "The table shows up to 300 active items. Search to reach a longer catalogue." %}</p>
+        <div class="sap-tablewrap">
+            <table class="sap-table">
+                <thead>
+                    <tr>
+                        <th scope="col">{% trans "Item code" %}</th>
+                        <th scope="col">{% trans "Description" %}</th>
+                        <th scope="col">{% trans "Sub Inventory" %}</th>
+                        <th scope="col">{% trans "Arabic Item" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td dir="ltr">{{ item.sku }}</td>
+                        <td>{{ item.description }}</td>
+                        <td>
+                            <input type="hidden" name="item_{{ forloop.counter0 }}" value="{{ item.pk }}">
+                            <input class="sap-input" type="text" name="sub_{{ forloop.counter0 }}"
+                                value="{{ item.sub_inventory }}" maxlength="120"
+                                aria-label="{% trans 'Sub Inventory' %}">
+                        </td>
+                        <td>
+                            <input class="sap-input" type="text" name="arabic_{{ forloop.counter0 }}"
+                                value="{{ item.arabic_name }}" maxlength="250"
+                                aria-label="{% trans 'Arabic Item' %}">
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="sap-empty">
+                            <span class="sap-empty__title">{% trans "No items match this search." %}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="sap-form-actions">
+            <button type="submit" class="sap-btn sap-btn--emphasized">{% trans "Save the item card data" %}</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

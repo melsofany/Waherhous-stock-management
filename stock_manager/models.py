@@ -24,6 +24,20 @@ class Admin(models.Model):
     # the App Configuration page, instead of being typed on each card.
     project_name = models.CharField(max_length=120, blank=True, default="", db_default="")
     project_code = models.CharField(max_length=20, blank=True, default="", db_default="")
+    # The card's reading direction and paper orientation. Both are stored once
+    # with the project, so every printed card matches the one before it.
+    card_direction = models.CharField(
+        max_length=3,
+        choices=(("rtl", "Right to left"), ("ltr", "Left to right")),
+        default="rtl",
+        db_default="rtl",
+    )
+    card_orientation = models.CharField(
+        max_length=9,
+        choices=(("portrait", "Portrait"), ("landscape", "Landscape")),
+        default="portrait",
+        db_default="portrait",
+    )
 
     class Meta:
         verbose_name = "App Configuration"
@@ -64,6 +78,24 @@ class Admin(models.Model):
         if config is None:
             return {"name": "", "code": ""}
         return {"name": config.project_name, "code": config.project_code}
+
+    @staticmethod
+    def get_card_settings():
+        """Everything printed on the card that is set once, not per item."""
+        config = Admin.objects.first()
+        if config is None:
+            return {
+                "name": "",
+                "code": "",
+                "direction": "rtl",
+                "orientation": "portrait",
+            }
+        return {
+            "name": config.project_name,
+            "code": config.project_code,
+            "direction": config.card_direction or "rtl",
+            "orientation": config.card_orientation or "portrait",
+        }
 
     def __str__(self):
         return f"Configuration Options"

@@ -201,6 +201,97 @@ class TestPicker:
         assert 'name="cards" id="cardSpec"' in html
 
 
+class TestCardSettingsPage:
+    def test_the_manager_sets_the_project_direction_and_item_fields(
+        self, client, manager, app_config, card_item
+    ):
+        client.force_login(manager)
+
+        response = client.post(
+            "/labels/card-settings/",
+            {
+                "project_name": "New Project",
+                "project_code": "900",
+                "card_direction": "ltr",
+                "card_orientation": "landscape",
+                "item_0": card_item.pk,
+                "sub_0": "كهرباء",
+                "arabic_0": "كابل نحاس",
+            },
+        )
+
+        assert response.status_code == 302
+        app_config.refresh_from_db()
+        card_item.refresh_from_db()
+        assert app_config.project_name == "New Project"
+        assert app_config.project_code == "900"
+        assert app_config.card_direction == "ltr"
+        assert app_config.card_orientation == "landscape"
+        assert card_item.sub_inventory == "كهرباء"
+        assert card_item.arabic_name == "كابل نحاس"
+
+    def test_the_saved_direction_and_orientation_reach_the_card(
+        self, client, manager, app_config, card_item
+    ):
+        app_config.project_name = "New Project"
+        app_config.project_code = "900"
+        app_config.card_direction = "ltr"
+        app_config.card_orientation = "landscape"
+        app_config.save()
+        client.force_login(manager)
+
+        html = client.get(f"/labels/cards/?skus={card_item.sku}").content.decode()
+
+        assert 'dir="ltr"' in html
+        assert "size: A4 landscape;" in html
+        assert 'class="cards-page cards-page--ltr cards-page--landscape"' in html
+
+    def test_the_page_offers_the_project_and_item_fields(
+        self, client, manager, card_item
+    ):
+        client.force_login(manager)
+
+        html = client.get("/labels/card-settings/").content.decode()
+
+        assert 'name="project_name"' in html
+        assert 'name="project_code"' in html
+        assert 'name="card_direction"' in html
+        assert 'name="card_orientation"' in html
+        assert f'name="item_0" value="{card_item.pk}"' in html
+        assert 'name="sub_0"' in html
+        assert 'name="arabic_0"' in html
+
+    def test_the_page_is_arabic_on_the_arabic_interface(
+        self, client, manager, card_item
+    ):
+        client.force_login(manager)
+        client.cookies[settings.LANGUAGE_COOKIE_NAME] = "ar"
+
+        html = client.get("/labels/card-settings/").content.decode()
+
+        assert "بيانات كارت الصنف" in html
+        assert "اسم المشروع" in html
+        assert "من اليمين لليسار" in html
+
+    def test_a_site_user_cannot_change_the_card(self, client, shop_user, card_item):
+        client.force_login(shop_user)
+
+        page = client.get("/labels/card-settings/")
+        post = client.post("/labels/card-settings/", {"project_name": "Hacked"})
+
+        assert page.status_code == 302
+        assert post.status_code == 302
+        assert not Admin.objects.filter(project_name="Hacked").exists()
+
+    def test_the_picker_links_to_the_settings(self, client, manager, card_item):
+        client.force_login(manager)
+
+        html = client.get("/labels/").content.decode()
+
+        assert 'href="/labels/card-settings/"' in html
+        assert "Item card settings" in html
+
+
 class TestItemAdminCardFields:
     def test_only_the_card_fields_are_editable_in_the_item_admin(self):
         assert isinstance(django_admin.site._registry[Item], ItemAdmin)

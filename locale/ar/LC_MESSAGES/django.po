@@ -208,6 +208,9 @@ msgstr "في انتظار الصرف"
 msgid "Back"
 msgstr "رجوع"
 
+msgid "Back to barcode printing"
+msgstr "رجوع إلى طباعة الباركود"
+
 msgid "Back to dashboard"
 msgstr "العودة إلى لوحة التحكم"
 
@@ -258,6 +261,9 @@ msgstr "إلغاء"
 
 msgid "Cancel the request"
 msgstr "إلغاء الطلب"
+
+msgid "Card direction"
+msgstr "اتجاه الكارت"
 
 msgid "Change my password"
 msgstr "تغيير كلمة المرور"
@@ -838,6 +844,12 @@ msgstr "وصف الصنف"
 msgid "Item card copies"
 msgstr "نسخ الكارت"
 
+msgid "Item card fields: SUB and Arabic name"
+msgstr "بيانات كارت الصنف: الـSUB والاسم العربي"
+
+msgid "Item card settings"
+msgstr "بيانات كارت الصنف"
+
 msgid "Item cards"
 msgstr "كروت الأصناف"
 
@@ -877,6 +889,9 @@ msgstr "أصناف مسجَّلة لموقعك"
 msgid "Items this permit covers"
 msgstr "البنود التي يغطيها هذا الإذن"
 
+msgid "Items: SUB and Arabic name"
+msgstr "الأصناف: الـSUB والاسم العربي"
+
 msgid "Keep this copy in the warehouse file."
 msgstr "احتفظ بهذه النسخة في ملف المخزن."
 
@@ -885,6 +900,9 @@ msgstr "المؤشرات الرئيسية"
 
 msgid "Label"
 msgstr "ملصق"
+
+msgid "Landscape"
+msgstr "عرضي"
 
 msgid "Language"
 msgstr "اللغة"
@@ -906,6 +924,9 @@ msgstr "اتركه فارغًا إذا كان التطبيق هو السجل ا�
 
 msgid "Left empty, it is taken from the phone number."
 msgstr "لو سيبتها فاضية، بتتاخد من رقم الهاتف."
+
+msgid "Left to right"
+msgstr "من اليسار لليمين"
 
 msgid "License GPLv3"
 msgstr "رخصة GPLv3"
@@ -1156,6 +1177,9 @@ msgstr "إذن الصرف الخاص بالموقع فقط هو الذي له ث
 msgid "Only a warehouse manager can approve documents."
 msgstr "اعتماد الأذون متاح لأمين المخزن فقط."
 
+msgid "Only a warehouse manager can change the item card."
+msgstr "مدير المخزن فقط هو من يعدّل كارت الصنف."
+
 msgid "Only a warehouse manager can complete the paperwork."
 msgstr "مدير المخزن فقط هو من يكمل الورق."
 
@@ -1261,6 +1285,9 @@ msgstr "رقم أمر الشراء"
 msgid "Pages"
 msgstr "الصفحات"
 
+msgid "Paper orientation"
+msgstr "اتجاه الورقة"
+
 msgid "Password"
 msgstr "كلمة المرور"
 
@@ -1336,6 +1363,9 @@ msgstr "برجاء التأكيد"
 msgid "Please select a file to upload."
 msgstr "اختر ملفًا للرفع."
 
+msgid "Portrait"
+msgstr "طولي"
+
 msgid "Posted"
 msgstr "مُسجل"
 
@@ -1368,6 +1398,15 @@ msgstr "طباعة الملصقات"
 
 msgid "Print the three copies"
 msgstr "طباعة النسخ الثلاث"
+
+msgid "Project and card direction"
+msgstr "المشروع واتجاه الكارت"
+
+msgid "Project code"
+msgstr "كود المشروع"
+
+msgid "Project name"
+msgstr "اسم المشروع"
 
 msgid "Publish"
 msgstr "نشر"
@@ -1537,6 +1576,9 @@ msgstr "ارتجاع من الموقع إلى المخزن"
 msgid "Review"
 msgstr "مراجعة"
 
+msgid "Right to left"
+msgstr "من اليمين لليسار"
+
 msgid "Role"
 msgstr "الدور"
 
@@ -1558,6 +1600,9 @@ msgstr "حفظ الإضافة"
 msgid "Save the issue"
 msgstr "حفظ الصرف"
 
+msgid "Save the item card data"
+msgstr "حفظ بيانات كارت الصنف"
+
 msgid "Save the permits"
 msgstr "حفظ الأذون"
 
@@ -1575,6 +1620,9 @@ msgstr "بحث"
 
 msgid "Search by item code or description"
 msgstr "ابحث بكود الصنف أو الوصف"
+
+msgid "Search by item code, description, SUB or Arabic name"
+msgstr "ابحث بكود الصنف أو الوصف أو الـSUB أو الاسم العربي"
 
 msgid "Search items by code or description..."
 msgstr "ابحث بالكود أو الوصف..."
@@ -1626,6 +1674,9 @@ msgstr "عنوان الخادم"
 
 msgid "Server address (fixed in the app)"
 msgstr "عنوان الخادم (مثبَّت في التطبيق)"
+
+msgid "Set the project once, then give each item its SUB and Arabic name. Every printed card uses these values."
+msgstr "اضبط المشروع مرة واحدة، ثم اكتب الـSUB والاسم العربي لكل صنف. كل كارت يُطبع يستخدم هذه القيم."
 
 msgid "Settings"
 msgstr "الإعدادات"
@@ -1900,6 +1951,9 @@ msgstr "البصمة يجب أن تكون 64 حرفًا سادس عشريًا."
 msgid "The code %(sku)s does not exist."
 msgstr "الكود %(sku)s غير موجود."
 
+msgid "The code printed beside the name"
+msgstr "الكود المطبوع بجوار الاسم"
+
 msgid "The company voucher number is too long."
 msgstr "رقم إذن الشركة أطول من المسموح."
 
@@ -1939,11 +1993,17 @@ msgstr "الكمية المصروفة يجب أن تكون أكبر من صفر.
 msgid "The item and its stock history will be removed."
 msgstr "سيتم حذف الصنف وسجل مخزونه."
 
+msgid "The item card settings were saved. %(count)s items were updated."
+msgstr "تم حفظ بيانات كارت الصنف. تم تحديث %(count)s صنف."
+
 msgid "The limit is"
 msgstr "الحد هو"
 
 msgid "The list of published builds could not be read just now."
 msgstr "مش قادرين نقرأ قائمة النسخ المنشورة دلوقتي."
+
+msgid "The name printed at the top of every card"
+msgstr "الاسم المطبوع أعلى كل كارت"
 
 msgid "The number written on the permit book"
 msgstr "الرقم المكتوب في دفتر إذن الصرف"
@@ -2037,6 +2097,9 @@ msgstr "سيخرج المخزون من المخزن إلى الموقع."
 
 msgid "The system is configured to delete all warehouse and site data that is not included in this upload."
 msgstr "النظام مُهيَّأ لحذف كل بيانات المخزن والمواقع غير المدرجة في هذا الملف."
+
+msgid "The table shows up to 300 active items. Search to reach a longer catalogue."
+msgstr "الجدول يعرض حتى 300 صنف نشط. استخدم البحث للوصول لباقي الأصناف."
 
 msgid "The update arrives by itself"
 msgstr "التحديث يصل تلقائيًا"
