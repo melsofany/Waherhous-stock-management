@@ -40,7 +40,7 @@
             {% trans "Pending issues" %}
         </div>
         <div class="sap-tile__value" id="kpiTransfers">{{ pending_transfers }}</div>
-        <div class="sap-tile__foot">{% trans "Awaiting dispatch" %}</div>
+        <div class="sap-tile__foot">{% trans "Waiting for an issue permit" %}</div>
     </a>
     <div class="sap-tile{% if edit_locked %} sap-tile--critical{% else %} sap-tile--positive{% endif %}">
         <div class="sap-tile__label">
@@ -63,11 +63,11 @@
                 <svg class="sap-icon" aria-hidden="true"><use href="#i-transfer"></use></svg>
                 {% trans "Site requests" %}
             </h2>
-            <p class="sap-card__subtitle">{% trans "What the sites asked for, and what is still to dispatch" %}</p>
+            <p class="sap-card__subtitle">{% trans "What the sites asked for; the spending page turns the requests into issue permits." %}</p>
         </div>
         <div class="sap-card__header-actions">
-            <a class="sap-btn sap-btn--emphasized sap-btn--sm" href="/issues/">
-                {% trans "Collect into an issue permit" %}
+            <a class="sap-btn sap-btn--ghost sap-btn--sm" href="/issues/report/">
+                {% trans "Open the spending page" %}
             </a>
             <button id="refreshTransfersPending" class="sap-btn sap-btn--ghost" type="button">
                 <svg class="sap-icon sap-icon--sm" aria-hidden="true"><use href="#i-refresh"></use></svg>
@@ -129,7 +129,7 @@
             <a class="sap-quicklink" href="/issues/report/">
                 <svg class="sap-icon" aria-hidden="true"><use href="#i-data"></use></svg>
                 <span class="sap-quicklink__title">{% trans "Issues report" %}</span>
-                <span class="sap-quicklink__text">{% trans "Every movement, by period" %}</span>
+                <span class="sap-quicklink__text">{% trans "Collect site requests into issue permits and review every movement" %}</span>
             </a>
             <a class="sap-quicklink" href="/labels/">
                 <svg class="sap-icon" aria-hidden="true"><use href="#i-package"></use></svg>

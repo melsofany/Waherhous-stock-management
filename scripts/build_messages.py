@@ -676,6 +676,15 @@ ARABIC = {
     "Issue permit": "إذن صرف",
     "Issue permit number": "رقم إذن الصرف",
     "Collect into an issue permit": "تجميعها في إذن صرف",
+    "Collect site requests into issue permits and review every movement": "تجميع طلبات المواقع في إذون صرف ومراجعة كل حركة",
+    "Waiting for an issue permit": "منتظر إذن صرف",
+    "What the sites asked for; the spending page turns the requests into issue permits.":
+        "اللي طلبته المواقع؛ وصفحة الصرفيات هي اللي بتحوّل الطلبات لإذون صرف.",
+    "Open the spending page": "فتح الصرفيات",
+    "Collect site requests into issue permits, follow the Oracle copies, and review everything that left the warehouse in the chosen period.":
+        "اجمع طلبات المواقع في إذون صرف، وتابع نسخ الأوراكل، وراجع كل ما خرج من المخزن في الفترة المختارة.",
+    "Use the manual form for a permit that did not come from a site request. Collected requests are handled on the issues report page.":
+        "استخدم النموذج اليدوي لإذن لم يأتِ من طلب موقع. الطلبات المجمعة تُعالج في صفحة الصرفيات.",
     "Issue permit posted to Oracle": "تسجيل إذن الصرف في الأوراكل",
     "The number written on the permit book": "الرقم المكتوب في دفتر إذن الصرف",
     "Site requests waiting for an issue permit": "طلبات المواقع المنتظرة لإذن صرف",

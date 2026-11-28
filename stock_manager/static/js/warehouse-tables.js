@@ -144,7 +144,6 @@
                     } else if (tableNum === 3) {
                         const highlightClass = item.ordered && isShopUser ? 'highlight-ordered' : '';
                         const shop_user = item.shop_user && item.shop_user.username ? item.shop_user.username : window.loggedInUsername;
-                        W.setXferVals(shop_user, item.item.sku, item.quantity);
                         const safeSku = W.escapeHtml(item.item.sku);
                         const safeShopUser = W.escapeHtml(shop_user);
                         row = `
@@ -152,9 +151,8 @@
     ${isManager ? `<td>${safeShopUser}</td>` : ''}
     <td class="sap-table__sku">${safeSku}</td>
     <td>${W.escapeHtml(item.item.description)}</td>
-    <td class="sap-table__num">${isManager ? `<input class="sap-input" type="number" min="0" value="${W.getXferVals(shop_user, item.item.sku)}" id="quantity3-${safeSku}" data-shop_user_id="${safeShopUser}">` : W.getXferVals(shop_user, item.item.sku)}</td>
+    <td class="sap-table__num">${item.quantity}</td>
     <td class="actions">
-    ${isManager ? `<button class="sap-btn sap-btn--sm sap-btn--emphasized dispatch-btn" type="button" data-sku="${safeSku}" data-shop-user="${safeShopUser}" id="dispatchButton-${safeSku}">Dispatch</button>` : ''}
     <button class="sap-btn sap-btn--sm sap-btn--negative cancel-btn" type="button" data-sku="${safeSku}" data-shop-user="${safeShopUser}" ${window.userGroups && !isManager && item.ordered ? 'disabled' : ''} id="deleteButton-${safeSku}">Cancel</button>
     </td>
 </tr>`;

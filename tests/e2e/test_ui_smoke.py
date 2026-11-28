@@ -131,7 +131,7 @@ class TestTransferFlow:
         expect(pending_row).to_have_count(0)
         assert not TransferItem.objects.filter(shop_user=shop_user, item=item).exists()
 
-    def test_manager_dispatches_transfer(
+    def test_the_dashboard_does_not_issue_a_request(
         self, page, live_server, login, manager, shop_user, app_config, make_item
     ):
         item = make_item(sku="SKU-1", quantity=10)
@@ -142,20 +142,13 @@ class TestTransferFlow:
 
         pending_row = page.locator('#itemTable3 tr[data-sku="SKU-1"]')
         expect(pending_row).to_contain_text("shop1")
-        page.click("#dispatchButton-SKU-1")
-
-        # The pending line disappears and the warehouse quantity is reduced;
-        # the item itself lives on its own page.
-        expect(pending_row).to_have_count(0)
-        page.goto(f"{live_server.url}/stock/")
-        expect(
-            page.locator('#itemTable1 input[data-sku="SKU-1"][data-field="quantity"]')
-        ).to_have_value("6")
+        expect(page.locator("#dispatchButton-SKU-1")).to_have_count(0)
+        expect(page.locator('a[href="/issues/report/"]').first).to_be_visible()
 
         item.refresh_from_db()
-        assert item.quantity == 6
-        assert ShopItem.objects.get(shop_user=shop_user, item=item).quantity == 4
-        assert not TransferItem.objects.filter(shop_user=shop_user, item=item).exists()
+        assert item.quantity == 10
+        assert not ShopItem.objects.filter(shop_user=shop_user, item=item).exists()
+        assert TransferItem.objects.filter(shop_user=shop_user, item=item).exists()
 
 
 class TestMaintenanceMode:

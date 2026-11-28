@@ -53,7 +53,7 @@ suggestions (`COMMON_UNITS` in `documents.py`). Rules that the tests pin:
 
 ## Tests
 
-`python -m pytest -q tests/` — 877 pass, 3 skip (a user-supplied, gitignored
+`python -m pytest -q tests/` — 878 pass, 3 skip (a user-supplied, gitignored
 `spreadsheet_convert.py`). `pip install Pillow` and
 `python -m playwright install chromium` are needed for the full run; the e2e
 suites skip themselves when Chromium is missing.
@@ -95,7 +95,7 @@ the partial — never a copy per shell.
   sign-in, document decisions, password changes (including a self-service one,
   via `AuditedPasswordChangeView`), and a setting change written as
   «Edit lock: on/off» rather than `edit_lock=False`.
-- `python -m pytest -q` — 877 pass, 3 skip.
+- `python -m pytest -q` — 878 pass, 3 skip.
 
 ## A deploy onto a database older than the migrations (the "already exists" build)
 
@@ -278,7 +278,7 @@ warehouse. Oracle code is the only join key: descriptions change, codes do not.
 - Tests: `tests/test_oracle_balance.py` (21) covers the real sheet's Arabic
   decimals, headers, duplicate summing, both missing directions, filters,
   manager-only upload, audit and Arabic rendering. The full suite is
-  **877 passed, 3 skipped**.
+  **878 passed, 3 skipped**.
 
 ## Missing paperwork: one page that is also the place you fix it
 
@@ -339,7 +339,8 @@ Oracle copy to the clerk who posts the deduction.
   turns a set of requests into a permit; `DocumentPermit` remains the separate
   company-authorisation number and is not the paper permit.
 - **One permit belongs to one site.** Requests are grouped by site on
-  `/issues/`; a crafted POST mixing two sites is refused before anything
+  `/issues/report/` — «الصرفيات» — because that is the desk that owns the
+  paper; a crafted POST mixing two sites is refused before anything
   changes. A line may be released in part: the remainder stays on the queue.
   A line released in full is deleted in the same transaction.
 - **The number is mandatory and unique.** The manager types the number from the
@@ -358,16 +359,17 @@ Oracle copy to the clerk who posts the deduction.
   `StockDocument.oracle_posted_at` / `oracle_posted_by` / `oracle_note`
   (migration `0016`) record that the clerk received the copy and posted the
   deduction. The action never touches `Item.quantity`; the release already did.
-  The issues page has an Oracle queue, the document page has the action, the
+  «الصرفيات» has the Oracle queue, the document page has the action, and the
   report and the Excel export carry the status.
 - **Management is one path**: only a warehouse manager can create a permit or
   mark it posted; a site user sees only their own queue and can print their
-  copy. The page's forms post to `/issues/permits/`, not to the old per-item
-  dispatch endpoint, so the paper trail exists from the first click.
+  copy. «الصرفيات» posts to `/issues/permits/`, not to the old per-item dispatch
+  endpoint, so the paper trail exists from the first click. The dashboard's
+  site-request table is read-only: it can cancel a request, never issue it.
 - **The migration adopts the live schema.** `0016_issue_permit_workflow`
   uses `ensure_models` like the other migrations: the three new columns are
   added only where absent, so a database built by `--run-syncdb` still deploys.
-- Tests: `tests/test_issue_workflow.py` (17) covers grouping, full and partial
+- Tests: `tests/test_issue_workflow.py` (18) covers grouping, full and partial
   release, mixed sites, insufficient stock, duplicate permit numbers,
   manager-only actions, the three-copy print page and the Oracle hand-off.
   `tests/test_issue_report.py` pins the report status.
@@ -838,4 +840,4 @@ item: every Oracle code keeps its own row, quantity, movements and documents.
   the far edge.
 - Tests: `tests/test_item_codes.py` (18), `tests/test_barcodes.py` (17) + the
   migration cases in `tests/test_migrations_adopt_existing_db.py` (5). Full run:
-  **877 passed, 3 skipped** (Chromium installed, so the E2E suites ran).
+  **878 passed, 3 skipped** (Chromium installed, so the E2E suites ran).

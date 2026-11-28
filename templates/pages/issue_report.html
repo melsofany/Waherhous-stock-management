@@ -5,7 +5,7 @@
 {% block crumb %}{% trans "Issues report" %}{% endblock %}
 {% block heading %}{% trans "Issues report" %}{% endblock %}
 {% block subheading %}
-{% trans "Everything that left the warehouse in the chosen period: what, to where, and who sent it." %}
+{% trans "Collect site requests into issue permits, follow the Oracle copies, and review everything that left the warehouse in the chosen period." %}
 {% endblock %}
 
 {% block actions %}
@@ -17,6 +17,9 @@
 {% endblock %}
 
 {% block content %}
+{% include "partials/site_request_queue.html" %}
+{% include "partials/oracle_queue.html" %}
+
 <form method="get" action="/issues/report/" class="sap-card">
     <div class="sap-card__body">
         <div class="sap-form-grid">

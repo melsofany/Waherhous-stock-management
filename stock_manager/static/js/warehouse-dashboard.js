@@ -1,6 +1,6 @@
 /*
- * The dashboard: the site-request queue's dispatch/cancel actions and its
- * refresh buttons. Loaded only by /.
+ * The dashboard: the site-request queue's cancel action and its refresh
+ * buttons. Issuing a request happens on the spending page, not here.
  */
 (() => {
     'use strict';
@@ -22,41 +22,31 @@
         });
     };
 
-    // Complete or cancel a transfer using AJAX POST.
-    const completeTransfer = (sku, shop_user_id, cancel) => {
-        const quantity = W.getXferVals(shop_user_id, sku);
+    // Cancel a transfer request using AJAX POST. Issuing the request is the
+    // spending page's job, so the dashboard never calls the dispatch path.
+    const cancelTransfer = (sku, shop_user_id) => {
         $.ajax({
             url: '/api/complete-transfer/',
             type: "POST",
             contentType: 'application/json',
-            data: JSON.stringify({ sku, shop_user_id, quantity, cancel }),
+            data: JSON.stringify({ sku, shop_user_id, cancel: 'true' }),
             success: () => {
                 [1, 3].forEach(tn => W.fetchItems(tn));
-                W.notify(cancel ? W.tr('Transfer cancelled.') : W.tr('Transfer dispatched.'), 'success');
+                W.notify(W.tr('Transfer cancelled.'), 'success');
             },
             error: xhr => W.notify(W.errorDetail(xhr, W.tr('Could not complete the transfer.')), 'error')
         });
         W.deleteXferVals(shop_user_id, sku);
     };
 
-    window.completeTransfer = completeTransfer;
+    window.cancelTransfer = cancelTransfer;
 
     // Transfer action buttons carry the SKU / shop user as data attributes
     // (read as exact strings) rather than interpolating them into inline
     // onclick handlers, so hostile values cannot inject JavaScript.
-    $(document).on("click", ".dispatch-btn", function () {
-        completeTransfer($(this).attr('data-sku'), $(this).attr('data-shop-user'), 'false');
-    });
     $(document).on("click", ".cancel-btn", function () {
-        completeTransfer($(this).attr('data-sku'), $(this).attr('data-shop-user'), 'true');
+        cancelTransfer($(this).attr('data-sku'), $(this).attr('data-shop-user'));
     });
-    $(document).on("blur", `input[id^="quantity3-"]`, function () {
-        const id = $(this).attr('id');
-        const sku = id.replace('quantity3-', '');
-        const shopUserID = $(this).data('shop_user_id');
-        W.setXferVals(shopUserID, sku, $(this).val());
-    });
-
     $(document).ready(() => {
         $('#submitTransferRequest').click(submitTransferRequest);
         $('#refreshInventory').click(() => W.tablesOnPage().forEach((tn) => W.fetchItems(tn)));

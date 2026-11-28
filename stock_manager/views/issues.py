@@ -336,6 +336,9 @@ def issues_report_page(request):
             "report_back": (
                 f"/issues/report/?from={date_from:%Y-%m-%d}&to={date_to:%Y-%m-%d}"
             ),
+            "request_groups": _request_groups(request.user),
+            "oracle_queue": issue_workflow.oracle_queue(),
+            "is_manager": is_warehouse_manager(request.user),
         },
     )
 

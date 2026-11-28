@@ -346,6 +346,12 @@ msgstr "اجمع طلبات الموقع، وحدّد الكمية المصرو�
 msgid "Collect into an issue permit"
 msgstr "تجميعها في إذن صرف"
 
+msgid "Collect site requests into issue permits and review every movement"
+msgstr "تجميع طلبات المواقع في إذون صرف ومراجعة كل حركة"
+
+msgid "Collect site requests into issue permits, follow the Oracle copies, and review everything that left the warehouse in the chosen period."
+msgstr "اجمع طلبات المواقع في إذون صرف، وتابع نسخ الأوراكل، وراجع كل ما خرج من المخزن في الفترة المختارة."
+
 msgid "Company item code"
 msgstr "كود الصنف في نظام الشركة"
 
@@ -1191,6 +1197,9 @@ msgstr "افتح رابط التنزيل على الهاتف ونصّب المل
 
 msgid "Open the link on the phone once and install the file (allow installing apps from this source if the phone asks)."
 msgstr "افتح اللينك على الموبايل مرة واحدة وثبّت الملف (اسمح بتثبيت التطبيقات من المصدر ده لو الموبايل سأل)."
+
+msgid "Open the spending page"
+msgstr "فتح الصرفيات"
 
 msgid "Operational"
 msgstr "يعمل"
@@ -2167,6 +2176,9 @@ msgstr "وقت الرفع"
 msgid "Uploaded by"
 msgstr "رفعه"
 
+msgid "Use the manual form for a permit that did not come from a site request. Collected requests are handled on the issues report page."
+msgstr "استخدم النموذج اليدوي لإذن لم يأتِ من طلب موقع. الطلبات المجمعة تُعالج في صفحة الصرفيات."
+
 msgid "Use the manual form for a permit that did not come from a site request. For collected requests, use the numbered form above."
 msgstr "استخدم النموذج اليدوي لإذن لم يأتِ من طلب موقع. للطلبات المجمعة استخدم النموذج المرقّم بالأعلى."
 
@@ -2227,6 +2239,9 @@ msgstr "تم تسجيل الإذن على توريد %(po)s."
 msgid "Wait for the lock to expire, or ask the system administrator to reset it."
 msgstr "انتظر انتهاء القفل أو اطلب من مسؤول النظام إعادة ضبطه."
 
+msgid "Waiting for an issue permit"
+msgstr "منتظر إذن صرف"
+
 msgid "Waiting for approval"
 msgstr "في انتظار الاعتماد"
 
@@ -2283,6 +2298,9 @@ msgstr "ويب فقط"
 
 msgid "What the sites asked for, and what is still to dispatch"
 msgstr "ما طلبته المواقع وما زال في انتظار الصرف."
+
+msgid "What the sites asked for; the spending page turns the requests into issue permits."
+msgstr "اللي طلبته المواقع؛ وصفحة الصرفيات هي اللي بتحوّل الطلبات لإذون صرف."
 
 msgid "What the warehouse holds, and what each site already holds."
 msgstr "ما يحتفظ به المخزن، وما يحتفظ به كل موقع."

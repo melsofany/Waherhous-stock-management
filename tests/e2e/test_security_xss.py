@@ -69,10 +69,10 @@ class TestTransferButtonInjection:
     def test_action_buttons_carry_sku_as_data_not_inline_js(
         self, page, live_server, login, manager, shop_user, app_config, make_item
     ):
-        # The dispatch/cancel buttons must not interpolate the SKU into an
-        # inline onclick handler (a SKU containing a quote could then inject
-        # JS that runs on click). They must carry the SKU as a data
-        # attribute and dispatch via a delegated handler instead.
+        # The cancel button must not interpolate the SKU into an inline
+        # onclick handler (a SKU containing a quote could then inject JS that
+        # runs on click). It carries the SKU as a data attribute and acts via
+        # a delegated handler instead.
         evil_sku = "x');window.__xss=true;//"
         item = make_item(sku=evil_sku, description="Widget")
         TransferItem.objects.create(
@@ -89,22 +89,22 @@ class TestTransferButtonInjection:
             assert button.get_attribute("data-sku") == evil_sku
         assert xss_fired(page) is False
 
-    def test_dispatch_still_works_with_ordinary_sku(
+    def test_cancel_still_works_with_ordinary_sku(
         self, page, live_server, login, manager, shop_user, app_config, make_item
     ):
-        # The delegated handler replacing the inline onclick must still
-        # dispatch correctly.
+        # The delegated handler replacing the inline onclick must still cancel.
         item = make_item(sku="SKU-1", quantity=10)
         TransferItem.objects.create(
             shop_user=shop_user, item=item, quantity=4, ordered=True
         )
         login("manager")
 
-        page.click("#dispatchButton-SKU-1")
+        page.click("#deleteButton-SKU-1")
 
         expect(page.locator('#itemTable3 tr[data-sku="SKU-1"]')).to_have_count(0)
         item.refresh_from_db()
-        assert item.quantity == 6
+        assert item.quantity == 10
+        assert not TransferItem.objects.filter(shop_user=shop_user, item=item).exists()
 
 
 class TestUsernameXSS:

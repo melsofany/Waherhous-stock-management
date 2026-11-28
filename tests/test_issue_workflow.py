@@ -217,7 +217,7 @@ class TestCollectedRequests:
         request_line(other_shop_user, item, 3)
         client.force_login(shop_user)
 
-        body = client.get("/issues/").content.decode()
+        body = client.get("/issues/report/").content.decode()
         queue = body.split('id="siteRequestGroups"', 1)[1].split(
             'id="oracleQueue"', 1
         )[0]
@@ -256,7 +256,7 @@ class TestThePaper:
         client.force_login(manager)
 
         queue = client.get(
-            "/issues/", HTTP_ACCEPT_LANGUAGE="ar"
+            "/issues/report/", HTTP_ACCEPT_LANGUAGE="ar"
         ).content.decode()
         assert "طلبات المواقع المنتظرة لإذن صرف" in queue
         assert "إنشاء إذن الصرف والطباعة" in queue
@@ -268,6 +268,21 @@ class TestThePaper:
         ).content.decode()
         for text in ("نسخة المخزن", "نسخة الموقع", "نسخة الأوراكل", "أمين المخزن"):
             assert text in paper
+
+    def test_collecting_belongs_to_the_spending_page_not_the_manual_issue_page(
+        self, client, manager, shop_user, make_item
+    ):
+        item = make_item(sku="SKU-1", quantity=20)
+        request_line(shop_user, item, 3)
+        client.force_login(manager)
+
+        spending = client.get("/issues/report/").content.decode()
+        manual = client.get("/issues/").content.decode()
+
+        assert 'id="siteRequestGroups"' in spending
+        assert 'id="oracleQueue"' in spending
+        assert 'id="siteRequestGroups"' not in manual
+        assert 'id="oracleQueue"' not in manual
 
     def test_another_site_cannot_read_the_permit(
         self, client, manager, shop_user, other_shop_user, make_item
