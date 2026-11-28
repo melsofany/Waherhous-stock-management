@@ -1321,6 +1321,13 @@ fieldset.sap-field {
     white-space: nowrap;
 }
 
+.sap-table .sap-table__sku .wh_sku-field {
+    width: 11rem;
+    max-width: 16rem;
+    font-family: var(--sap-font-mono);
+    font-size: 0.8125rem;
+}
+
 /* An internal code (and its total) spans the rows that belong to it. */
 .sap-table .sap-table__group {
     font-family: var(--sap-font-mono);

@@ -36,6 +36,26 @@ class TestTheTwoPages:
         # A manager does not request stock from itself.
         expect(page.locator("#submitTransferRequest")).to_have_count(0)
 
+    def test_manager_edits_the_oracle_code_from_the_stock_table(
+        self, page, live_server, login, manager, app_config, make_item
+    ):
+        make_item(sku="OLD-CODE", description="Widget")
+        login("manager")
+        page.goto(f"{live_server.url}/stock/")
+
+        field = page.locator(
+            '#itemTable1 input[data-sku="OLD-CODE"][data-field="sku"]'
+        )
+        expect(field).to_have_value("OLD-CODE")
+        field.fill("NEW-CODE")
+        field.blur()
+
+        expect(
+            page.locator('#itemTable1 input[data-sku="NEW-CODE"][data-field="sku"]')
+        ).to_be_visible()
+        assert Item.objects.filter(pk="NEW-CODE").exists()
+        assert not Item.objects.filter(pk="OLD-CODE").exists()
+
     def test_shop_user_gets_read_only_rows_and_a_transfer_field(
         self, page, live_server, login, shop_user, app_config, make_item
     ):
@@ -81,8 +101,12 @@ class TestSearch:
         page.locator("#searchBox1").press_sequentially("bird")
 
         expect(page.locator("#itemTable1 tr")).to_have_count(1)
-        expect(page.locator("#itemTable1")).to_contain_text("ABC")
-        expect(page.locator("#itemTable1")).not_to_contain_text("XYZ")
+        expect(
+            page.locator('#itemTable1 input[data-sku="ABC"][data-field="sku"]')
+        ).to_be_visible()
+        expect(
+            page.locator('#itemTable1 input[data-sku="XYZ"][data-field="sku"]')
+        ).to_have_count(0)
 
 
 class TestTransferFlow:

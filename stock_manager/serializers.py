@@ -56,6 +56,19 @@ class ItemSerializer(serializers.ModelSerializer):
             internal_group_id=obj.internal_group_id, is_active=True
         ).count()
 
+    def validate_sku(self, value):
+        value = str(value).strip()
+        if not value:
+            raise serializers.ValidationError("The Oracle code is required.")
+        existing = Item.objects.filter(sku=value)
+        if self.instance is not None:
+            existing = existing.exclude(pk=self.instance.pk)
+        if existing.exists():
+            raise serializers.ValidationError(
+                "An item with this Oracle code already exists."
+            )
+        return value
+
     def validate_quantity(self, value):
         if not re.match(r"^\d+$", str(value)):
             raise serializers.ValidationError("Quantity must be a valid integer.")
